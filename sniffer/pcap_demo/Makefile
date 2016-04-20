@@ -7,7 +7,7 @@ INCLUDE = -I../lib
 LDFLAGS = -lsnf -lpcap
 LDPATH = -L../
 
-PROGS =	lookupdev
+PROGS =	lookupdev open_live
 
 .PHONY: all
 all: $(PROGS)
@@ -21,6 +21,9 @@ clean:
 	$(CC) -o $@ -c $< $(CFLAGS) $(INCLUDE)
 
 lookupdev: lookupdev.o
+	$(CC) -o $@ $^ $(LDFLAGS) $(LDPATH)
+
+open_live: open_live.o
 	$(CC) -o $@ $^ $(LDFLAGS) $(LDPATH)
 
 
