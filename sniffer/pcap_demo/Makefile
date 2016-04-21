@@ -7,7 +7,7 @@ INCLUDE = -I../lib
 LDFLAGS = -lsnf -lpcap
 LDPATH = -L../
 
-PROGS =	lookupdev open_live loop setfilter findalldevs
+PROGS =	lookupdev open_live loop setfilter findalldevs open_offline
 
 .PHONY: all
 all: $(PROGS)
@@ -35,4 +35,6 @@ setfilter: setfilter.o
 findalldevs: findalldevs.o
 	$(CC) -o $@ $^ $(LDFLAGS) $(LDPATH)
 
+open_offline: open_offline.o
+	$(CC) -o $@ $^ $(LDFLAGS) $(LDPATH)
 
