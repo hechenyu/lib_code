@@ -3,6 +3,10 @@
 
 #include <pcap.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**
  * 获得用于捕获网络数据包的数据包捕获描述字
  */
@@ -49,5 +53,9 @@ void Pcap_setfilter(pcap_t *p, struct bpf_program *fp);
  * "-"为标准输入
  */
 pcap_t *Pcap_open_offline(const char *fname);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
