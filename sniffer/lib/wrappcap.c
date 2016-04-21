@@ -51,3 +51,9 @@ pcap_t *Pcap_open_offline(const char *fname)
 	return p;
 }
 
+void Pcap_next_ex(pcap_t *p, struct pcap_pkthdr **h, const u_char **pkt)
+{
+    if (pcap_next_ex(p, h, pkt) < 0) {
+        err_quit("pcap_setfilter error: %s", pcap_geterr(p));
+    }
+}

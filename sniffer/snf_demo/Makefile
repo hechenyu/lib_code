@@ -7,7 +7,7 @@ INCLUDE = -I../lib
 LDFLAGS = -lsnf -lpcap
 LDPATH = -L../
 
-PROGS =	simplesniffer arpsniffer arpsniffer_file
+PROGS =	simplesniffer arpsniffer arpsniffer_file ipsniffer ipsniffer_bsd
 
 .PHONY: all
 all: $(PROGS)
@@ -29,7 +29,10 @@ arpsniffer: arpsniffer.o
 arpsniffer_file: arpsniffer_file.o
 	$(CC) -o $@ $^ $(LDFLAGS) $(LDPATH)
 
-loop: loop.o
+ipsniffer: ipsniffer.o
+	$(CC) -o $@ $^ $(LDFLAGS) $(LDPATH)
+
+ipsniffer_bsd: ipsniffer_bsd.o
 	$(CC) -o $@ $^ $(LDFLAGS) $(LDPATH)
 
 

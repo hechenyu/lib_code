@@ -54,6 +54,14 @@ void Pcap_setfilter(pcap_t *p, struct bpf_program *fp);
  */
 pcap_t *Pcap_open_offline(const char *fname);
 
+/**
+ * 捕获单个数据包
+ * p：调用pcap_open_live函数获得的用于捕获网络数据包的描述字
+ * h：指向p_cap_pkthdr结构的指针的地址
+ * pkt: 获得的网络数据包内容 
+ */
+void Pcap_next_ex(pcap_t *p, struct pcap_pkthdr **h, const u_char **pkt);
+
 #ifdef __cplusplus
 }
 #endif
