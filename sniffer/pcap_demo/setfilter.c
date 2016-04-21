@@ -48,6 +48,9 @@ int main(int argc,char **argv)
     /* set the compiled program as the filter */
     Pcap_setfilter(descr,&fp);
 
+    /** free filter */
+    pcap_freecode(&fp);
+
     /* ... and loop */ 
     pcap_loop(descr,-1,my_callback,NULL);
 

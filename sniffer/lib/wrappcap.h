@@ -63,6 +63,12 @@ pcap_t *Pcap_open_offline(const char *fname);
  */
 const u_char *Pcap_next(pcap_t *p, struct pcap_pkthdr *h);
 
+/**
+ * 获取一个可打开的网络设备的列表
+ * 返回pcap_if_t *需要通过pcap_freealldevs释放
+ */
+pcap_if_t *Pcap_findalldevs();
+
 #ifdef __cplusplus
 }
 #endif

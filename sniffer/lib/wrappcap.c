@@ -78,3 +78,12 @@ const u_char *Pcap_next(pcap_t *p, struct pcap_pkthdr *h)
         // else ret == 0, timeout and continue
     }
 }
+
+pcap_if_t *Pcap_findalldevs()
+{
+    pcap_if_t *alldevs = NULL;
+    if (pcap_findalldevs(&alldevs, pcap_errbuf) < 0) {
+        err_quit("pcap_findalldevs error: %s", pcap_errbuf);
+    }
+    return alldevs;
+}
