@@ -1,5 +1,5 @@
-/* Simple ARP sniffer
- * To compile: gcc ipsniffer.c -o ipsniffer -lpcap
+/* Simple TCP sniffer
+ * To compile: gcc tcpsniffer.c -o tcppsniffer -lpcap
  * Run as root!
  * */
 #include <stdlib.h>
@@ -9,10 +9,11 @@
 #include <arpa/inet.h>
 #include <netinet/if_ether.h> /* includes net/ethernet.h */
 #include <netinet/ip.h>
+#include <netinet/tcp.h>
 
 #include "snf.h"
 
-#define MAXBYTES2CAPTURE 2048
+#define MAXBYTES2CAPTURE 30
 
 int main(int argc, char *argv[])
 {
@@ -22,10 +23,11 @@ int main(int argc, char *argv[])
 	struct pcap_pkthdr pkthdr;
 	const unsigned char *packet = NULL;
 	struct iphdr *ipptr = NULL;
+	struct tcphdr *tcpptr = NULL;
 	struct in_addr addr;
 
 	if (argc < 2 || argc > 3 || (argv[1][0] == '-' && argv[1][1] == 'h')){
-		printf("Usage: ipsniffer <interface> | ipsniffer -f <dumpfile>\n");
+		printf("Usage: tcpsniffer <interface> | tcpsniffer -f <dumpfile>\n");
 		exit(1);
 	}
 
@@ -35,7 +37,7 @@ int main(int argc, char *argv[])
     } else {    // argc == 3
 	    descr = Pcap_open_offline(argv[2]);
     }
-	Pcap_compile(descr, &filter, "ip", 1, mask);
+	Pcap_compile(descr, &filter, "tcp", 1, mask);
 	Pcap_setfilter(descr, &filter);
 
 	while (1){
@@ -58,6 +60,11 @@ int main(int argc, char *argv[])
 		printf ("Destination IP: %s\n", inet_ntoa(addr));    
 		addr.s_addr = ipptr->saddr;
 		printf ("Source IP: %s\n", inet_ntoa(addr));
+
+		tcpptr = (struct tcphdr *) (packet + 14 + ipptr->ihl*4);
+		printf ("Destination port : %d\n", ntohs(tcpptr->dest));
+		printf ("Source port : %d\n", ntohs(tcpptr->source));
+		printf ("the seq of packet is %u\n", ntohl(tcpptr->seq));
 	}
 	return 0;
 }

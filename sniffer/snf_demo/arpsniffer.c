@@ -13,6 +13,7 @@
 //ARP Header, (assuming Ethernet+ipv4)
 #define ARP_REQUEST 1
 #define ARP_REPLY 2
+
 typedef struct arphdr {
 	u_int16_t htype; //hardware type
 	u_int16_t ptype; //protocol type
@@ -26,6 +27,7 @@ typedef struct arphdr {
 } arphdr_t;
 
 #define MAXBYTES2CAPTURE 2048
+
 int main(int argc, char *argv[])
 {
 	int i=0;
@@ -49,6 +51,7 @@ int main(int argc, char *argv[])
     }
 	Pcap_compile(descr, &filter, "arp", 1, mask);
 	Pcap_setfilter(descr, &filter);
+
 	while (1){
 		packet = Pcap_next(descr, &pkthdr);
 		if (packet == NULL) {
@@ -59,6 +62,7 @@ int main(int argc, char *argv[])
             }
             exit(1);
         }
+
 		arpheader = (struct arphdr *)(packet + 14);
 		printf("\n\nReceived Packet Size: %d bytes\n", pkthdr.len);
 		printf("Hardware type: %s\n", (ntohs(arpheader->htype) == 1) ?

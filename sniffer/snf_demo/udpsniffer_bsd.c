@@ -13,6 +13,7 @@
 #include "snf.h"
 
 #define MAXBYTES2CAPTURE 2048
+
 int main(int argc, char *argv[])
 {
 	bpf_u_int32 netaddr=0, mask=0;
@@ -36,6 +37,7 @@ int main(int argc, char *argv[])
     }
 	Pcap_compile(descr, &filter, "udp", 1, mask);
 	Pcap_setfilter(descr, &filter);
+
 	while (1){
 		packet = Pcap_next(descr, &pkthdr);
 		if (packet == NULL) {
@@ -46,6 +48,7 @@ int main(int argc, char *argv[])
             }
             exit(1);
         }
+
 		ipptr = (struct ip *)(packet + 14);
 		printf("\n\nReceived Packet Size: %d bytes\n", pkthdr.len);
 		printf("\n\nthe IP packets version: %d\n", ipptr->ip_v); 

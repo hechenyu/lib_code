@@ -1,5 +1,5 @@
-/* Simple ARP sniffer
- * To compile: gcc ipsniffer.c -o ipsniffer -lpcap
+/* Simple TCP sniffer
+ * To compile: gcc tcpsniffer.c -o tcppsniffer -lpcap
  * Run as root!
  * */
 #include <stdlib.h>
@@ -7,13 +7,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <arpa/inet.h>
-#include <netinet/if_ether.h> /* includes net/ethernet.h */
 #include <netinet/ip.h>
+#include <netinet/tcp.h>
 
 #include "snf.h"
 
 #define MAXBYTES2CAPTURE 2048
-
 int main(int argc, char *argv[])
 {
 	bpf_u_int32 netaddr=0, mask=0;
@@ -21,11 +20,11 @@ int main(int argc, char *argv[])
 	pcap_t *descr = NULL;
 	struct pcap_pkthdr pkthdr;
 	const unsigned char *packet = NULL;
-	struct iphdr *ipptr = NULL;
-	struct in_addr addr;
+	struct ip *ipptr = NULL;
+	struct tcphdr *tcpptr = NULL;
 
 	if (argc < 2 || argc > 3 || (argv[1][0] == '-' && argv[1][1] == 'h')){
-		printf("Usage: ipsniffer <interface> | ipsniffer -f <dumpfile>\n");
+		printf("Usage: tcpsniffer <interface> | tcpsniffer -f <dumpfile>\n");
 		exit(1);
 	}
 
@@ -35,7 +34,7 @@ int main(int argc, char *argv[])
     } else {    // argc == 3
 	    descr = Pcap_open_offline(argv[2]);
     }
-	Pcap_compile(descr, &filter, "ip", 1, mask);
+	Pcap_compile(descr, &filter, "tcp", 1, mask);
 	Pcap_setfilter(descr, &filter);
 
 	while (1){
@@ -49,15 +48,18 @@ int main(int argc, char *argv[])
             exit(1);
         }
 
-		ipptr = (struct iphdr *)(packet + 14);
+		ipptr = (struct ip *)(packet + 14);
 		printf("\n\nReceived Packet Size: %d bytes\n", pkthdr.len);
-		printf("\n\nthe IP packets version: %d\n", ipptr->version); 
-		printf ("the IP packets total_length is :%d\n", ntohs(ipptr->tot_len));
-		printf ("the IP protocol is %d\n", ipptr->protocol);
-		addr.s_addr = ipptr->daddr;
-		printf ("Destination IP: %s\n", inet_ntoa(addr));    
-		addr.s_addr = ipptr->saddr;
-		printf ("Source IP: %s\n", inet_ntoa(addr));
+		printf("\n\nthe IP packets version: %d\n", ipptr->ip_v); 
+		printf ("the IP packets total_length is :%d\n", ntohs(ipptr->ip_len));
+		printf ("the IP protocol is %d\n", ipptr->ip_p);
+		printf ("Destination IP: %s\n", inet_ntoa(ipptr->ip_dst));    
+		printf ("Source IP: %s\n", inet_ntoa(ipptr->ip_src));
+
+		tcpptr = (struct tcphdr *) (packet + 14 + ipptr->ip_hl*4);
+		printf ("Destination port : %d\n", ntohs(tcpptr->th_dport));
+		printf ("Source port : %d\n", ntohs(tcpptr->th_sport));
+		printf ("the seq of packet is %u\n", ntohl(tcpptr->th_seq));
 	}
 	return 0;
 }
