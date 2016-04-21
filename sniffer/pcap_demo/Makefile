@@ -7,7 +7,7 @@ INCLUDE = -I../lib
 LDFLAGS = -lsnf -lpcap
 LDPATH = -L../
 
-PROGS =	lookupdev open_live loop
+PROGS =	lookupdev open_live loop setfilter
 
 .PHONY: all
 all: $(PROGS)
@@ -27,6 +27,9 @@ open_live: open_live.o
 	$(CC) -o $@ $^ $(LDFLAGS) $(LDPATH)
 
 loop: loop.o
+	$(CC) -o $@ $^ $(LDFLAGS) $(LDPATH)
+
+setfilter: setfilter.o
 	$(CC) -o $@ $^ $(LDFLAGS) $(LDPATH)
 
 

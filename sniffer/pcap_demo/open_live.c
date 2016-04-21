@@ -39,7 +39,7 @@ int main(int argc, char **argv)
        not!! Be sure you know the rules of the network you are running on
        before you set your card in promiscuous mode!!     */
 
-    descr = Pcap_open_live(dev,BUFSIZ,1,0);
+    descr = Pcap_open_live(dev,BUFSIZ,1,-1);
  
     /*
        grab a packet from descr (yay!)                    

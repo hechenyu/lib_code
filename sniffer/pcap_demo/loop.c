@@ -33,7 +33,7 @@ int main(int argc,char **argv)
 	dev = Pcap_lookupdev();
 
 	/* open device for reading */
-	descr = Pcap_open_live(dev,BUFSIZ,1,0);
+	descr = Pcap_open_live(dev,BUFSIZ,1,-1);
 
 	/* allright here we call pcap_loop(..) and pass in our callback function */
 	/* int pcap_loop(pcap_t *p, int cnt, pcap_handler callback, u_char *user)*/
