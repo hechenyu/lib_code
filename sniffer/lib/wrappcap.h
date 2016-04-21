@@ -58,9 +58,10 @@ pcap_t *Pcap_open_offline(const char *fname);
  * 捕获单个数据包
  * p：调用pcap_open_live函数获得的用于捕获网络数据包的描述字
  * h：指向p_cap_pkthdr结构的指针的地址
- * pkt: 获得的网络数据包内容 
+ * 成功：获得的网络数据包内容
+ * 失败：NULL (loop broken out or EOF, use pcap_file judge)
  */
-void Pcap_next_ex(pcap_t *p, struct pcap_pkthdr **h, const u_char **pkt);
+const u_char *Pcap_next(pcap_t *p, struct pcap_pkthdr *h);
 
 #ifdef __cplusplus
 }

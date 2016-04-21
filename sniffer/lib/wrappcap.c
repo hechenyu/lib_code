@@ -1,5 +1,12 @@
 #include "wrappcap.h"
+
+#include <stdlib.h>
+
 #include "error.h"
+
+#ifndef PCAP_ERROR_BREAK 
+#define PCAP_ERROR_BREAK        -2
+#endif
 
 static char pcap_errbuf[PCAP_ERRBUF_SIZE];
 
@@ -51,9 +58,23 @@ pcap_t *Pcap_open_offline(const char *fname)
 	return p;
 }
 
-void Pcap_next_ex(pcap_t *p, struct pcap_pkthdr **h, const u_char **pkt)
+const u_char *Pcap_next(pcap_t *p, struct pcap_pkthdr *h)
 {
-    if (pcap_next_ex(p, h, pkt) < 0) {
-        err_quit("pcap_setfilter error: %s", pcap_geterr(p));
+    struct pcap_pkthdr *header;
+    const u_char *packet;
+    int ret;
+    while (1) {
+        ret = pcap_next_ex(p, &header, &packet);
+        if (ret > 0) {
+            memcpy(h, header, sizeof(struct pcap_pkthdr));
+            return packet; 
+        } else if (ret < 0) {    // ret < 0
+            if (ret == PCAP_ERROR_BREAK) {
+                return NULL;
+            } else {
+                err_quit("pcap_next_ex error: %s", pcap_geterr(p));
+            }
+        }
+        // else ret == 0, timeout and continue
     }
 }

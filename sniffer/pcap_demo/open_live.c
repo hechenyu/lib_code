@@ -48,14 +48,12 @@ int main(int argc, char **argv)
        our call to pcap_open_live and an allocated        
        struct pcap_pkthdr                                 */
  
-    packet = pcap_next(descr,&hdr);
+    packet = Pcap_next(descr,&hdr);
  
-again:
     if(packet == NULL)
     {/* dinna work *sob* */
-        goto again;
         printf("Didn't grab packet\n");
-        // exit(1);
+        exit(1);
     }
  
     /*  struct pcap_pkthdr {
@@ -84,7 +82,7 @@ again:
                 ntohs(eptr->ether_type),
                 ntohs(eptr->ether_type));
     }else {
-        printf("Ethernet type %x not IP", ntohs(eptr->ether_type));
+        printf("Ethernet type %x not IP\n", ntohs(eptr->ether_type));
         exit(1);
     }
  

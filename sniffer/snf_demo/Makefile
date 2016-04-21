@@ -7,7 +7,7 @@ INCLUDE = -I../lib
 LDFLAGS = -lsnf -lpcap
 LDPATH = -L../
 
-PROGS =	simplesniffer arpsniffer arpsniffer_file ipsniffer ipsniffer_bsd
+PROGS =	simplesniffer arpsniffer ipsniffer ipsniffer_bsd udpsniffer udpsniffer_bsd
 
 .PHONY: all
 all: $(PROGS)
@@ -26,13 +26,15 @@ simplesniffer: simplesniffer.o
 arpsniffer: arpsniffer.o
 	$(CC) -o $@ $^ $(LDFLAGS) $(LDPATH)
 
-arpsniffer_file: arpsniffer_file.o
-	$(CC) -o $@ $^ $(LDFLAGS) $(LDPATH)
-
 ipsniffer: ipsniffer.o
 	$(CC) -o $@ $^ $(LDFLAGS) $(LDPATH)
 
 ipsniffer_bsd: ipsniffer_bsd.o
 	$(CC) -o $@ $^ $(LDFLAGS) $(LDPATH)
 
+udpsniffer: udpsniffer.o
+	$(CC) -o $@ $^ $(LDFLAGS) $(LDPATH)
+
+udpsniffer_bsd: udpsniffer_bsd.o
+	$(CC) -o $@ $^ $(LDFLAGS) $(LDPATH)
 
