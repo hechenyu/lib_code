@@ -1,3 +1,4 @@
 libsnf.a: library of sniffer
-1) cd lib and make
+libptl.a: library of protocol
+1) cd lib(libsnf) and make
 2) cd other dir and make

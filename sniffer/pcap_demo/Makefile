@@ -3,7 +3,7 @@
 RM = rm -f
 CC = gcc
 CFLAGS = -Wall -g
-INCLUDE = -I../lib
+INCLUDE = -I../libsnf
 LDFLAGS = -lsnf -lpcap
 LDPATH = -L../
 
