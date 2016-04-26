@@ -7,7 +7,7 @@ RANLIB = ranlib
 LIBSNF_NAME = ../libptl.a
 
 # Following are all the object files to create in the lib/ directory.
-LIB_OBJS = http_parser.o httpreq.o httpresp.o
+LIB_OBJS = http_parser.o httpreq.o httpresp.o dns_parser.o
 #LIB_SRCS = $(shell ls *.c)
 #LIB_OBJS = $(LIB_SRCS:%.c=%.o)
 

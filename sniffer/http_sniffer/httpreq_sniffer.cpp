@@ -31,6 +31,7 @@ int main(int argc, char *argv[])
 	const unsigned char *packet = NULL;
 	struct ip *ipptr = NULL;
 	struct tcphdr *tcpptr = NULL;
+	Httpreq_header httpreq_hdr;
 
 	if (argc < 2 || argc > 3 || (argv[1][0] == '-' && argv[1][1] == 'h')){
 		printf("Usage: httpreq_sniffer <interface> | httpreq_sniffer -f <dumpfile>\n");
@@ -46,7 +47,6 @@ int main(int argc, char *argv[])
 	Pcap_compile(descr, &filter, (char *) "tcp and dst port 80", 1, mask);
 	Pcap_setfilter(descr, &filter);
 
-	Httpreq_header httpreq_hdr;
 	while (1){
 		packet = Pcap_next(descr, &pkthdr);
 		if (packet == NULL) {
@@ -67,9 +67,9 @@ int main(int argc, char *argv[])
 			continue;
 		}
 
-		printf("Received Packet Size: %d bytes\n", pkthdr.len);
-		printf("Capture Packet Size: %d bytes\n", pkthdr.caplen);
-		printf("the IP packets version: %d\n", ipptr->ip_v); 
+		printf ("Received Packet Size: %d bytes\n", pkthdr.len);
+		printf ("Capture Packet Size: %d bytes\n", pkthdr.caplen);
+		printf ("the IP packets version: %d\n", ipptr->ip_v); 
 		printf ("the IP packets total_length is :%d\n", ntohs(ipptr->ip_len));
 		printf ("the IP protocol is %d\n", ipptr->ip_p);
 		printf ("Destination IP: %s\n", inet_ntoa(ipptr->ip_dst));    
