@@ -1,13 +1,13 @@
 CC = gcc
-CFLAGS = -I. -g -O2 -D_REENTRANT -Wall -I../libutl
+CFLAGS = -I. -g -O2 -D_REENTRANT -Wall
 RANLIB = ranlib
 
 # Following is the main library, built from all the object files
 # in the lib/ and libfree/ directories.
-LIBSNF_NAME = ../libsnf.a
+LIBSNF_NAME = ../libutl.a
 
 # Following are all the object files to create in the lib/ directory.
-LIB_OBJS = wrappcap.o
+LIB_OBJS = error.o
 #LIB_SRCS = $(shell ls *.c)
 #LIB_OBJS = $(LIB_SRCS:%.c=%.o)
 

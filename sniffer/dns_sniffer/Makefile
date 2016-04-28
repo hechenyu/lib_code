@@ -4,8 +4,8 @@ RM = rm -f
 CXX = g++
 CXXFLAGS = -Wall -g 
 INCLUDE = -I../libsnf -I../libptl
-LDFLAGS = -lptl -lsnf -lpcap
-LDPATH = -L../
+LDFLAGS = -lptl -lsnf -lutl -lpcap
+LDPATH = -L..
 
 PROGS =	dns_sniffer dns_sniffer_bsd
 

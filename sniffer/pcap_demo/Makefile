@@ -4,8 +4,8 @@ RM = rm -f
 CC = gcc
 CFLAGS = -Wall -g
 INCLUDE = -I../libsnf
-LDFLAGS = -lsnf -lpcap
-LDPATH = -L../
+LDFLAGS = -lsnf -lutl -lpcap
+LDPATH = -L..
 
 PROGS =	lookupdev open_live loop setfilter findalldevs open_offline
 
