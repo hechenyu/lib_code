@@ -1,5 +1,5 @@
 
-SUBDIRS = libutl libsnf libptl pcap_demo snf_demo http_sniffer dns_sniffer
+SUBDIRS = libutl libsnf libptl libinj pcap_demo snf_demo http_sniffer dns_sniffer
 #SUBDIRS = public thread algo ipc ipv4 pcap socket \
 #	fs ipreg mysql share 
 
