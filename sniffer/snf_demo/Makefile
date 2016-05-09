@@ -4,7 +4,7 @@ RM = rm -f
 CC = gcc
 CFLAGS = -Wall -g
 INCLUDE = -I../libsnf
-LDFLAGS = -lsnf -lutl -lpcap
+LDFLAGS = -lsnf -lpcap
 LDPATH = -L..
 
 PROGS =	simplesniffer arpsniffer ipsniffer ipsniffer_bsd udpsniffer udpsniffer_bsd tcpsniffer tcpsniffer_bsd

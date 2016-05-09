@@ -1,7 +1,5 @@
 
-SUBDIRS = libutl libsnf libptl libinj pcap_demo snf_demo http_sniffer dns_sniffer
-#SUBDIRS = public thread algo ipc ipv4 pcap socket \
-#	fs ipreg mysql share 
+SUBDIRS = libsnf libptl pcap_demo snf_demo http_sniffer dns_sniffer libnet_demo
 
 all:
 	@$(MAKE) $(MFLAGS) WHAT_TO_MAKE=$@ common

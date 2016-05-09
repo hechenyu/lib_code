@@ -41,7 +41,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "inj.h"
+#include "snf.h"
 
 void usage(char *name);
 

@@ -41,7 +41,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "inj.h"
+#include "snf.h"
 
 void usage(char *name);
 
@@ -52,8 +52,6 @@ int main(int argc, char *argv[])
 	char *device = NULL;
 	char *dst = "2.2.2.2", *src = "1.1.1.1";
 	u_long src_ip, dst_ip;
-	char errbuf[LIBNET_ERRBUF_SIZE];
-	libnet_ptag_t ip_ptag = 0;
 	u_short proto = IPPROTO_UDP;
 	u_char payload[255] = {0x11, 0x11, 0x22, 0x22, 0x00, 0x08, 0xc6, 0xa5};
 	u_long payload_s = 8;

@@ -61,6 +61,60 @@ libnet_ptag_t Libnet_build_ipv4(uint16_t ip_len, uint8_t tos, uint16_t id, uint1
         uint8_t ttl, uint8_t prot, uint16_t sum, uint32_t src, uint32_t dst, 
         const uint8_t* payload, uint32_t payload_s, libnet_t *l, libnet_ptag_t ptag);
 
+/**
+ * 构造IP选项
+ * options: IP选项字节序列
+ * options_s: IP选项字节序列长度
+ * l: 调用libnet_init函数获得的libnet上下文
+ * ptag: 协议标签, 0表示新创建, 其他表示一个已存在的报首
+ */
+libnet_ptag_t Libnet_build_ipv4_options(const uint8_t *options, uint32_t options_s, libnet_t *l,
+        libnet_ptag_t ptag);
+
+/**
+ * 构造TCP报首
+ * sp: 源端口
+ * dp: 目的端口
+ * seq: 序号
+ * akc: 确认号
+ * control: 控制字段
+ * win: 窗口尺寸
+ * sum: 校验和(0标识libnet自动填写)
+ * urg: 紧急指针
+ * len: tcp报文总长度(用于计算校验和)
+ * payload: 可选有效载荷(可为NULL)
+ * paylaod_s: payload长度(可为0)
+ * l: 调用libnet_init函数获得的libnet上下文
+ * ptag: 协议标签, 0表示新创建, 其他表示一个已存在的报首
+ */
+libnet_ptag_t Libnet_build_tcp(uint16_t sp, uint16_t dp, uint32_t seq, uint32_t ack,
+        uint8_t control, uint16_t win, uint16_t sum, uint16_t urg, uint16_t len, 
+        const uint8_t* payload, uint32_t payload_s, libnet_t *l, libnet_ptag_t ptag);
+
+/**
+ * 构造TCP选项
+ * options: TCP选项字节序列
+ * options_s: TCP选项字节序列长度
+ * l: 调用libnet_init函数获得的libnet上下文
+ * ptag: 协议标签, 0表示新创建, 其他表示一个已存在的报首
+ */
+libnet_ptag_t Libnet_build_tcp_options(const uint8_t *options, uint32_t options_s, libnet_t *l,
+        libnet_ptag_t ptag);
+
+/**
+ * 构造TCP报首
+ * sp: 源端口
+ * dp: 目的端口
+ * udp: udp报文总长度
+ * sum: 校验和(0标识libnet自动填写)
+ * payload: 可选有效载荷(可为NULL)
+ * paylaod_s: payload长度(可为0)
+ * l: 调用libnet_init函数获得的libnet上下文
+ * ptag: 协议标签, 0表示新创建, 其他表示一个已存在的报首
+ */
+libnet_ptag_t Libnet_build_udp(uint16_t sp, uint16_t dp, uint16_t len, uint16_t sum, 
+        const uint8_t* payload, uint32_t payload_s, libnet_t *l, libnet_ptag_t ptag);
+
 #ifdef __cplusplus
 }
 #endif
