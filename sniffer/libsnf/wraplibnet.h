@@ -8,11 +8,16 @@ extern "C" {
 #endif
 
 /**
- * 初始化libnet环境, 返回libnet描述符
+ * 初始化libnet环境, 返回libnet描述符(描述符最终应该通过libnet_destroy释放)
  * injection_type: 构造发送的报文类型, 例如: LIBNET_RAW4构造发送IPv4报文
  * device：指定打开的网络设备名
  */
 libnet_t *Libnet_init(int injection_type, const char *device);
+
+/**
+ * 获取设备的IPv4地址
+ */
+uint32_t Libnet_get_ipaddr4(libnet_t *l);
 
 /**
  * 将IP地址字符串或是DNS域名转换成网络字节序的IP地址, 仅支持IPv4
@@ -21,12 +26,6 @@ libnet_t *Libnet_init(int injection_type, const char *device);
  * use_name: LIBNET_RESOLVE或LIBNET_DONT_RESOLVE
  */
 uint32_t Libnet_name2addr4(libnet_t *l, char *host_name, uint8_t use_name);
-
-/**
- * 将预先构造好的报文(通过libnet_bulic_xxx)发送到网络接口
- * l: 调用libnet_init函数获得的libnet上下文
- */
-int Libnet_write(libnet_t *l);
 
 /**
  * 构造以太网报首
@@ -39,6 +38,34 @@ int Libnet_write(libnet_t *l);
  * ptag: 协议标签, 0表示新创建, 其他表示一个已存在的报首
  */
 libnet_ptag_t Libnet_build_ethernet(const uint8_t *dst, const uint8_t *src, uint16_t type, 
+        const uint8_t* payload, uint32_t payload_s, libnet_t *l, libnet_ptag_t ptag);
+
+/**
+ * 自动构造以太网报首
+ * dst: 目的MAC地址
+ * type: 上层协议类型
+ * l: 调用libnet_init函数获得的libnet上下文
+ */
+libnet_ptag_t Libnet_autobuild_ethernet(const uint8_t *dst, uint16_t type, libnet_t *l);
+
+/**
+ * 构造ARP报首
+ * hrd: 链路层地址类型
+ * pro: 网络层地址类型
+ * hln: 链路层地址长度
+ * pln: 网络层地址长度
+ * op: ARP操作类型
+ * sha: 发送方链路层地址
+ * spa: 发送方网络地址
+ * tha: 目标链路层地址
+ * tpa: 目标网络地址
+ * payload: 可选有效载荷(可为NULL)
+ * paylaod_s: payload长度(可为0)
+ * l: 调用libnet_init函数获得的libnet上下文
+ * ptag: 协议标签, 0表示新创建, 其他表示一个已存在的报首
+ */
+libnet_ptag_t Libnet_build_arp(uint16_t hrd, uint16_t pro, uint8_t hln, uint8_t pln,
+        uint16_t op, const uint8_t *sha, const uint8_t *spa, const uint8_t *tha, const uint8_t *tpa,
         const uint8_t* payload, uint32_t payload_s, libnet_t *l, libnet_ptag_t ptag);
 
 /**
@@ -114,6 +141,21 @@ libnet_ptag_t Libnet_build_tcp_options(const uint8_t *options, uint32_t options_
  */
 libnet_ptag_t Libnet_build_udp(uint16_t sp, uint16_t dp, uint16_t len, uint16_t sum, 
         const uint8_t* payload, uint32_t payload_s, libnet_t *l, libnet_ptag_t ptag);
+
+/**
+ * 从libnet上下文中拉取预构建的报文
+ * 只支持advanced模式的libnet_init
+ * l: 调用libnet_init函数获得的libnet上下文
+ * packet: 包含报文的内容的buffer(*packet使用后需要通过libnet_adv_free_packet释放)
+ * packet_s: 包含报文的内容的buffer长度
+ */
+void Libnet_adv_cull_packet(libnet_t *l, uint8_t **packet, uint32_t *packet_s);
+
+/**
+ * 将预先构造好的报文(通过libnet_bulic_xxx)发送到网络接口
+ * l: 调用libnet_init函数获得的libnet上下文(发送成功后, 应该通过libnet_clear_packet释放内存)
+ */
+int Libnet_write(libnet_t *l);
 
 #ifdef __cplusplus
 }
