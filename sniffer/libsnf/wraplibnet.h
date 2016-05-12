@@ -15,6 +15,11 @@ extern "C" {
 libnet_t *Libnet_init(int injection_type, const char *device);
 
 /**
+ * 获取设备的MAC地址
+ */ 
+struct libnet_ether_addr *Libnet_get_hwaddr(libnet_t *l);
+
+/**
  * 获取设备的IPv4地址
  */
 uint32_t Libnet_get_ipaddr4(libnet_t *l);
@@ -141,6 +146,25 @@ libnet_ptag_t Libnet_build_tcp_options(const uint8_t *options, uint32_t options_
  */
 libnet_ptag_t Libnet_build_udp(uint16_t sp, uint16_t dp, uint16_t len, uint16_t sum, 
         const uint8_t* payload, uint32_t payload_s, libnet_t *l, libnet_ptag_t ptag);
+
+/**
+ * 构造DNS报首
+ * h_len: LIBNET_UDP_DNSV4_H or LIBNET_TCP_DNSV4_H
+ * id: 标识
+ * flags: 标志
+ * num_q: 问题记录数
+ * num_anws_rr: 回答记录数
+ * num_auth_rr: 授权记录数
+ * num_addi_rr: 附加记录数
+ * payload: 可选有效载荷(可为NULL)
+ * paylaod_s: payload长度(可为0)
+ * l: 调用libnet_init函数获得的libnet上下文
+ * ptag: 协议标签, 0表示新创建, 其他表示一个已存在的报首
+ */
+libnet_ptag_t Libnet_build_dnsv4(uint16_t h_len, uint16_t id, uint16_t flags,
+        uint16_t num_q, uint16_t num_anws_rr, uint16_t num_auth_rr,
+        uint16_t num_addi_rr, const uint8_t* payload, uint32_t payload_s, libnet_t *l,
+        libnet_ptag_t ptag);
 
 /**
  * 从libnet上下文中拉取预构建的报文

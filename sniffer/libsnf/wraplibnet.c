@@ -15,6 +15,15 @@ libnet_t *Libnet_init(int injection_type, const char *device)
     return l;
 }
 
+struct libnet_ether_addr *Libnet_get_hwaddr(libnet_t *l)
+{
+    struct libnet_ether_addr *addr = libnet_get_hwaddr(l);
+    if (addr == NULL) {
+        err_quit("libnet_get_hwaddr error: %s", libnet_geterror(l));
+    }
+    return addr;
+}
+
 uint32_t Libnet_get_ipaddr4(libnet_t *l)
 {
     uint32_t addr = libnet_get_ipaddr4(l);
@@ -177,6 +186,29 @@ libnet_ptag_t Libnet_build_udp(uint16_t sp, uint16_t dp, uint16_t len, uint16_t 
                         ptag);          /* libnet id */
     if (t == -1) {
         err_quit("libnet_build_udp error: %s", libnet_geterror(l));
+    }
+    return t;
+}
+
+libnet_ptag_t Libnet_build_dnsv4(uint16_t h_len, uint16_t id, uint16_t flags,
+        uint16_t num_q, uint16_t num_anws_rr, uint16_t num_auth_rr,
+        uint16_t num_addi_rr, const uint8_t* payload, uint32_t payload_s, libnet_t *l,
+        libnet_ptag_t ptag)
+{
+    libnet_ptag_t t = libnet_build_dnsv4(
+                        h_len,
+                        id,
+                        flags,
+                        num_q,
+                        num_anws_rr,    
+                        num_auth_rr,
+                        num_addi_rr,
+                        payload,
+                        payload_s,
+                        l,
+                        ptag);
+    if (t == -1) {
+        err_quit("libnet_build_dnsv4 error: %s", libnet_geterror(l));
     }
     return t;
 }

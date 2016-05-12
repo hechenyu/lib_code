@@ -7,7 +7,7 @@ INCLUDE = -I../libsnf
 LDFLAGS = -lsnf -lnet
 LDPATH = -L..
 
-PROGS = arp	ip_link ip_raw tcp1 tcp2 udp1 udp2
+PROGS = get_addr arp ip_link ip_raw tcp1 tcp2 udp1 udp2 dns
 
 .PHONY: all
 all: $(PROGS)
@@ -19,6 +19,9 @@ clean:
 
 %.o:%.c
 	$(CC) -o $@ -c $< $(CFLAGS) $(INCLUDE)
+
+get_addr: get_addr.o
+	$(CC) -o $@ $^ $(LDFLAGS) $(LDPATH)
 
 arp: arp.o
 	$(CC) -o $@ $^ $(LDFLAGS) $(LDPATH)
@@ -39,5 +42,8 @@ udp1: udp1.o
 	$(CC) -o $@ $^ $(LDFLAGS) $(LDPATH)
 
 udp2: udp2.o
+	$(CC) -o $@ $^ $(LDFLAGS) $(LDPATH)
+
+dns: dns.o
 	$(CC) -o $@ $^ $(LDFLAGS) $(LDPATH)
 
