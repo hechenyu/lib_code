@@ -1,4 +1,4 @@
-#include "wrappcap.h"
+#include "wrap_pcap.h"
 
 #include <stdlib.h>
 

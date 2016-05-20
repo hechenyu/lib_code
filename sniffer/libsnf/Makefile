@@ -7,7 +7,7 @@ RANLIB = ranlib
 LIBSNF_NAME = ../libsnf.a
 
 # Following are all the object files to create in the lib/ directory.
-LIB_OBJS = wrappcap.o wraplibnet.o error.o
+LIB_OBJS = wrap_pcap.o wrap_libnet.o error.o
 #LIB_SRCS = $(shell ls *.c)
 #LIB_OBJS = $(LIB_SRCS:%.c=%.o)
 

@@ -1,3 +1,3 @@
 #include "error.h"
-#include "wrappcap.h"
-#include "wraplibnet.h"
+#include "wrap_pcap.h"
+#include "wrap_libnet.h"
