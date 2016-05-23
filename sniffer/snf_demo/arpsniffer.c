@@ -8,7 +8,7 @@
 #include <string.h>
 #include <arpa/inet.h>
 
-#include "snf.h"
+#include "wrap_pcap.h"
 
 //ARP Header, (assuming Ethernet+ipv4)
 #define ARP_REQUEST 1

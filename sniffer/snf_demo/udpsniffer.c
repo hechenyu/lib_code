@@ -11,7 +11,7 @@
 #include <linux/ip.h>
 #include <linux/udp.h>
 
-#include "snf.h"
+#include "wrap_pcap.h"
 
 #define MAXBYTES2CAPTURE 2048
 
