@@ -7,9 +7,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <arpa/inet.h>
-#include <netinet/if_ether.h> /* includes net/ethernet.h */
-#include <linux/ip.h>
-#include <linux/udp.h>
+#include <libnet.h>
 #include <string>
 
 #include "snf.h"
@@ -28,11 +26,10 @@ int main(int argc, char *argv[])
 	pcap_t *descr = NULL;
 	struct pcap_pkthdr pkthdr;
 	const unsigned char *packet = NULL;
-	struct iphdr *ipptr = NULL;
-	struct udphdr *udpptr = NULL;
-	struct Dns_header *dnsptr = NULL;
-    struct Dns_question dnsqry;
-	struct in_addr addr;
+	Ipv4_header *ipptr = NULL;
+	Udp_header *udpptr = NULL;
+	Dns_header *dnsptr = NULL;
+    Dns_question dnsqry;
 
 	if (argc < 2 || argc > 3 || (argv[1][0] == '-' && argv[1][1] == 'h')){
 		printf("Usage: httpreq_sniffer <interface> | httpreq_sniffer -f <dumpfile>\n");
@@ -59,22 +56,20 @@ int main(int argc, char *argv[])
             exit(1);
         }
 
-		ipptr = (struct iphdr *)(packet + 14);
+		ipptr = (Ipv4_header *)(packet + 14);
 		printf ("\n\nReceived Packet Size: %d bytes\n", pkthdr.len);
-		printf ("\n\nthe IP packets version: %d\n", ipptr->version); 
-		printf ("the IP packets total_length is :%d\n", ntohs(ipptr->tot_len));
-		printf ("the IP protocol is %d\n", ipptr->protocol);
-		addr.s_addr = ipptr->daddr;
-		printf ("Destination IP: %s\n", inet_ntoa(addr));    
-		addr.s_addr = ipptr->saddr;
-		printf ("Source IP: %s\n", inet_ntoa(addr));
+		printf ("\n\nthe IP packets version: %d\n", ipptr->ip_v); 
+		printf ("the IP packets total_length is :%d\n", ntohs(ipptr->ip_len));
+		printf ("the IP protocol is %d\n", ipptr->ip_p);
+		printf ("Destination IP: %s\n", inet_ntoa(ipptr->ip_dst));    
+		printf ("Source IP: %s\n", inet_ntoa(ipptr->ip_src));
 
-		udpptr = (struct udphdr *) (packet + 14 + ipptr->ihl*4);
-		printf ("Destination port : %d\n", ntohs(udpptr->dest));
-		printf ("Source port : %d\n", ntohs(udpptr->source));
-		printf ("the len of udp packet is %u\n", ntohs(udpptr->len));
+		udpptr = (Udp_header *) (packet + 14 + ipptr->ip_hl*4);
+		printf ("Destination port : %d\n", ntohs(udpptr->uh_dport));
+		printf ("Source port : %d\n", ntohs(udpptr->uh_sport));
+		printf ("the len of udp packet is %u\n", ntohs(udpptr->uh_ulen));
 
-		dnsptr = (struct Dns_header *) (packet + 14 + ipptr->ihl*4 + sizeof (udphdr));
+		dnsptr = (Dns_header *) (packet + 14 + ipptr->ip_hl*4 + sizeof (libnet_udp_hdr));
 		printf ("the Dns transaction id: %x\n", ntohs(dnsptr->id));
 		printf ("the Dns flags: %x\n", ntohs(dnsptr->flags));
 		printf ("the Dns questions: %d\n", ntohs(dnsptr->num_q));
@@ -85,8 +80,8 @@ int main(int argc, char *argv[])
 		if (ntohs(dnsptr->num_q) != 1)
 			continue;
 
-		uint8_t *dns_body = (uint8_t *) (packet + 14 + ipptr->ihl*4 + 
-				sizeof (udphdr) + sizeof (Dns_header));
+        uint8_t *dns_body = (uint8_t *) (packet + 14 + ipptr->ip_hl*4 +
+                sizeof (Udp_header) + sizeof (Dns_header));
         int ret = parser_dns_query(dns_body, packet+pkthdr.caplen, dnsqry);
         if (ret < 0) {
             printf ("parser dns question error!\n");

@@ -7,7 +7,7 @@ INCLUDE = -I../libsnf -I../libptl
 LDFLAGS = -lptl -lsnf -lpcap
 LDPATH = -L..
 
-PROGS =	dns_sniffer dns_sniffer_bsd
+PROGS =	dns_sniffer 
 
 .PHONY: all
 all: $(PROGS)
@@ -23,5 +23,3 @@ clean:
 dns_sniffer: dns_sniffer.o
 	$(CXX) -o $@ $^ $(LDFLAGS) $(LDPATH)
 
-dns_sniffer_bsd: dns_sniffer_bsd.o
-	$(CXX) -o $@ $^ $(LDFLAGS) $(LDPATH)
