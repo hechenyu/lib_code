@@ -1,5 +1,5 @@
-#ifndef	__snf_wrappcap_h
-#define	__snf_wrappcap_h
+#ifndef	__snf_wrap_pcap_h
+#define	__snf_wrap_pcap_h
 
 #include <pcap.h>
 

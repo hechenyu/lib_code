@@ -1,5 +1,5 @@
-#ifndef	__inj_wraplibnet_h
-#define	__inj_wraplibnet_h
+#ifndef	__snf_wrap_libnet_h
+#define	__snf_wrap_libnet_h
 
 #include <libnet.h>
 
