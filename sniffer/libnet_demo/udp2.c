@@ -38,7 +38,7 @@
 #include <time.h>
 #endif
 
-#include "snf.h"
+#include "wrap_libnet.h"
 
 #define libnet_timersub(tvp, uvp, vvp)                                  \
         do {                                                            \

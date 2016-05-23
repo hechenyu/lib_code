@@ -41,7 +41,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "snf.h"
+#include "wrap_libnet.h"
 
 void usage(char *name);
 
