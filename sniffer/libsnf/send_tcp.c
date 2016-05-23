@@ -2,7 +2,7 @@
 #include "wrap_libnet.h"
 
 void Send_tcp_resp(const char *data, int len,
-	struct libnet_tcp_hdr *tcpptr, struct libnet_ipv4_hdr *ipptr, struct libnet_ethernet_hdr *eptr,
+	Tcp_header *tcpptr, Ipv4_header *ipptr, Ether_header *eptr,
 	libnet_t *l)
 {
 	int req_payload_len = ntohs(ipptr->ip_len)-ipptr->ip_hl*4-tcpptr->th_off*4;

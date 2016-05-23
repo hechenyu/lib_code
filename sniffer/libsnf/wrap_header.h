@@ -4,10 +4,10 @@
 #ifdef USE_LIBNET_HEADERS
 #include <libnet.h>
 
-typedef struct libnet_ether_header Ether_header;
-typedef struct libnet_ipv4_header Ipv4_header;
-typedef struct libnet_tcp_header Tcp_header;
-typedef struct libnet_udp_header Udp_header;
+typedef struct libnet_ethernet_hdr Ether_header;
+typedef struct libnet_ipv4_hdr Ipv4_header;
+typedef struct libnet_tcp_hdr Tcp_header;
+typedef struct libnet_udp_hdr Udp_header;
 
 #else
 #include <netinet/if_ether.h>

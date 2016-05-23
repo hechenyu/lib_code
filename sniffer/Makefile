@@ -1,5 +1,5 @@
 
-SUBDIRS = libsnf libptl pcap_demo snf_demo http_sniffer dns_sniffer libnet_demo
+SUBDIRS = libsnf libptl pcap_demo http_sniffer dns_sniffer libnet_demo http_cheat
 
 all:
 	@$(MAKE) $(MFLAGS) WHAT_TO_MAKE=$@ common
