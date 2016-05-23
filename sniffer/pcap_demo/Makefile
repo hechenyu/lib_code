@@ -8,7 +8,7 @@ LDFLAGS = -lsnf -lpcap
 LDPATH = -L..
 
 PROGS =	lookupdev open_live loop setfilter findalldevs open_offline \
-		simplesniffer arpsniffer ipsniffer ipsniffer_bsd udpsniffer udpsniffer_bsd tcpsniffer tcpsniffer_bsd
+		simple arp ip ip2 udp udp2 tcp tcp2
 
 .PHONY: all
 all: $(PROGS)
@@ -39,27 +39,27 @@ findalldevs: findalldevs.o
 open_offline: open_offline.o
 	$(CC) -o $@ $^ $(LDFLAGS) $(LDPATH)
 
-simplesniffer: simplesniffer.o
+simple: simple.o
 	$(CC) -o $@ $^ $(LDFLAGS) $(LDPATH)
 
-arpsniffer: arpsniffer.o
+arp: arp.o
 	$(CC) -o $@ $^ $(LDFLAGS) $(LDPATH)
 
-ipsniffer: ipsniffer.o
+ip: ip.o
 	$(CC) -o $@ $^ $(LDFLAGS) $(LDPATH)
 
-ipsniffer_bsd: ipsniffer_bsd.o
+ip2: ip2.o
 	$(CC) -o $@ $^ $(LDFLAGS) $(LDPATH)
 
-udpsniffer: udpsniffer.o
+udp: udp.o
 	$(CC) -o $@ $^ $(LDFLAGS) $(LDPATH)
 
-udpsniffer_bsd: udpsniffer_bsd.o
+udp2: udp2.o
 	$(CC) -o $@ $^ $(LDFLAGS) $(LDPATH)
 
-tcpsniffer: tcpsniffer.o
+tcp: tcp.o
 	$(CC) -o $@ $^ $(LDFLAGS) $(LDPATH)
 
-tcpsniffer_bsd: tcpsniffer_bsd.o
+tcp2: tcp2.o
 	$(CC) -o $@ $^ $(LDFLAGS) $(LDPATH)
 
