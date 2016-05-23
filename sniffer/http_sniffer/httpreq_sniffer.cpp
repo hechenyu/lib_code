@@ -7,9 +7,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <arpa/inet.h>
-#include <netinet/if_ether.h> /* includes net/ethernet.h */
-#include <netinet/ip.h>
-#include <netinet/tcp.h>
 #include <iostream>
 
 #include "snf.h"
@@ -29,8 +26,8 @@ int main(int argc, char *argv[])
 	pcap_t *descr = NULL;
 	struct pcap_pkthdr pkthdr;
 	const unsigned char *packet = NULL;
-	struct ip *ipptr = NULL;
-	struct tcphdr *tcpptr = NULL;
+	Ipv4_header *ipptr = NULL;
+	Tcp_header *tcpptr = NULL;
 	Httpreq_header httpreq_hdr;
 
 	if (argc < 2 || argc > 3 || (argv[1][0] == '-' && argv[1][1] == 'h')){
@@ -58,9 +55,9 @@ int main(int argc, char *argv[])
             exit(1);
         }
 
-		ipptr = (struct ip *)(packet + 14);
+		ipptr = (Ipv4_header *)(packet + 14);
 
-		tcpptr = (struct tcphdr *) (packet + 14 + ipptr->ip_hl*4);
+		tcpptr = (Tcp_header *) (packet + 14 + ipptr->ip_hl*4);
 
 		if (!httpreq_parse((uint8_t *) packet + 14 + ipptr->ip_hl*4 + tcpptr->th_off*4, 
 				(uint8_t *) packet + pkthdr.caplen, &httpreq_hdr)) {
