@@ -7,7 +7,7 @@
 #include <arpa/inet.h>
 #include <netinet/if_ether.h> 
 
-#include "snf.h"
+#include "wrap_pcap.h"
 
 /* just print a count every time we have a packet...                        */
 void my_callback(u_char *useless,const struct pcap_pkthdr* pkthdr,const u_char*

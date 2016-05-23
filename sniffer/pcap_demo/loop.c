@@ -5,7 +5,7 @@
 #include <arpa/inet.h>
 #include <netinet/if_ether.h>
 
-#include "snf.h"
+#include "wrap_pcap.h"
 
 /* callback function that is passed to pcap_loop(..) and called each time 
  * a packet is recieved                                                    */

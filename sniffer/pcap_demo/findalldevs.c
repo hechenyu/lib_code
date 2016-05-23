@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "snf.h"
+#include "wrap_pcap.h"
 
 int main()//取得网络设备列表
 {

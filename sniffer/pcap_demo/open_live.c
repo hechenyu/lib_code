@@ -6,7 +6,7 @@
 #include <arpa/inet.h>
 #include <netinet/if_ether.h> /* includes net/ethernet.h */
  
-#include "snf.h"
+#include "wrap_pcap.h"
 
 int main(int argc, char **argv)
 {
