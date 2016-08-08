@@ -37,7 +37,7 @@ class Task_queue: public std::queue<Task_base *> {
 	std::mutex queue_mtx_;
 
 public:
-	void push_task(Task_base *task) {
+	void post_task(Task_base *task) {
 		std::lock_guard<std::mutex> lck(queue_mtx_);
 		this->push(task);
 	}	
@@ -48,7 +48,6 @@ public:
 			this->swap(task_queue);
 		}
 	}
-	
 };
 
 void processor(Task_queue &incoming_queue)
@@ -99,11 +98,11 @@ int main()
 	Task_queue task_queue;
 	std::thread proc_thread(processor, std::ref(task_queue));
 	for (int i = 0; i < 10; i++) {
-		task_queue.push_task(make_task(print_int, i));
-		task_queue.push_task(make_task(print_string, std::string("hello")));
-		task_queue.push_task(make_task(&Foo::print, &foo));
+		task_queue.post_task(make_task(print_int, i));
+		task_queue.post_task(make_task(print_string, std::string("hello")));
+		task_queue.post_task(make_task(&Foo::print, &foo));
 	}
-	task_queue.push_task(make_task(process_exit));
+	task_queue.post_task(make_task(process_exit));
 	proc_thread.join();
 	return 0;
 }

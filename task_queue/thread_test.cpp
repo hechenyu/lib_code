@@ -56,13 +56,13 @@ int main()
 {
 	Foo foo(1);
     Thread mythread("test");
-    mythread.Start();
+    mythread.start();
 
-	auto task_queue = mythread.GetTaskQueue();
+	auto task_queue = mythread.get_task_queue();
 	for (int i = 0; i < 10; i++) {
-		task_queue->PushTask(make_task(print_int, i));
-		task_queue->PushTask(make_task(print_string, std::string("hello")));
-		task_queue->PushTask(make_task(&Foo::print, &foo));
+		task_queue->push_task(make_task(print_int, i));
+		task_queue->push_task(make_task(print_string, std::string("hello")));
+		task_queue->push_task(make_task(&Foo::print, &foo));
 	}
     Base base;
     Derived_A derived_a;
@@ -72,14 +72,11 @@ int main()
     Base *p2 = &derived_a;
     Base *p3 = &derived_b;
 
-    task_queue->PushTask(make_task(&Base::print, p1));
-    task_queue->PushTask(make_task(&Base::print, p2));
-    task_queue->PushTask(make_task(&Base::print, p3));
+    task_queue->push_task(make_task(&Base::print, p1));
+    task_queue->push_task(make_task(&Base::print, p2));
+    task_queue->push_task(make_task(&Base::print, p3));
 
-    char c;
-    std::cin >> c;
-
-    mythread.Stop();
+    mythread.stop();
 	return 0;
 }
 
