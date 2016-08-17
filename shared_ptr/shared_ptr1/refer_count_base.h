@@ -3,7 +3,7 @@
 
 class Refer_count_base {
 private:
-	std::atomic<long> ref_count_;
+    std::atomic<long> ref_count_;
 
     Refer_count_base(const Refer_count_base &) = delete;
     Refer_count_base &operator =(const Refer_count_base &) = delete;
