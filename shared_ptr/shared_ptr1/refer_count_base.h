@@ -23,13 +23,13 @@ public:
         delete this;
     }
 
-	// increase ref_count_
+    // increase ref_count_
     void incr_ref_count()
     {
         ++ref_count_;
     }
 
-	// decrease ref_count_
+    // decrease ref_count_
     void decr_ref_count() noexcept
     {
         if(--ref_count_ == 0) {
@@ -41,7 +41,7 @@ public:
 public:
     virtual void *get_deleter() = 0;
 
-	virtual void *get_pointer() = 0;
+    virtual void *get_pointer() = 0;
 
     long use_count() const noexcept
     {
