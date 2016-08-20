@@ -12,26 +12,23 @@ private:
 public:
     Ref_counted_base(): ref_count_(1) {}
 
-    virtual ~Ref_counted_base() noexcept {}
+    virtual ~Ref_counted_base() {}
 
     // dispose() is called when ref_count_ drops to zero, to release
     // the resources managed by *this.
     virtual void dispose() = 0; // nothrow
 
     // destroy() is called when ref_count_ drops to zero, to delete this.
-    virtual void destroy() noexcept
-    {
-        delete this;
-    }
+    virtual void destroy() { delete this; }
 
     // increase ref_count_
-    void incr_ref_count()
+    void incr_ref_count() 
     {
         ++ref_count_;
     }
 
     // decrease ref_count_
-    void decr_ref_count() noexcept
+    void decr_ref_count() 
     {
         if(--ref_count_ == 0) {
             dispose();
@@ -40,10 +37,7 @@ public:
     }
 
 public:
-    long ref_count() const noexcept
-    {
-        return ref_count_;
-    }
+    long ref_count() const { return ref_count_; }
 };
 
 #endif

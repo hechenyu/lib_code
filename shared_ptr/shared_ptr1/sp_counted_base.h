@@ -12,10 +12,7 @@ public:
 
     virtual void *get_deleter() = 0;
 
-    long use_count() const noexcept
-    {
-        return this->ref_count();
-    }
+    long use_count() const noexcept { return ref_count(); }
 };
 
 #endif
