@@ -1,8 +1,8 @@
 #ifndef __ref_counted_base_h
 #define __ref_counted_base_h
 
-// reference counted base
-class Ref_counted_base {
+// 引用计数基类
+class Ref_counted_base {    // Reference
 private:
     std::atomic<int> ref_count_;
 
@@ -14,21 +14,20 @@ public:
 
     virtual ~Ref_counted_base() {}
 
-    // dispose() is called when ref_count_ drops to zero, to release
-    // the resources managed by *this.
-    virtual void dispose() = 0; // nothrow
+    // 当引用计数递减至0, 释放资源.
+    virtual void dispose() = 0;
 
-    // destroy() is called when ref_count_ drops to zero, to delete this.
+    // 当引用计数递减至0, 释放this.
     virtual void destroy() { delete this; }
 
-    // increase ref_count_
-    void incr_ref_count() 
+    // 增加引用计数
+    void incr_ref_count() // increase
     {
         ++ref_count_;
     }
 
-    // decrease ref_count_
-    void decr_ref_count() 
+    // 减少引用计数
+    void decr_ref_count() // decrease
     {
         if(--ref_count_ == 0) {
             dispose();

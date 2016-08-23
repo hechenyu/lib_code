@@ -1,7 +1,7 @@
 #ifndef __sp_counted_impl_h
 #define __sp_counted_impl_h
 
-// shared pointer counted implement pointer
+// shared pointer counted implement: pointer
 template <typename T>
 class Sp_counted_impl_p: public Sp_counted_base {
 private:
@@ -20,7 +20,7 @@ public:
 	virtual void *get_deleter() { return nullptr; }
 };
 
-// shared pointer counted implement pointer deleter
+// shared pointer counted implement: pointer+deleter
 template <typename T, typename Del>
 class Sp_counted_impl_pd: public Sp_counted_base {
 private:
@@ -42,7 +42,7 @@ public:
 	virtual void *get_deleter() { return &del_; }
 };
 
-// shared pointer counted implement pointer deleter allocator
+// shared pointer counted implement: pointer+deleter+allocator
 template <typename T, typename Del, typename Alloc>
 class Sp_counted_impl_pda: public Sp_counted_base {
 private:
