@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
         list_insert_back(list, list_new_node(string(argv[i])));
     }
 
-    if (list_empty(list)) {
+    if (list_is_empty(list)) {
         cout << "list is empty!" << endl;
     } else {
         cout << "list: [";
@@ -39,7 +39,7 @@ int main(int argc, char *argv[])
 
     cout << "free list: ";
 	int i = 0;
-    while (!list_empty(list)) {
+    while (!list_is_empty(list)) {
 		Node *node = nullptr;
 		if (i++ % 2) {
 			node = list_remove_front(list);
@@ -52,7 +52,7 @@ int main(int argc, char *argv[])
 	cout << endl;
 
     cout << "after free list" << endl;
-    if (list_empty(list)) {
+    if (list_is_empty(list)) {
         cout << "list is empty!" << endl;
     } else {
         cout << "list is not empty!" << endl;

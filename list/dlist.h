@@ -1,17 +1,24 @@
 #ifndef __dlist_h
 #define __dlist_h
 
-// 双向循环链表结点, 不包含数据
+// 双向循环链表节点, 不包含数据
 typedef struct Dlist_node_base *Dlist_link;
 
+/**
+ * 双向链表节点基类
+ *            ___  next      
+ *           |   |------>
+ *     <-----|___|       
+ *       prev
+ */
 struct Dlist_node_base {
 	Dlist_link next;
 	Dlist_link prev;
 };
 
-// 带哨兵结点的双向循环链表
+// 带哨兵节点的双向循环链表
 struct Dlist_base {
-	Dlist_node_base nil;	// 哨兵结点
+	Dlist_node_base nil;	// 哨兵节点
 };
 
 /**
@@ -26,19 +33,19 @@ struct Dlist_base {
 inline 
 void list_init(Dlist_base &list)
 {
-	// 初始化nil结点
+	// 初始化nil节点
 	list.nil.prev = list.nil.next = &list.nil;
 }
 
 // 判断list是否为空, 
 inline
-bool list_empty(const Dlist_base &list)
+bool list_is_empty(const Dlist_base &list)
 {
 	return (list.nil.next == &list.nil);
 }
 
 /**
- * 在链表的x结点前插入t结点
+ * 在链表的x节点前插入t节点
  *            ___                ___
  *           |   |------------->|   |------>
  *    <------|___|<-------------|___|
@@ -75,7 +82,7 @@ void list_insert(Dlist_link x, Dlist_link t)
 }
 
 /**
- * 从链表上删除x结点
+ * 从链表上删除x节点
  *            ___           ___           ___ 
  *           |   |-------->|   |-------->|   |------>
  *    <------|___|<--------|___|<--------|___|
@@ -118,21 +125,21 @@ void list_free_node(Dlist_node<T> *x)
     delete x;
 }
 
-// 在链表头插入结点
+// 在链表头插入节点
 template <typename T>
 void list_insert_front(Dlist<T> &list, Dlist_node<T> *x)
 {
     list_insert(list.nil.next, x);
 }
 
-// 在链表尾插入结点
+// 在链表尾插入节点
 template <typename T>
 void list_insert_back(Dlist<T> &list, Dlist_node<T> *x)
 {
     list_insert(&list.nil, x);
 }
 
-// 在链表头删除结点
+// 在链表头删除节点
 template <typename T>
 Dlist_node<T> *list_remove_front(Dlist<T> &list)
 {
@@ -141,7 +148,7 @@ Dlist_node<T> *list_remove_front(Dlist<T> &list)
     return static_cast<Dlist_node<T> *>(x);
 }
 
-// 在链表尾删除结点
+// 在链表尾删除节点
 template <typename T>
 Dlist_node<T> *list_remove_back(Dlist<T> &list)
 {
