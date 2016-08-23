@@ -26,7 +26,7 @@ void list_init(Slist_base &list)
 
 // 判断list是否为空, 
 inline
-bool list_empty(const Slist_base &list)
+bool list_is_empty(const Slist_base &list)
 {
 	return (list.head.next == nullptr);
 }
