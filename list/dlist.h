@@ -111,6 +111,7 @@ template <typename T>
 struct Dlist : public Dlist_base {
 };
 
+// 在堆上动态分配一个节点
 template <typename T>
 Dlist_node<T> *list_new_node(const T &val)
 {
@@ -119,6 +120,7 @@ Dlist_node<T> *list_new_node(const T &val)
     return x;
 }
 
+// 将一个节点释放回堆
 template <typename T>
 void list_free_node(Dlist_node<T> *x)
 {
@@ -157,6 +159,7 @@ Dlist_node<T> *list_remove_back(Dlist<T> &list)
     return static_cast<Dlist_node<T> *>(x);
 }
 
+// 遍历链表, 为每个节点调用fn
 template <typename T, typename Function>
 void list_for_each(Dlist<T> &list, Function fn)
 {
@@ -164,6 +167,8 @@ void list_for_each(Dlist<T> &list, Function fn)
         fn(static_cast<Dlist_node<T> *>(x));
 }
 
+// 查找值等于val的第一个节点的地址, 
+// 如果没有等于val的节点, 返回nil的地址
 template <typename T>
 Dlist_node<T> *list_search(Dlist<T> &list, const T &val)
 {
