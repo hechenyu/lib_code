@@ -12,8 +12,10 @@ int main(int argc, char *argv[])
     List list;
     list_init(list);
     for (int i = 1; i < argc; i++) {
-        list_insert_front(list, list_new_node(string(argv[i])));
-        list_insert_back(list, list_new_node(string(argv[i])));
+        if (i % 2) 
+            list_insert_front(list, list_new_node(string(argv[i])));
+        else
+            list_insert_back(list, list_new_node(string(argv[i])));
     }
 
     if (list_is_empty(list)) {

@@ -105,8 +105,13 @@ public:
     // destructor
 	~list()
     {
-        auto free_node = [](node_type *node) { list_free_node(node); };
-        list_for_each(list_, free_node);
+        auto link = list_.nil.next;
+        auto nil = &list_.nil;
+        while (link != nil) {
+            auto node = static_cast<Dlist_node<T> *>(link);
+            link = link->next;    // 先获取下一个节点, 再释放当前节点
+            list_free_node(node);
+        }
     }
 
     // 头迭代器
