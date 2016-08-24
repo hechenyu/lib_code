@@ -21,17 +21,17 @@ public:
 };
 
 // shared pointer counted implement pointer deleter
-template <typename T, typename Del>
+template <typename T, typename D>
 class Sp_counted_impl_pd: public Sp_counted_base {
 private:
 	T *p_;		// pointer
-	Del del_;	// deleter
+	D del_;	// deleter
 
 	Sp_counted_impl_pd(const Sp_counted_impl_pd &) = delete;
 	Sp_counted_impl_pd &operator =(const Sp_counted_impl_pd &) = delete;
 
 public:
-	Sp_counted_impl_pd(T *p, Del &d): p_(p), del_(del) {}
+	Sp_counted_impl_pd(T *p, D &d): p_(p), del_(del) {}
 
 	Sp_counted_impl_pd(T *p): p_(p), del_() {}
 
@@ -43,20 +43,20 @@ public:
 };
 
 // shared pointer counted implement pointer deleter allocator
-template <typename T, typename Del, typename Alloc>
+template <typename T, typename D, typename Alloc>
 class Sp_counted_impl_pda: public Sp_counted_base {
 private:
 	T p_;			// pointer
-	Del del_;		// deleter
+	D del_;		// deleter
 	Alloc alloc_;	// allocator
 
 	Sp_counted_impl_pda(const Sp_counted_impl_pda &) = delete;
 	Sp_counted_impl_pda &operator =(const Sp_counted_impl_pda &) = delete;
 
-	typedef Sp_counted_impl_pda<T, Del, Alloc> this_type;
+	typedef Sp_counted_impl_pda<T, D, Alloc> this_type;
 
 public:
-	Sp_counted_impl_pda(T p, Del &del, Alloc alloc): p_(p), del_(del), alloc_(alloc) {}
+	Sp_counted_impl_pda(T p, D &del, Alloc alloc): p_(p), del_(del), alloc_(alloc) {}
 
 	Sp_counted_impl_pda(T p, Alloc alloc): p_(p), del_(), alloc_(alloc) {}
 
