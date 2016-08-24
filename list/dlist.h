@@ -160,14 +160,14 @@ Dlist_node<T> *list_remove_back(Dlist<T> &list)
 template <typename T, typename Function>
 void list_for_each(Dlist<T> &list, Function fn)
 {
-    for (Dlist_link x = list.nil.next; x != &list.nil; x = x->next)
+    for (auto x = list.nil.next; x != &list.nil; x = x->next)
         fn(static_cast<Dlist_node<T> *>(x));
 }
 
 template <typename T>
 Dlist_node<T> *list_search(Dlist<T> &list, const T &val)
 {
-    Dlist_link x = list.nil.next; 
+    auto x = list.nil.next; 
     while (x != &list.nil && static_cast<Dlist_node<T> *>(x)->value != val)
         x = x->next;
     return static_cast<Dlist_node<T> *>(x); 
