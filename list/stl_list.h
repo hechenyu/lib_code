@@ -93,10 +93,7 @@ public:
 	template <typename InputIterator>
 	list(InputIterator first, InputIterator last): list()
     {
-        for (auto iter = first; iter != last; ++iter) {
-            auto new_node = list_new_node(*iter);
-            list_insert_back(list_, new_node);
-        }
+        assign(first, last);
     }
 
     // copy constructor
@@ -105,14 +102,18 @@ public:
     // destructor
 	~list()
     {
-        auto link = list_.nil.next;
-        auto nil = &list_.nil;
-        while (link != nil) {
-            auto node = static_cast<Dlist_node<T> *>(link);
-            link = link->next;    // 先获取下一个节点, 再释放当前节点
-            list_free_node(node);
-        }
+        destroy();
     }
+
+    // 赋值
+	template <typename InputIterator>
+	void assign(InputIterator first, InputIterator last)
+	{
+        for (auto iter = first; iter != last; ++iter) {
+            auto new_node = list_new_node(*iter);
+            list_insert_back(list_, new_node);
+        }
+	}
 
     // 头迭代器
 	iterator begin()
@@ -136,4 +137,35 @@ public:
         auto count_node = [&count](node_type *node) { ++count; };
         list_for_each(list_, count_node);
 	}
+
+    // 获取list头节点元素值, 如果list为空, 结果为未定义
+	reference front()
+	{
+        auto node = static_cast<node_type *>(list_.nil.next);
+		return node->value;
+	}
+
+    // 获取list尾节点元素值, 如果list为空, 结果为未定义
+	reference back()
+	{
+        auto node = static_cast<node_type *>(list_.nil.prev);
+        return node->value;
+	}
+
+    // 在list头插入元素
+	void push_front(const value_type &val)
+	{
+        auto new_node = list_new_node(val);
+        list_insert_front(list_, new_node);
+	}
+
+private:
+    // 销毁list中所有节点, 使list变成一个空list
+    void destroy()
+    {
+        while (!list_is_empty(list_)) {
+            auto node = list_remove_front(list_);
+            list_free_node(node);
+        }
+    }
 };
