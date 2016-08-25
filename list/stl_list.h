@@ -1,5 +1,8 @@
 
 template <typename T>
+class list;
+
+template <typename T>
 class list_iterator {
 private:
     typedef Dlist_link link_type;
@@ -8,6 +11,8 @@ private:
 
     // 成员变量
 	link_type link_;    
+
+    friend class list<T>;
 
 public:
 	typedef T value_type;
@@ -157,6 +162,81 @@ public:
 	{
         auto new_node = list_new_node(val);
         list_insert_front(list_, new_node);
+	}
+
+    // 在list尾插入元素
+	void push_back(const value_type &val)
+	{
+        auto new_node = list_new_node(val);
+        list_insert_back(list_, new_node);
+	}
+
+    // 删除list头元素
+	void pop_front()
+	{
+        if (list_is_empty(list_))
+            return;
+
+        auto node = list_remove_front(list_);
+        list_free_node(node);
+	}
+
+    // 删除list尾节点
+	void pop_back()
+	{
+        if (list_is_empty(list_))
+            return;
+
+        auto node = list_remove_back(list_);
+        list_free_node(node);
+	}
+
+    // 在position前插入值为val的元素, 返回指向第一个被插入元素的迭代器
+	iterator insert(const_iterator position, const value_type &val)
+	{
+        auto new_node = list_new_node(val);
+        list_insert(position.link_, new_node);
+
+		return iterator(new_node);
+	}
+
+    // 在position前插入[first, last)个元素, 返回指向第一个被插入元素的迭代器
+	template <typename InputIterator>
+	iterator insert(iterator position, 
+            InputIterator first, InputIterator last)
+	{
+		auto keep = position.link_;
+		for (auto iter = first; iter != last; ++iter) {
+			auto node = list_new_node(*iter);
+			if (iter == first) {
+				keep = link;
+			}
+			list_insert(position.link_, node);
+		}
+		return iterator(keep);
+	}
+
+    // 删除position指向的元素节点, 返回被删除节点的下一个节点位置
+	iterator erase(iterator position)
+	{
+        auto node = static_cast<node_type *>(position.link_);
+		auto keep = node->next;
+		list_remove(node);
+        list_free_node(node);
+		return iterator(keep);
+	}
+
+    // 删除[first, last)个元素, 返回指向最后一个被删除元素的下一个位置
+	iterator erase(iterator first, iterator last)
+	{
+        auto iter = first;
+        while (iter != last) {
+            auto node = static_cast<node_type *>(iter.link_);
+            ++iter;
+            list_remove(node);
+            list_free_node(node);
+        }
+		return last;
 	}
 
 private:
