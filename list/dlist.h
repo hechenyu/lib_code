@@ -73,6 +73,7 @@ bool list_is_empty(const Dlist_base &list)
  *             '---|___|<----'
  *                   ^-t
  */
+inline
 void list_insert(Dlist_link x, Dlist_link t)
 {
 	t->prev = x->prev;
@@ -96,10 +97,67 @@ void list_insert(Dlist_link x, Dlist_link t)
  *             A             ^-x    |   
  *             |____________________|                    
  */
+inline
 void list_remove(Dlist_link x)
 {
 	x->prev->next = x->next;
 	x->next->prev = x->prev;
+}
+
+/**
+ * 从一个链表上将[a,b]之间的节点移动到另外一个链表上x节点前
+ *            ___             ___             ___            ___ 
+ *           |   |---------->|   |----...--->|   |--------->|   |------>
+ *    <------|___|<----------|___|<---...----|___|<---------|___|
+ *                             ^-a             ^-b
+ *            ___             ___             ___ 
+ *           |   |----...--->|   |---------->|   |------>
+ *    <------|___|<---...----|___|<----------|___|
+ *                                             ^-x       
+ * ======================================================================
+ *                   ,________________________________________,
+ *                   | ,_________________________________,    |
+ *            ___    | |      ___             ___        |   _V_ 
+ *           |   |---' | .-->|   |----...--->|   |----,  |  |   |------>
+ *    <------|___|<----' | .-|___|<---...----|___|<-. |  '--|___|
+ *                       | |   ^-a             ^-b  | |
+ *                       | '---------.  .-----------' |
+ *                       |           |  | .-----------'     
+ *                       '---------. |  | |    
+ *            ___             ___  | |  | |   ___ 
+ *           |   |----...--->|   |-' |  | '->|   |------>
+ *    <------|___|<---...----|___|<--'  '----|___|
+ *                                             ^-x       
+ */
+inline
+void list_transfer(Dlist_link x, Dlist_link a, Dlist_link b)
+{
+    // 先将[a,b]从之前的链表上摘除
+    a->prev->next = b->next;
+    b->next->prev = a->prev;
+
+    // 再将[a,b]插入到新链表的x节点前
+    a->prev = x->prev;
+    b->next = x;
+    x->prev->next = a;
+    x->prev = b;
+}
+
+/**
+ * 交换两个链表的所有节点(除了nil节点)
+ */
+inline
+void list_swap(Dlist_base &list1, Dlist_base &list2)
+{
+    Dlist_base temp;
+    list_init(temp);
+
+    if (!list_is_empty(list1)) // temp = list1
+        list_transfer(&temp.nil, list1.nil.next, list1.nil.prev);
+    if (!list_is_empty(list2)) // list1 = list2
+        list_transfer(&list1.nil, list2.nil.next, list2.nil.prev);
+    if (!list_is_empty(temp))  // list2 = temp
+        list_transfer(&list2.nil, temp.nil.next, temp.nil.prev);
 }
 
 template <typename T>
