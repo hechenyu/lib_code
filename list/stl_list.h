@@ -239,6 +239,17 @@ public:
 		return last;
 	}
 
+    // 清除list中的所有元素
+	void clear()
+	{
+        destroy();
+	}
+
+    // 交换两个list的元素
+	void swap(list &x)
+	{
+	}
+
 private:
     // 销毁list中所有节点, 使list变成一个空list
     void destroy()
