@@ -55,17 +55,14 @@ void print(Dlist<T> &list, const std::string &beg="", const std::string &end="")
 }
 
 template <typename T>
-bool test_empty(Dlist<T> &list, const std::string &list_name="list")
+void print_list(Dlist<T> &list, const std::string &list_name="list")
 {
-    auto is_empty = list_is_empty(list);
-    if (is_empty) {
+    if (list_is_empty(list)) {
         std::cout << list_name << " is empty!";
     } else {
         print(list, list_name+": [", "]");
     }
     std::cout << std::endl;
-
-    return is_empty;
 }
 
 template <typename T>
@@ -95,25 +92,24 @@ int main(int argc, char *argv[])
 
     List list1, list2;
     list_init(list1);
+    assert(list_is_empty(list1));
     list_init(list2);
+    assert(list_is_empty(list2));
 
     std::cout << "---------------------------" << std::endl;
     std::cout << "after init" << std::endl;
-    bool is_empty;
-    is_empty = test_empty(list1, NAME(list1));
-    assert(is_empty);
-    is_empty = test_empty(list2, NAME(list2));
-    assert(is_empty);
+    print_list(list1, NAME(list1));
+    print_list(list2, NAME(list2));
 
     insert_inorder(list1, {1, 3, 5, 7, 9});
+    assert(!list_is_empty(list1));
     insert_reverse(list2, {0, 2, 4, 6, 8});
+    assert(!list_is_empty(list2));
 
     std::cout << "---------------------------" << std::endl;
     std::cout << "after insert" << std::endl;
-    is_empty = test_empty(list1, NAME(list1));
-    assert(!is_empty);
-    is_empty = test_empty(list2, NAME(list2));
-    assert(!is_empty);
+    print_list(list1, NAME(list1));
+    print_list(list2, NAME(list2));
 
     std::cout << "---------------------------" << std::endl;
     std::cout << "test replace" << std::endl;
@@ -127,10 +123,8 @@ int main(int argc, char *argv[])
 
     std::cout << "---------------------------" << std::endl;
     std::cout << "after replace" << std::endl;
-    is_empty = test_empty(list1, NAME(list1));
-    assert(!is_empty);
-    is_empty = test_empty(list2, NAME(list2));
-    assert(!is_empty);
+    print_list(list1, NAME(list1));
+    print_list(list2, NAME(list2));
 
 	return 0;
 }
