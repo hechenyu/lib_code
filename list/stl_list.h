@@ -248,6 +248,7 @@ public:
     // 交换两个list的元素
 	void swap(list &x)
 	{
+        list_swap(this->list_, x.list_);
 	}
 
 private:
