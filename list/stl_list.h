@@ -1,3 +1,8 @@
+#ifndef __stl_list_h
+#define __stl_list_h
+
+#include <iterator>
+#include "dlist.h"
 
 template <typename T>
 class list;
@@ -23,7 +28,7 @@ public:
 
 	list_iterator(): link_(nullptr) {}
 
-	explicit list_iterator(link_type *link): link_(link) {}
+	explicit list_iterator(link_type link): link_(link) {}
 
 	reference operator *() const 
 	{
@@ -83,8 +88,6 @@ class list {
 
 public:
 	typedef	T value_type;
-	typedef Alloc allocator_type;
-	typedef T value_type;
 	typedef T *pointer;
 	typedef T &reference;
 	typedef list_iterator<T> iterator;
@@ -133,7 +136,7 @@ public:
     }
 
     // 判断list是否为空
-	bool empty() const { return list_is_empty(&lst_); }
+	bool empty() const { return list_is_empty(list_); }
 
     // 统计list中元素个数
 	size_type size() const
@@ -192,7 +195,7 @@ public:
 	}
 
     // 在position前插入值为val的元素, 返回指向第一个被插入元素的迭代器
-	iterator insert(const_iterator position, const value_type &val)
+	iterator insert(iterator position, const value_type &val)
 	{
         auto new_node = list_new_node(val);
         list_insert(position.link_, new_node);
@@ -205,11 +208,11 @@ public:
 	iterator insert(iterator position, 
             InputIterator first, InputIterator last)
 	{
-		auto keep = position.link_;
+		auto keep = &list_.nil;
 		for (auto iter = first; iter != last; ++iter) {
 			auto node = list_new_node(*iter);
 			if (iter == first) {
-				keep = link;
+				keep = node;
 			}
 			list_insert(position.link_, node);
 		}
@@ -261,3 +264,5 @@ private:
         }
     }
 };
+
+#endif
