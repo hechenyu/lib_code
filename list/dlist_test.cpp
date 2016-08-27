@@ -7,25 +7,31 @@
 #define NAME(list) #list
 
 template <typename T>
-void insert_inorder(Dlist<T> &list, std::initializer_list<T> il)
+void insert_inorder(Dlist<T> &list, std::initializer_list<T> il, const std::string &list_name="list")
 {
+    std::cout << "insert inorder " << list_name << ": ";
     for (auto &val : il) {
+        std::cout << val << ", ";
         list_insert_back(list, list_new_node(val));
     }
+    std::cout << std::endl;
 }
 
 template <typename T>
-void insert_reverse(Dlist<T> &list, std::initializer_list<T> il)
+void insert_reverse(Dlist<T> &list, std::initializer_list<T> il, const std::string &list_name="list")
 {
+    std::cout << "insert reverse " << list_name << ": ";
     for (auto &val : il) {
+        std::cout << val << ", ";
         list_insert_front(list, list_new_node(val));
     }
+    std::cout << std::endl;
 }
 
 template <typename T>
 void remove_inorder(Dlist<T> &list, const std::string &list_name="list")
 {
-    std::cout << "free " << list_name << ": ";
+    std::cout << "free inorder " << list_name << ": ";
     while (!list_is_empty(list)) {
         auto node = list_remove_front(list);
         std::cout << node->value << ", ";
@@ -37,7 +43,7 @@ void remove_inorder(Dlist<T> &list, const std::string &list_name="list")
 template <typename T>
 void remove_reverse(Dlist<T> &list, const std::string &list_name="list")
 {
-    std::cout << "free " << list_name << ": ";
+    std::cout << "free reverse " << list_name << ": ";
     while (!list_is_empty(list)) {
         auto node = list_remove_back(list);
         std::cout << node->value << ", ";
@@ -101,6 +107,8 @@ int main(int argc, char *argv[])
     print_list(list1, NAME(list1));
     print_list(list2, NAME(list2));
 
+    std::cout << "---------------------------" << std::endl;
+    std::cout << "test insert" << std::endl;
     insert_inorder(list1, {1, 3, 5, 7, 9});
     assert(!list_is_empty(list1));
     insert_reverse(list2, {0, 2, 4, 6, 8});
@@ -123,6 +131,29 @@ int main(int argc, char *argv[])
 
     std::cout << "---------------------------" << std::endl;
     std::cout << "after replace" << std::endl;
+    print_list(list1, NAME(list1));
+    print_list(list2, NAME(list2));
+
+    for (int i = 1; i <= 2; i++) {
+        std::cout << "---------------------------" << std::endl;
+        std::cout << "test swap" << std::endl;
+        list_swap(list1, list2);
+
+        std::cout << "---------------------------" << std::endl;
+        std::cout << "after swap" << std::endl;
+        print_list(list1, NAME(list1));
+        print_list(list2, NAME(list2));
+    }
+
+    std::cout << "---------------------------" << std::endl;
+    std::cout << "test remove" << std::endl;
+    remove_inorder(list1);
+    assert(list_is_empty(list1));
+    remove_reverse(list2);
+    assert(list_is_empty(list2));
+
+    std::cout << "---------------------------" << std::endl;
+    std::cout << "after remove" << std::endl;
     print_list(list1, NAME(list1));
     print_list(list2, NAME(list2));
 
