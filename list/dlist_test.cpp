@@ -1,8 +1,8 @@
+#include "dlist.h"
 #include <cassert>
 #include <iostream>
 #include <string>
 #include <initializer_list>
-#include "dlist.h"
 
 #define NAME(list) #list
 
