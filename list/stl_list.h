@@ -4,6 +4,8 @@
 #include <iterator>
 #include "dlist.h"
 
+namespace stl {
+
 template <typename T>
 class list;
 
@@ -104,6 +106,9 @@ public:
         assign(first, last);
     }
 
+    // 用ininializer_list构造list
+	list(std::initializer_list<value_type> il): list(il.begin(), il.end()) {}
+
     // copy constructor
 	list(const list &x): list(x.begin(), x.end()) {}
 
@@ -121,6 +126,23 @@ public:
             auto new_node = list_new_node(*iter);
             list_insert_back(list_, new_node);
         }
+	}
+
+    // 重载=运算符, 
+	list &operator =(const list &x)
+	{
+		if (this == &x)
+			return *this;
+
+		assign(x.begin(), x.end());
+		return *this;
+	}
+
+    // 重载=运算符, 
+	list &operator =(std::initializer_list<value_type> il)
+	{
+		assign(il.begin(), il.end());
+		return *this;
 	}
 
     // 头迭代器
@@ -264,5 +286,7 @@ private:
         }
     }
 };
+
+}   // namespace stl
 
 #endif
