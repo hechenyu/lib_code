@@ -42,37 +42,4 @@ public:
 	virtual void *get_deleter() { return &del_; }
 };
 
-// shared pointer counted implement: pointer+deleter+allocator
-template <typename T, typename D, typename Alloc>
-class Sp_counted_impl_pda: public Sp_counted_base {
-private:
-	T p_;			// pointer
-	D del_;		// deleter
-	Alloc alloc_;	// allocator
-
-	Sp_counted_impl_pda(const Sp_counted_impl_pda &) = delete;
-	Sp_counted_impl_pda &operator =(const Sp_counted_impl_pda &) = delete;
-
-	typedef Sp_counted_impl_pda<T, D, Alloc> this_type;
-
-public:
-	Sp_counted_impl_pda(T p, D &del, Alloc alloc): p_(p), del_(del), alloc_(alloc) {}
-
-	Sp_counted_impl_pda(T p, Alloc alloc): p_(p), del_(), alloc_(alloc) {}
-
-	virtual void dispose() noexcept { del_(p_); }
-
-	virtual void destroy() noexcept
-	{
-		typedef typename Alloc::template rebind<this_type>::other alloc_type;
-		alloc_type alloc(alloc_);
-		this->~this_type();
-		alloc.deallocate(this, 1);
-	}
-	
-	virtual void *get_pointer() { return p_; }
-
-	virtual void *get_deleter() { return &reinterpret_cast<char &>(del_); }
-};
-
 #endif
