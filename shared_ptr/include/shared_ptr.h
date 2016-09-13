@@ -1,6 +1,9 @@
 #ifndef __shared_ptr_h
 #define __shared_ptr_h
 
+#include <iostream>
+#include <utility>
+#include <cstddef>
 #include "sp_counted_impl.h"
 
 template <typename T>
@@ -11,6 +14,9 @@ public:
 private:
     Sp_counted_base *pi_ = nullptr;
 
+    typedef Shared_ptr<T> this_type;
+
+public:
     // 默认构造函数, (不持有任何指针, 引用计数为0)
 	Shared_ptr() {}
 
@@ -19,7 +25,7 @@ private:
 	{
 		try 
 		{
-			pi_ = new sp_counted_impl_p<T>(p);
+			pi_ = new Sp_counted_impl_p<T>(p);
 		}
 		catch (...) 
 		{
@@ -35,7 +41,7 @@ private:
 	{
 		try 
 		{
-			pi_ = new sp_counted_impl_pd<T, D>(p, del);
+			pi_ = new Sp_counted_impl_pd<T, D>(p, del);
 		}
 		catch (...)
 		{
@@ -75,7 +81,7 @@ private:
 	void swap(Shared_ptr &x)
 	{
         using std::swap;
-		swap(ptr_, x.ptr_);
+		swap(this->ptr_, x.ptr_);
 	}
 
     // 重置当前智能指针对象, 使得当前对象为空, 即默认构造的对象
@@ -145,46 +151,40 @@ private:
 
 // 比较两个Shared_ptr
 template <typename T>
-bool operator <=(const Shared_ptr &lhs, const Shared_ptr &rhs)
+bool operator <=(const Shared_ptr<T> &lhs, const Shared_ptr<T> &rhs)
 {
     return (lhs < rhs || lhs == rhs);
 }
 
 template <typename T>
-bool operator !=(const Shared_ptr &lhs, const Shared_ptr &rhs)
+bool operator !=(const Shared_ptr<T> &lhs, const Shared_ptr<T> &rhs)
 {
     return !(lhs == rhs);
 }
 
 template <typename T>
-bool operator >(const Shared_ptr &lhs, const Shared_ptr &rhs)
+bool operator >(const Shared_ptr<T> &lhs, const Shared_ptr<T> &rhs)
 {
     return !(lhs <= rhs);
 }
 
 template <typename T>
-bool operator >=(const Shared_ptr &lhs, const Shared_ptr &rhs)
+bool operator >=(const Shared_ptr<T> &lhs, const Shared_ptr<T> &rhs)
 {
     return !(lhs < rhs);
 }
 
 // 比较Shared_ptr和nullptr
 template <typename T>
-bool operator ==(const Shared_ptr<T>& lhs, nullptr_t)
+bool operator ==(const Shared_ptr<T> &lhs, std::nullptr_t)
 {
-    return
+	return lhs.get() == nullptr;
 }
 
 template <typename T>
 bool operator ==(std::nullptr_t, const Shared_ptr<T> &rhs)
 {
 	return nullptr == rhs.get();
-}
-
-template <typename T>
-bool operator ==(const Shared_ptr<T> &lhs, std::nullptr_t)
-{
-	return lhs.get() == nullptr;
 }
 
 template <typename T>
@@ -249,8 +249,8 @@ bool operator >=(std::nullptr_t, const Shared_ptr<T> &rhs)
 
 // 重载输出运算符
 template <class charT, class traits, class T>
-std::basic_ostream<charT,traits>& operator <<(
-        basic_ostream<charT,traits>& os, const Shared_ptr<T>& x)
+std::basic_ostream<charT, traits> &operator <<(
+        std::basic_ostream<charT, traits> &os, const Shared_ptr<T> &x)
 {
     os << x.get();
     return os;

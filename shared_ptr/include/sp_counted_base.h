@@ -1,6 +1,8 @@
 #ifndef __sp_counted_base_h
 #define __sp_counted_base_h
 
+#include "ref_counted_base.h"
+
 // shared pointer counted base
 class Sp_counted_base: public Ref_counted_base {
 public:
