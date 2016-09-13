@@ -1,6 +1,8 @@
 #ifndef __sp_counted_impl_h
 #define __sp_counted_impl_h
 
+#include "sp_counted_base.h"
+
 // shared pointer counted implement: pointer
 template <typename T>
 class Sp_counted_impl_p: public Sp_counted_base {
@@ -31,7 +33,7 @@ private:
 	Sp_counted_impl_pd &operator =(const Sp_counted_impl_pd &) = delete;
 
 public:
-	Sp_counted_impl_pd(T *p, D &d): p_(p), del_(del) {}
+	Sp_counted_impl_pd(T *p, D &d): p_(p), del_(d) {}
 
 	Sp_counted_impl_pd(T *p): p_(p), del_() {}
 
