@@ -1,6 +1,8 @@
 #ifndef __ref_counted_base_h
 #define __ref_counted_base_h
 
+#include <atomic>
+
 // 引用计数基类
 class Ref_counted_base {    // Reference
 private:
