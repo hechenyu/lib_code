@@ -1,3 +1,4 @@
+#include "shared_ptr.h"
 #include "sputil.h"
 
 int main()

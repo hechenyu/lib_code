@@ -81,7 +81,7 @@ public:
 	void swap(Shared_ptr &x)
 	{
         using std::swap;
-		swap(this->ptr_, x.ptr_);
+		swap(this->pi_, x.pi_);
 	}
 
     // 重置当前智能指针对象, 使得当前对象为空, 即默认构造的对象
@@ -261,6 +261,13 @@ template <typename T, typename ...Args>
 Shared_ptr<T> make_shared(Args &&...args)
 {
 	return Shared_ptr<T>(new T(std::forward<Args>(args)...));
+}
+
+// 交换指针
+template <typename T>
+void swap(Shared_ptr<T> &lhs, Shared_ptr<T> &rhs)
+{
+    lhs.swap(rhs);
 }
 
 #endif
