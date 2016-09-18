@@ -137,19 +137,27 @@ public:
 		return get() != nullptr;
 	}
 
-    // 比较运算符
-	friend inline bool operator ==(const Shared_ptr &lhs, const Shared_ptr &rhs)
-	{
-		return lhs.pi_ == rhs.pi_;
-	}
-
-	friend inline bool operator <(const Shared_ptr &lhs, const Shared_ptr &rhs)
-	{
-		return lhs.pi_ < rhs.pi_;
-	}
+    // 获取deleter指针
+    void *get_deleter() const
+    {
+        return (this->pi_ != nullptr ? this->pi_->get_deleter() : 0);
+    }
 };
 
+
 // 比较两个Shared_ptr
+template <typename T>
+bool operator ==(const Shared_ptr<T> &lhs, const Shared_ptr<T> &rhs)
+{
+	return lhs.get() == rhs.get();
+}
+
+template <typename T>
+bool operator <(const Shared_ptr<T> &lhs, const Shared_ptr<T> &rhs)
+{
+	return lhs.get() < rhs.get();
+}
+
 template <typename T>
 bool operator <=(const Shared_ptr<T> &lhs, const Shared_ptr<T> &rhs)
 {
@@ -268,6 +276,13 @@ template <typename T>
 void swap(Shared_ptr<T> &lhs, Shared_ptr<T> &rhs)
 {
     lhs.swap(rhs);
+}
+
+// 获取deleter
+template <typename D, typename T>
+D *get_deleter(const Shared_ptr<T> &sp)
+{
+    return static_cast<D *>(sp.get_deleter());
 }
 
 #endif
