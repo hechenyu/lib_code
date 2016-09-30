@@ -11,7 +11,7 @@ public:
     virtual ~Sp_counted_base() noexcept {}
 
     // 获取指向资源的指针
-	virtual void *get_pointer() = 0;
+    virtual void *get_pointer() = 0;
 
     // 获取指向deleter的指针
     virtual void *get_deleter() = 0;
