@@ -33,9 +33,7 @@ private:
     Sp_counted_impl_pd &operator =(const Sp_counted_impl_pd &) = delete;
 
 public:
-    Sp_counted_impl_pd(T *p, D &d): p_(p), del_(d) {}
-
-    Sp_counted_impl_pd(T *p): p_(p), del_() {}
+    Sp_counted_impl_pd(T *p, const D &d): p_(p), del_(d) {}
 
     virtual void dispose() noexcept { del_(p_); }
 
