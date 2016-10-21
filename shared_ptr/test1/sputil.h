@@ -32,7 +32,7 @@ static void show_rc(unsigned long count)
 }
 
 template <class Sp>
-void show_refs(const Shared_ptr<Sp> &sp)
+void show_refs(const shared_ptr<Sp> &sp)
 {
 	show_rc(sp.use_count());
 }

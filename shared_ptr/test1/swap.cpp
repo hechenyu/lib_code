@@ -3,8 +3,8 @@
 
 int main()
 {
-    Shared_ptr<resource> sp0(new resource(0));
-    Shared_ptr<resource> sp1(new resource(1));
+    shared_ptr<resource> sp0(new resource(0));
+    shared_ptr<resource> sp1(new resource(1));
     show("sp0 before swap", sp0);
     show("sp1 before swap", sp1);
 

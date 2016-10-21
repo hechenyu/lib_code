@@ -17,7 +17,7 @@ public:
 
 int main()
 {
-    Shared_ptr<resource> sp0;
+    shared_ptr<resource> sp0;
     show("empty object before reset", sp0);
 
     sp0.reset(new resource(1), FreeResource());

@@ -5,15 +5,15 @@
 
 // shared pointer counted implement: pointer
 template <typename T>
-class Sp_counted_impl_p: public Sp_counted_base {
+class sp_counted_impl_p: public sp_counted_base {
 private:
     T *p_;  // pointer
 
-    Sp_counted_impl_p(const Sp_counted_impl_p &) = delete;
-    Sp_counted_impl_p &operator =(const Sp_counted_impl_p &) = delete;
+    sp_counted_impl_p(const sp_counted_impl_p &) = delete;
+    sp_counted_impl_p &operator =(const sp_counted_impl_p &) = delete;
 
 public:
-    explicit Sp_counted_impl_p(T *p): p_(p) {}
+    explicit sp_counted_impl_p(T *p): p_(p) {}
 
     virtual void dispose() noexcept { delete p_; }
 
@@ -24,16 +24,16 @@ public:
 
 // shared pointer counted implement: pointer+deleter
 template <typename T, typename D>
-class Sp_counted_impl_pd: public Sp_counted_base {
+class sp_counted_impl_pd: public sp_counted_base {
 private:
     T *p_;      // pointer
     D del_;     // deleter
 
-    Sp_counted_impl_pd(const Sp_counted_impl_pd &) = delete;
-    Sp_counted_impl_pd &operator =(const Sp_counted_impl_pd &) = delete;
+    sp_counted_impl_pd(const sp_counted_impl_pd &) = delete;
+    sp_counted_impl_pd &operator =(const sp_counted_impl_pd &) = delete;
 
 public:
-    Sp_counted_impl_pd(T *p, const D &d): p_(p), del_(d) {}
+    sp_counted_impl_pd(T *p, const D &d): p_(p), del_(d) {}
 
     virtual void dispose() noexcept { del_(p_); }
 

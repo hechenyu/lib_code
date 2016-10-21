@@ -3,7 +3,7 @@
 #include "shared_ptr.h"
 #include "sputil.h"
 
-typedef Shared_ptr<resource> sps;
+typedef shared_ptr<resource> sps;
 
 static void asgn0()
 {

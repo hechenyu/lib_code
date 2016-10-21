@@ -18,7 +18,7 @@ struct deleter
 
 int main()
 {
-    Shared_ptr<resource> sp(new resource(3), deleter());
+    shared_ptr<resource> sp(new resource(3), deleter());
     show("construct from pointer", sp);
 
     return 0;

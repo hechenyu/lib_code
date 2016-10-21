@@ -6,7 +6,7 @@
 using std::cout;
 using std::boolalpha;
 
-typedef Shared_ptr<int> spi;
+typedef shared_ptr<int> spi;
 
 int main()
 {

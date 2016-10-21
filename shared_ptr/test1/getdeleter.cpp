@@ -14,8 +14,8 @@ struct del
 
 int main()
 {
-    Shared_ptr<int> sp0(new int);
-    Shared_ptr<int> sp1(new int, del());
+    shared_ptr<int> sp0(new int);
+    shared_ptr<int> sp1(new int, del());
     cout << get_deleter<del>(sp0) << '\n';
     cout << get_deleter<del>(sp1) << '\n';
 

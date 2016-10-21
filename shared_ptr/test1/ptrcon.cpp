@@ -5,7 +5,7 @@
 
 int main()
 {
-    Shared_ptr<resource> sp(new resource(3));
+    shared_ptr<resource> sp(new resource(3));
     show("construct from pointer", sp);
 
     return 0;

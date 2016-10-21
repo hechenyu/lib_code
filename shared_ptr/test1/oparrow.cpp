@@ -12,7 +12,7 @@ int main()
 {
 	S *s = new S;
 	s->member = 4;
-	Shared_ptr<S> sp(s);
+	shared_ptr<S> sp(s);
 	cout << sp->member << '\n';
 	return 0;
 }

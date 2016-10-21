@@ -286,4 +286,7 @@ D *get_deleter(const Shared_ptr<T> &sp)
     return static_cast<D *>(sp.get_deleter());
 }
 
+template <typename T>
+using shared_ptr = Shared_ptr<T>;
+
 #endif

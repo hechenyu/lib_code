@@ -5,7 +5,7 @@
 using std::cout;
 using std::string;
 
-typedef Shared_ptr<string> stp;
+typedef shared_ptr<string> stp;
 
 void show(stp s)
 {

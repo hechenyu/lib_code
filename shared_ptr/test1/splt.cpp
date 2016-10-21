@@ -8,7 +8,7 @@ using std::lower_bound;
 using std::set;
 using std::cout;
 
-typedef Shared_ptr<int> spi;
+typedef shared_ptr<int> spi;
 typedef set<spi> iset;
 typedef iset::const_iterator citer;
 

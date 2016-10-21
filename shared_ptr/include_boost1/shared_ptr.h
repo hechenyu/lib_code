@@ -7,25 +7,25 @@
 #include "sp_counted_impl.h"
 
 template <typename T>
-class Shared_ptr {
+class shared_ptr {
 public:
     typedef T element_type;
 
 private:
-    Sp_counted_base *pi_ = nullptr;
+    sp_counted_base *pi_ = nullptr;
 
-    typedef Shared_ptr<T> this_type;
+    typedef shared_ptr<T> this_type;
 
 public:
     // 默认构造函数, (不持有任何指针, 引用计数为0)
-    Shared_ptr() {}
+    shared_ptr() {}
 
     // 通过指针p构造, 持有指针p, 引用计数为1
-    explicit Shared_ptr(T *p)
+    explicit shared_ptr(T *p)
     {
         try 
         {
-            pi_ = new Sp_counted_impl_p<T>(p);
+            pi_ = new sp_counted_impl_p<T>(p);
         }
         catch (...) 
         {
@@ -37,11 +37,11 @@ public:
     // 通过指针p和deleter构造, 持有指针p和deleter, 引用计数为1,
     // 当引用计数降到0时, 通过deleter释放指针p
     template <typename D>
-    explicit Shared_ptr(T *p, D del)
+    explicit shared_ptr(T *p, D del)
     {
         try 
         {
-            pi_ = new Sp_counted_impl_pd<T, D>(p, del);
+            pi_ = new sp_counted_impl_pd<T, D>(p, del);
         }
         catch (...)
         {
@@ -51,21 +51,21 @@ public:
     }
 
     // 析构函数, 减少引用计数
-    ~Shared_ptr()
+    ~shared_ptr()
     {
         if (pi_ != nullptr) pi_->decr_ref_count();
     }
 
     // 复制构造函数, 如果x非空, 增加引用计数,
     // 否则创建一个空对象, 类似于默认构造函数
-    Shared_ptr(const Shared_ptr &x)
+    shared_ptr(const shared_ptr &x)
         : pi_(x.pi_)
     {
         if (pi_ != nullptr) pi_->incr_ref_count();
     }
 
     // 赋值运算符, 减少当前引用计数, 增加x的引用计数
-    Shared_ptr &operator =(const Shared_ptr &x)
+    shared_ptr &operator =(const shared_ptr &x)
     {
         /**
           if (this != &x) {
@@ -78,8 +78,8 @@ public:
         return *this;
     }
 
-    // 交给两个Shared_ptr
-    void swap(Shared_ptr &x)
+    // 交给两个shared_ptr
+    void swap(shared_ptr &x)
     {
         using std::swap;
         swap(this->pi_, x.pi_);
@@ -146,112 +146,112 @@ public:
 };
 
 
-// 比较两个Shared_ptr
+// 比较两个shared_ptr
 template <typename T>
-bool operator ==(const Shared_ptr<T> &lhs, const Shared_ptr<T> &rhs)
+bool operator ==(const shared_ptr<T> &lhs, const shared_ptr<T> &rhs)
 {
     return lhs.get() == rhs.get();
 }
 
 template <typename T>
-bool operator <(const Shared_ptr<T> &lhs, const Shared_ptr<T> &rhs)
+bool operator <(const shared_ptr<T> &lhs, const shared_ptr<T> &rhs)
 {
     return lhs.get() < rhs.get();
 }
 
 template <typename T>
-bool operator <=(const Shared_ptr<T> &lhs, const Shared_ptr<T> &rhs)
+bool operator <=(const shared_ptr<T> &lhs, const shared_ptr<T> &rhs)
 {
     return (lhs < rhs || lhs == rhs);
 }
 
 template <typename T>
-bool operator !=(const Shared_ptr<T> &lhs, const Shared_ptr<T> &rhs)
+bool operator !=(const shared_ptr<T> &lhs, const shared_ptr<T> &rhs)
 {
     return !(lhs == rhs);
 }
 
 template <typename T>
-bool operator >(const Shared_ptr<T> &lhs, const Shared_ptr<T> &rhs)
+bool operator >(const shared_ptr<T> &lhs, const shared_ptr<T> &rhs)
 {
     return !(lhs <= rhs);
 }
 
 template <typename T>
-bool operator >=(const Shared_ptr<T> &lhs, const Shared_ptr<T> &rhs)
+bool operator >=(const shared_ptr<T> &lhs, const shared_ptr<T> &rhs)
 {
     return !(lhs < rhs);
 }
 
-// 比较Shared_ptr和nullptr
+// 比较shared_ptr和nullptr
 template <typename T>
-bool operator ==(const Shared_ptr<T> &lhs, std::nullptr_t)
+bool operator ==(const shared_ptr<T> &lhs, std::nullptr_t)
 {
     return lhs.get() == nullptr;
 }
 
 template <typename T>
-bool operator ==(std::nullptr_t, const Shared_ptr<T> &rhs)
+bool operator ==(std::nullptr_t, const shared_ptr<T> &rhs)
 {
     return nullptr == rhs.get();
 }
 
 template <typename T>
-bool operator !=(const Shared_ptr<T> &lhs, std::nullptr_t)
+bool operator !=(const shared_ptr<T> &lhs, std::nullptr_t)
 {
     return !(lhs == nullptr);
 }
 
 template <typename T>
-bool operator !=(std::nullptr_t, const Shared_ptr<T> &rhs)
+bool operator !=(std::nullptr_t, const shared_ptr<T> &rhs)
 {
     return !(nullptr == rhs);
 }
 
 template <typename T>
-bool operator <(const Shared_ptr<T> &lhs, std::nullptr_t)
+bool operator <(const shared_ptr<T> &lhs, std::nullptr_t)
 {
     return lhs.get() < nullptr;
 }
 
 template <typename T>
-bool operator <(std::nullptr_t, const Shared_ptr<T> &rhs)
+bool operator <(std::nullptr_t, const shared_ptr<T> &rhs)
 {
     return nullptr < rhs.get();
 }
 
 template <typename T>
-bool operator <=(const Shared_ptr<T> &lhs, std::nullptr_t)
+bool operator <=(const shared_ptr<T> &lhs, std::nullptr_t)
 {
     return !(lhs.get() > nullptr);
 }
 
 template <typename T>
-bool operator <=(std::nullptr_t, const Shared_ptr<T> &rhs)
+bool operator <=(std::nullptr_t, const shared_ptr<T> &rhs)
 {
     return !(nullptr > rhs.get());
 }
 
 template <typename T>
-bool operator >(const Shared_ptr<T> &lhs, std::nullptr_t)
+bool operator >(const shared_ptr<T> &lhs, std::nullptr_t)
 {
     return (nullptr < lhs);
 }
 
 template <typename T>
-bool operator >(std::nullptr_t, const Shared_ptr<T> &rhs)
+bool operator >(std::nullptr_t, const shared_ptr<T> &rhs)
 {
     return (rhs < nullptr);
 }
 
 template <typename T>
-bool operator >=(const Shared_ptr<T> &lhs, std::nullptr_t)
+bool operator >=(const shared_ptr<T> &lhs, std::nullptr_t)
 {
     return !(lhs < nullptr);
 }
 
 template <typename T>
-bool operator >=(std::nullptr_t, const Shared_ptr<T> &rhs)
+bool operator >=(std::nullptr_t, const shared_ptr<T> &rhs)
 {
     return !(nullptr < rhs);
 }
@@ -259,7 +259,7 @@ bool operator >=(std::nullptr_t, const Shared_ptr<T> &rhs)
 // 重载输出运算符
 template <class charT, class traits, class T>
 std::basic_ostream<charT, traits> &operator <<(
-        std::basic_ostream<charT, traits> &os, const Shared_ptr<T> &x)
+        std::basic_ostream<charT, traits> &os, const shared_ptr<T> &x)
 {
     os << x.get();
     return os;
@@ -267,21 +267,21 @@ std::basic_ostream<charT, traits> &operator <<(
 
 // 实现make_shared
 template <typename T, typename ...Args>
-Shared_ptr<T> make_shared(Args &&...args)
+shared_ptr<T> make_shared(Args &&...args)
 {
-    return Shared_ptr<T>(new T(std::forward<Args>(args)...));
+    return shared_ptr<T>(new T(std::forward<Args>(args)...));
 }
 
 // 交换指针
 template <typename T>
-void swap(Shared_ptr<T> &lhs, Shared_ptr<T> &rhs)
+void swap(shared_ptr<T> &lhs, shared_ptr<T> &rhs)
 {
     lhs.swap(rhs);
 }
 
 // 获取deleter
 template <typename D, typename T>
-D *get_deleter(const Shared_ptr<T> &sp)
+D *get_deleter(const shared_ptr<T> &sp)
 {
     return static_cast<D *>(sp.get_deleter());
 }

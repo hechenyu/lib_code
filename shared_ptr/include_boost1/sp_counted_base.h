@@ -4,17 +4,17 @@
 #include <atomic>
 
 // shared pointer counted base
-class Sp_counted_base {
+class sp_counted_base {
 private:
     std::atomic<int> use_count_;
 
-    Sp_counted_base(const Sp_counted_base &) = delete;
-    Sp_counted_base &operator =(const Sp_counted_base &) = delete;
+    sp_counted_base(const sp_counted_base &) = delete;
+    sp_counted_base &operator =(const sp_counted_base &) = delete;
 
 public:
-    Sp_counted_base(): use_count_(1) {}
+    sp_counted_base(): use_count_(1) {}
 
-    virtual ~Sp_counted_base() {}
+    virtual ~sp_counted_base() {}
 
     // 当引用计数递减至0, 释放资源.
     virtual void dispose() = 0;

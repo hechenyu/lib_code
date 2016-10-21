@@ -3,7 +3,7 @@
 
 int main()
 {
-    Shared_ptr<int> sp;
+    shared_ptr<int> sp;
     show("default constructor", sp);
 
     return 0;
