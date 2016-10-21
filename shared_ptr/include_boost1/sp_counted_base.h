@@ -6,7 +6,7 @@
 // shared pointer counted base
 class sp_counted_base {
 private:
-    std::atomic<int> use_count_;
+    std::atomic<long> use_count_;
 
     sp_counted_base(const sp_counted_base &) = delete;
     sp_counted_base &operator =(const sp_counted_base &) = delete;
