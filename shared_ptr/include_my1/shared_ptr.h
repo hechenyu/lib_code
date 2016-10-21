@@ -45,7 +45,7 @@ public:
         }
         catch (...)
         {
-            del(p);	// delete p
+            del(p); // delete p
             throw;
         }
     }

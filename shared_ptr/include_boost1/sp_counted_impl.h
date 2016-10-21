@@ -7,7 +7,7 @@
 template <typename T>
 class Sp_counted_impl_p: public Sp_counted_base {
 private:
-    T *p_;	// pointer
+    T *p_;  // pointer
 
     Sp_counted_impl_p(const Sp_counted_impl_p &) = delete;
     Sp_counted_impl_p &operator =(const Sp_counted_impl_p &) = delete;
@@ -26,8 +26,8 @@ public:
 template <typename T, typename D>
 class Sp_counted_impl_pd: public Sp_counted_base {
 private:
-    T *p_;		// pointer
-    D del_;	// deleter
+    T *p_;      // pointer
+    D del_;     // deleter
 
     Sp_counted_impl_pd(const Sp_counted_impl_pd &) = delete;
     Sp_counted_impl_pd &operator =(const Sp_counted_impl_pd &) = delete;
