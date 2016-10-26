@@ -1,4 +1,6 @@
+#include <stdio.h>
 #include <iostream>
+#include <stdexcept>
 
 #ifndef NDEBUG
 #define private public
@@ -7,6 +9,23 @@
 #include "shared_ptr.h"
 
 using std::cout;
+
+void *operator new(size_t sz)
+{
+    void *res = malloc(sz);
+    if (res == 0) {
+        printf("no memory");
+        throw std::bad_alloc();
+    }
+    printf("\n*** new %d bytes at %p ***\n", (int) sz, res);
+    return res;
+}
+
+void operator delete(void *ptr)
+{
+    printf("\n*** delete at %p ***\n", ptr);
+    free(ptr);
+}
 
 void print_details(const shared_ptr<int> &sp)
 {
@@ -20,29 +39,20 @@ void print_details(const shared_ptr<int> &sp)
     } else {
         cout << "no resource\n";
     }
-    if (get_deleter<void>(sp)) {
-        cout << "get_deleter: " << get_deleter<void>(sp) << '\n';
-    } else {
-        cout << "no deleter, use default delete\n";
-    }
 }
-
-struct deleter
-{
-    void operator ()(int *p)
-    {
-        cout << "destroying int at "
-            << p << '\n';
-        delete p;
-    }
-};
 
 int main()
 {
-    shared_ptr<int> sp0;
-    shared_ptr<int> sp1(new int(3));
-    shared_ptr<int> sp2(nullptr);
-    shared_ptr<int> sp3(new int(3), deleter());
+    cout << "sizeof int: " << sizeof (int) << '\n';
+#ifndef NDEBUG
+    cout << "sizeof sp_counted_impl_p<int>: " << sizeof (sp_counted_impl_p<int>) << '\n';
+#endif
+
+    cout << "shared_ptr<int> sp0(new int(3));" << '\n';
+    shared_ptr<int> sp0(new int(3));
+
+    cout << "shared_ptr<int> sp1(new int(3));" << '\n';
+    shared_ptr<int> sp1(new int(4));
 
     cout << "-----------------------------\n";
     cout << "sp0:\n";
@@ -54,15 +64,19 @@ int main()
     print_details(sp1);
     cout << "-----------------------------\n\n";
 
+    cout << "sp0 = sp1;" << '\n';
+    sp0 = sp1;
+
     cout << "-----------------------------\n";
-    cout << "sp2:\n";
-    print_details(sp2);
+    cout << "sp0:\n";
+    print_details(sp0);
     cout << "-----------------------------\n\n";
 
     cout << "-----------------------------\n";
-    cout << "sp3:\n";
-    print_details(sp3);
+    cout << "sp1:\n";
+    print_details(sp1);
     cout << "-----------------------------\n\n";
 
     return 0;
 }
+

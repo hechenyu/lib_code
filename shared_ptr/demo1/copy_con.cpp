@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <iostream>
 #include <stdexcept>
 
@@ -43,7 +44,9 @@ void print_details(const shared_ptr<int> &sp)
 int main()
 {
     cout << "sizeof int: " << sizeof (int) << '\n';
+#ifndef NDEBUG
     cout << "sizeof sp_counted_impl_p<int>: " << sizeof (sp_counted_impl_p<int>) << '\n';
+#endif
 
     cout << "shared_ptr<int> sp0(new int(3));" << '\n';
     shared_ptr<int> sp0(new int(3));
