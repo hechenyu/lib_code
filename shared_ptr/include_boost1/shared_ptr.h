@@ -68,12 +68,12 @@ public:
     shared_ptr &operator =(const shared_ptr &x)
     {
         /**
-          if (this != &x) {
-          pi_->decr_ref_count();
-          pi_ = x.pi_;
-          pi_->incr_ref_count();
-          }
-          */
+        if (this != &x) {
+            pi_->decr_ref_count();
+            pi_ = x.pi_;
+            pi_->incr_ref_count();
+        }
+        */
         this_type(x).swap(*this);
         return *this;
     }
@@ -88,6 +88,10 @@ public:
     // 重置当前智能指针对象, 使得当前对象为空, 即默认构造的对象
     void reset()
     {
+        /**
+        pi_->decr_ref_count();
+        pi_ = nullptr;
+        */
         this_type().swap(*this);
     }
 
