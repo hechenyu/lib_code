@@ -1,10 +1,19 @@
 #include <iostream>
+
+#ifndef NDEBUG
+#define private public
+#endif
+
 #include "shared_ptr.h"
 
 using std::cout;
 
+
 void print_details(const shared_ptr<int> &sp)
 {
+#ifndef NDEBUG
+    cout << "pi_: " << sp.pi_ << '\n';
+#endif
     cout << "use_count: " << sp.use_count() << '\n'
         << "get: " << sp.get() << '\n';
     if (sp) {
@@ -13,7 +22,7 @@ void print_details(const shared_ptr<int> &sp)
         cout << "no resource\n";
     }
     if (get_deleter<void>(sp)) {
-        cout << "deleter at: " << get_deleter<void>(sp) << '\n';
+        cout << "get_deleter: " << get_deleter<void>(sp) << '\n';
     } else {
         cout << "no deleter, use default delete\n";
     }
@@ -24,7 +33,7 @@ struct deleter
     void operator ()(int *p)
     {
         cout << "destroying int at "
-            << (void *) p << '\n';
+            << p << '\n';
         delete p;
     }
 };

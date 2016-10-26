@@ -1,5 +1,10 @@
 #include <iostream>
 #include <stdexcept>
+
+#ifndef NDEBUG
+#define private public
+#endif
+
 #include "shared_ptr.h"
 
 using std::cout;
@@ -23,6 +28,9 @@ void operator delete(void *ptr)
 
 void print_details(const shared_ptr<int> &sp)
 {
+#ifndef NDEBUG
+    cout << "pi_: " << sp.pi_ << '\n';
+#endif
     cout << "use_count: " << sp.use_count() << '\n'
         << "get: " << sp.get() << '\n';
     if (sp) {

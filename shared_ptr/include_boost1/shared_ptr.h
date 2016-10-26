@@ -89,8 +89,10 @@ public:
     void reset()
     {
         /**
-        pi_->decr_ref_count();
-        pi_ = nullptr;
+        if (pi_) {
+            pi_->decr_ref_count();
+            pi_ = nullptr;
+        }
         */
         this_type().swap(*this);
     }
