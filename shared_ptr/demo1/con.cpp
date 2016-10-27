@@ -14,7 +14,9 @@ void print_details(const shared_ptr<int> &sp)
     cout << "pi_: " << sp.pi_ << '\n';
 #endif
     cout << "use_count: " << sp.use_count() << '\n'
-        << "get: " << sp.get() << '\n';
+        << "get: " << sp.get() << '\n'
+        << "unique: " << std::boolalpha << sp.unique() << '\n'
+        << "operator bool: " << static_cast<bool>(sp) << '\n';
     if (sp) {
         cout << "resource value: " << *sp << '\n';
     } else {
