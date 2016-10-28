@@ -53,7 +53,7 @@ public:
     // 析构函数, 减少引用计数
     ~shared_ptr()
     {
-        if (pi_ != nullptr) pi_->decr_ref_count();
+        if (pi_ != nullptr) pi_->release();
     }
 
     // 复制构造函数, 如果x非空, 增加引用计数,
@@ -61,7 +61,7 @@ public:
     shared_ptr(const shared_ptr &x)
         : pi_(x.pi_)
     {
-        if (pi_ != nullptr) pi_->incr_ref_count();
+        if (pi_ != nullptr) pi_->add_ref_copy();
     }
 
     // 赋值运算符, 减少当前引用计数, 增加x的引用计数
@@ -69,9 +69,9 @@ public:
     {
         /**
         if (this != &x) {
-            pi_->decr_ref_count();
+            pi_->release();
             pi_ = x.pi_;
-            pi_->incr_ref_count();
+            pi_->add_ref_copy();
         }
         */
         this_type(x).swap(*this);
@@ -90,7 +90,7 @@ public:
     {
         /**
         if (pi_) {
-            pi_->decr_ref_count();
+            pi_->release();
             pi_ = nullptr;
         }
         */

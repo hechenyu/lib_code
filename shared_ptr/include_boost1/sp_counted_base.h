@@ -16,20 +16,20 @@ public:
 
     virtual ~sp_counted_base() {}
 
-    // 当引用计数递减至0, 释放资源.
+    // 当引用计数递减至0, 释放所持有的对象
     virtual void dispose() = 0;
 
-    // 当引用计数递减至0, 释放this.
+    // 当引用计数递减至0, 释放计数器本身
     virtual void destroy() { delete this; }
 
-    // 增加引用计数
-    void incr_ref_count() // increase
+    // 增加持有者, 增加引用计数
+    void add_ref_copy()
     {
         ++use_count_;
     }
 
-    // 减少引用计数
-    void decr_ref_count() // decrease
+    // 持有者释放控制, 减少引用计数
+    void release() 
     {
         if(--use_count_ == 0) {
             dispose();
@@ -37,7 +37,7 @@ public:
         }
     }
 
-    // 获取指向资源的指针
+    // 获取持有对象的指针
     virtual void *get_pointer() = 0;
 
     // 获取指向deleter的指针
