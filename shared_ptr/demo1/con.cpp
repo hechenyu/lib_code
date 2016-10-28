@@ -8,8 +8,10 @@
 
 using std::cout;
 
-void print_details(const shared_ptr<int> &sp)
+void print_details(const shared_ptr<int> &sp, const std::string &name)
 {
+    cout << "-----------------------------\n";
+    cout << name << '\n';
 #ifndef NDEBUG
     cout << "pi_: " << sp.pi_ << '\n';
 #endif
@@ -27,6 +29,7 @@ void print_details(const shared_ptr<int> &sp)
     } else {
         cout << "no deleter, use default delete\n";
     }
+    cout << "-----------------------------\n\n";
 }
 
 struct deleter
@@ -46,25 +49,10 @@ int main()
     shared_ptr<int> sp2(nullptr);
     shared_ptr<int> sp3(new int(3), deleter());
 
-    cout << "-----------------------------\n";
-    cout << "sp0:\n";
-    print_details(sp0);
-    cout << "-----------------------------\n\n";
-
-    cout << "-----------------------------\n";
-    cout << "sp1:\n";
-    print_details(sp1);
-    cout << "-----------------------------\n\n";
-
-    cout << "-----------------------------\n";
-    cout << "sp2:\n";
-    print_details(sp2);
-    cout << "-----------------------------\n\n";
-
-    cout << "-----------------------------\n";
-    cout << "sp3:\n";
-    print_details(sp3);
-    cout << "-----------------------------\n\n";
+    print_details(sp0, "sp0");
+    print_details(sp1, "sp1");
+    print_details(sp2, "sp2");
+    print_details(sp3, "sp3");
 
     return 0;
 }
