@@ -23,17 +23,18 @@ public:
 };
 
 // shared pointer counted implement: pointer+deleter
-template <typename T, typename D>
+template <typename P, typename D>
 class sp_counted_impl_pd: public sp_counted_base {
 private:
-    T *p_;      // pointer
+    P p_;      // pointer
     D del_;     // deleter
 
     sp_counted_impl_pd(const sp_counted_impl_pd &) = delete;
     sp_counted_impl_pd &operator =(const sp_counted_impl_pd &) = delete;
 
 public:
-    sp_counted_impl_pd(T *p, const D &d): p_(p), del_(d) {}
+    sp_counted_impl_pd(P p, D &d): p_(p), del_(d) {}
+    sp_counted_impl_pd(P p): p_(p), del_() {}
 
     virtual void dispose() noexcept { del_(p_); }
 

@@ -41,7 +41,7 @@ public:
     {
         try 
         {
-            pi_ = new sp_counted_impl_pd<T, D>(p, del);
+            pi_ = new sp_counted_impl_pd<T *, D>(p, del);
         }
         catch (...)
         {
