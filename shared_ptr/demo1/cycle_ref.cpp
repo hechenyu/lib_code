@@ -30,16 +30,16 @@ void operator delete(void *ptr)
 struct track
 {
 	track()
-	{ std::cout << " constructing track\n"; }
+	{ std::cout << "\nconstructing track, this: " << this << "\n"; }
 
 	track(const track &)
-	{ std::cout << " copy constructing track\n"; }
+	{ std::cout << "\ncopy constructing track, this: " << this << "\n"; }
 
 	track &operator =(const track &)
-	{ std::cout << " copying track\n"; return *this; }
+	{ std::cout << "\ncopying track, this: " << this << "\n"; return *this; }
 
 	~track()
-	{ std::cout << " destroying track\n"; }
+	{ std::cout << "\ndestroying track, this: " << this << "\n"; }
 };
 
 struct node: public track
