@@ -22,3 +22,5 @@ all:	${LIB_OBJS}
 
 clean:
 		rm -f ${PROGS} ${CLEANFILES}
+
+distclean: clean
