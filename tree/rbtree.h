@@ -34,7 +34,7 @@ struct RBTree_base {
 
 // 初始化红黑树
 inline
-void rbtree_init(RBTree_node_base &tree)
+void tree_init(RBTree_node_base &tree)
 {
     tree.nil.parent = tree.nil.left = tree.nil.right = &tree.nil;
     tree.nil.color = RBTREE_NODE_BLACK;
@@ -43,14 +43,14 @@ void rbtree_init(RBTree_node_base &tree)
 
 // 判断rbtree是否为空, 
 inline
-bool rbtree_is_empty(const RBTree_node_base &tree)
+bool tree_is_empty(const RBTree_node_base &tree)
 {
     return (tree.root == &tree.nil);
 }
 
 // 返回以结点x为根的子树的最小元素的指针,
 inline
-RBTree_link rbtree_minimum(RBTree_node_base &tree, RBTree_link x)
+RBTree_link tree_minimum(RBTree_node_base &tree, RBTree_link x)
 {
     while (x->left != &tree.nil)
         x = x->left;
@@ -78,7 +78,7 @@ RBTree_link tree_maximum(RBTree_node_base &tree, RBTree_link x)
  *   a   b              b   r      
  */
 inline
-void rbtree_left_rotate(RBTree_base &tree, RBTree_link x)
+void tree_left_rotate(RBTree_base &tree, RBTree_link x)
 {
     assert(x->right != &tree.nil);
     assert(tree.root->parent == &tree.nil);
@@ -115,7 +115,7 @@ void rbtree_left_rotate(RBTree_base &tree, RBTree_link x)
  *   a   b              b   r      
  */
 inline
-void rbtree_right_rotate(RBTree_base &tree, RBTree_link y)
+void tree_right_rotate(RBTree_base &tree, RBTree_link y)
 {
     assert(y->left != &tree.nil);
     assert(tree.root->parent == &tree.nil);
@@ -140,5 +140,95 @@ void rbtree_right_rotate(RBTree_base &tree, RBTree_link y)
     y->parent = x;
 }
 
+/**
+ * 对结点重新着色并旋转, 以保持红黑性质
+ * () -> 红色结点 
+ * [] -> 黑色结点
+ * 情况1: z的叔结点y是红色的
+ *
+ *            |                             |           
+ *           [C]                    新结点z(C)
+ *        __/   \__                     __/   \__        
+ *       /         \      ===          /         \
+ *     (A)         (D)y              [A]         [D]
+ *    /   \       /   \             /   \       /   \
+ *   a    (B)z   d     e           a    (B)    d     e  
+ *       /   \                         /   \
+ *      b     r                       b     r           
+ *
+ * case 2)
+ *                   [11]
+ *                  /    \
+ *                /        \
+ *              <2>        [14] <-keep
+ *             /   \          \
+ *            /     \          \
+ *          [1]     <7> <-viol <15>
+ *                  / \
+ *                [5] [8]
+ *                /
+ *              <4>
+ *                    ||
+ *                    \/
+ * case 3)
+ *                   [11]
+ *                  /    \
+ *                /        \
+ *              <7>        [14] <-keep
+ *             /   \          \
+ *            /     \          \
+ *   viol-> <2>     [8]        <15>
+ *         /   \
+ *       [1]   [5] 
+ *             /
+ *            <4>
+ *                    ||
+ *                    \/
+ *
+ *                    [7]
+ *                   /   \
+ *                 /       \
+ *        viol-> <2>       <11> 
+ *              /   \      /  \
+ *             /     \    /    \
+ *           [1]    [5]  [8]   [14]
+ *                  /            \
+ *                <4>           <15>
+ */
+
+
+template <typename T>
+struct RBTree_node : public RBTree_node_base {
+    T value;
+};
+
+template <typename T>
+struct RBTree : public RBTree_base {
+};
+
+// 向红黑树里插入一个结点z(假设z的value属性已被事先赋值)
+template <typename T>
+void tree_insert(RBTree<T> &tree, RBTree_node<T> *z) 
+{
+    auto y = &tree.nil;     // y为要插入位置的父结点
+    auto x = tree.root;     // x遍历树
+    while (x != &tree.nil) {
+        y = x;
+        if (z.value < static_cast<RBTree_node<T> *>(x).value)
+            x = x->left;
+        else
+            x = x->right;
+    }
+    z->parent = y;
+    if (y == &tree.nil)     // 树为空
+        tree.root = z;
+    else if (z.value < static_cast<RBTree_node<T> *>(y).value)  // z插入到左子树
+        y->left = z;
+    else                    // z插入到右子树
+        y->right =z;
+    z->left = z->right = &tree.nil; // z的左右子树指向nil
+    z.color = RBTREE_NODE_RED; 
+    tree_insert_fixup(tree, z); // 调整树
+}
 
 #endif
