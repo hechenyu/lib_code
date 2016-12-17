@@ -5,11 +5,14 @@
 
 typedef struct RBTree_node_base *RBTree_link;
 
-#define RBTREE_NODE_RED   0
-#define RBTREE_NODE_BLACK 1
+// 红黑树结点颜色
+enum {
+    RED,
+    BLACK
+};
 
 // 红黑树结点, 包含指向父结点的指针,
-// 以及指向左右结点的指针,
+// 以及指向左右子结点的指针,
 // 以及颜色属性
 // 不包含数据
 struct RBTree_node_base {
@@ -22,9 +25,9 @@ struct RBTree_node_base {
 // 红黑树为满足如下性质的二叉搜索树:
 // 每个结点或是红色的, 或是黑色的;
 // 根结点是黑色的;
-// 每个结点(NIL)是黑色的;
+// 每个叶结点(NIL)是黑色的;
 // 如果一个结点是红色的, 则它的两个子结点都是黑色的,
-// (任何路径上不存在连续的黑色结点);
+// (任何路径上不存在连续的红色结点);
 // 对每个结点, 从该结点到其所有后代叶结点的简单路径上,
 // 均包含相同数目的黑色结点.
 struct RBTree_base {
@@ -37,7 +40,7 @@ inline
 void tree_init(RBTree_node_base &tree)
 {
     tree.nil.parent = tree.nil.left = tree.nil.right = &tree.nil;
-    tree.nil.color = RBTREE_NODE_BLACK;
+    tree.nil.color = BLACK;
     tree.root = &tree.nil;
 }
 
@@ -156,30 +159,39 @@ void tree_right_rotate(RBTree_base &tree, RBTree_link y)
  *        /   \       /   \             /   \       /   \
  *       a    (B)z   d     e           a    (B)    d     e  
  *           /   \                         /   \
- *          b     r                       b     r           
+ *          b     c                       b     c
  * b)
  *                 |                             |           
  *                [C]                    新结点z(C)
  *             __/   \__                     __/   \__        
- *            /         \      ===          /         \
+ *            /         \     ======>       /         \
  *          (B)         (D)y              [B]         [D]
  *         /   \       /   \             /   \       /   \
- *      z(A)    r     d     e          (A)    r     d     e
+ *      z(A)    c     d     e          (A)    c     d     e
  *      /   \                         /   \
  *     a     b                       a     b
  *
  * 情况2: z的叔结点y是黑色的且z是一个右孩子
  * 情况3: z的叔结点y是黑色的且z是一个左孩子
  *
- *              
- *
- * 
- *
- *
- *             
- *
+ *                |                               |                           |
+ *               [C]                             [C]                         [B]
+ *            __/   \__                       __/   \__                   __/   \__
+ *           /         \      ======>        /         \     ======>     /         \
+ *         (A)          d y                (B)          d y           z(A)         (C)
+ *        /   \                           /   \                       /   \       /   \
+ *       a    (B)z                     z(A)    c                     a     b     r     d
+ *           /   \                     /   \
+ *          b     c                   a     b                          
+ *             情况2                          情况3
  *
  */
+inline
+void tree_insert_fixup(RBTree_base &tree, RBTree_link z) 
+{
+    while (z->parent->color == RED) {
+    }
+}
 
 
 template <typename T>
@@ -212,7 +224,7 @@ void tree_insert(RBTree<T> &tree, RBTree_node<T> *z)
     else                    // z插入到右子树
         y->right =z;
     z->left = z->right = &tree.nil; // z的左右子树指向nil
-    z.color = RBTREE_NODE_RED; 
+    z.color = RED; 
     tree_insert_fixup(tree, z); // 调整树
 }
 
