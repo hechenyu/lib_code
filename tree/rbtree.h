@@ -174,23 +174,55 @@ void tree_right_rotate(RBTree_base &tree, RBTree_link y)
  * 情况2: z的叔结点y是黑色的且z是一个右孩子
  * 情况3: z的叔结点y是黑色的且z是一个左孩子
  *
- *                |                               |                           |
- *               [C]                             [C]                         [B]
- *            __/   \__                       __/   \__                   __/   \__
- *           /         \      ======>        /         \     ======>     /         \
- *         (A)          d y                (B)          d y           z(A)         (C)
- *        /   \                           /   \                       /   \       /   \
- *       a    (B)z                     z(A)    c                     a     b     r     d
- *           /   \                     /   \
- *          b     c                   a     b                          
- *             情况2                          情况3
+ *            |                            |                         |
+ *           [C]                          [C]                       [B]
+ *        __/   \__                    __/   \__                 __/   \__
+ *       /         \    ======>       /         \    ======>    /         \
+ *     (A)          d y             (B)          d y         z(A)         (C)
+ *    /   \                        /   \                     /   \       /   \
+ *   a    (B)z                  z(A)    c                   a     b     r     d
+ *       /   \                  /   \
+ *      b     c                a     b                         
+ *         情况2                       情况3
  *
  */
 inline
 void tree_insert_fixup(RBTree_base &tree, RBTree_link z) 
 {
+    assert(z->color == RED);
+
     while (z->parent->color == RED) {
+        if (z->parent == z->parent->parent->left) { // z的父结点为左子树
+            auto y = z->parent->parent->right;      // y为z的叔结点
+            if (y->color == RED) {
+                z->parent->color = BLACK;       // 情况1
+                y->color = BLACK;               // 情况1
+                z->parent->parent->color = RED; // 情况1
+                z = z->parent->parent;          // 情况1
+            } else if (z == z->parent->right) {
+                z = z->parent;              // 情况2
+                tree_left_rotate(tree, z);  // 情况2
+            }
+            z->parent->color = BLACK;                   // 情况3
+            z->parent->parent->color = RED;             // 情况3
+            tree_right_rotate(tree, z->parent->parent); // 情况3
+        } else {                                    // z的父结点为右子树
+            auto y = z->parent->parent->left;       // y为z的叔结点
+            if (y->color == RED) {
+                z->parent->color = BLACK;       // 情况1
+                y->color = BLACK;               // 情况1
+                z->parent->parent->color = RED; // 情况1
+                z = z->parent->parent;          // 情况1
+            } else if (z == z->parent->left) {
+                z = z->parent;              // 情况2
+                tree_right_rotate(tree, z); // 情况2
+            }
+            z->parent->color = BLACK;                   // 情况3
+            z->parent->parent->color = RED;             // 情况3
+            tree_left_rotate(tree, z->parent->parent);  // 情况3
+        }
     }
+    tree.root->color = BLACK;
 }
 
 
