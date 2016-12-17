@@ -225,6 +225,40 @@ void tree_insert_fixup(RBTree_base &tree, RBTree_link z)
     tree.root->color = BLACK;
 }
 
+/**
+ * 用另一棵子树替换一棵子树并成为其双亲的孩子结点:
+ * 用一个以v为根的子树来替换一棵以u为根的子树时,
+ * 结点u的双亲就变为v的双亲, 并且最后v成为u的双亲的相应孩子.
+ *
+ *         q            
+ *         |           |
+ *         B u         E v
+ *       /   \       /   \
+ *      A     C     D     F
+ *             ||
+ *             \/
+ *         q             
+ *         |           |  
+ *         E v         B u
+ *       /   \       /   \
+ *      D     F     A     C
+ *
+ */
+inline
+void tree_transplant(RBTree &tree, RBTree_link u, RBTree_link v)
+{
+	if (u->parent == &tree.nil) {       // u为树的根结点
+		tree->root = v;
+	} else if (u == u->parent->left) {  // u为父结点的左子树
+		u->parent->left = v;
+	} else {                            // u为父结点的右子树
+		u->parent->right = v;
+	}
+
+	v->parent = u->parent;
+}
+
+
 
 template <typename T>
 struct RBTree_node : public RBTree_node_base {
