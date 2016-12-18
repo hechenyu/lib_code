@@ -269,6 +269,7 @@ void tree_transplant(RBTree &tree, RBTree_link u, RBTree_link v)
  * () -> 红色结点 
  * [] -> 黑色结点
  * {} -> 双重黑色结点
+ * ?? -> 不确定颜色结点
  *
  * 情况1: x的兄弟结点w是红色的
  * 
@@ -294,38 +295,32 @@ void tree_transplant(RBTree &tree, RBTree_link u, RBTree_link v)
  *                / \     / \                   / \     / \
  *               c   d   e   f                 c   d   e   f
  *                                                        
- * Case 3)
- *                q                                q
- *                |                                |
- *                D                                D
- *              /   \                            /   \
- *            /       \        =====>          /       \
- * viol-> [[B]]        [H] <-keep   viol-> [[B]]        [F] 
- *        /   \       /   \                /   \       /   \
- *       A     C    <F>   [J]             A     C     E    <H>
- *                  / \   / \                             /   \
- *                 E   G I   K                           G    [J]
- *                                                            / \
- *                                                           I   K
- * # exchange the color of F with H
- * # right rotate H
- * # goto Case 4
+ * 情况3: x的兄弟节点是黑色的, w的左孩子是红色的, w的右孩子是黑色的
  *
- * Case 4)
- *                q                             q
- *                |                             |
- *                D                             H
- *              /   \                         /   \
- *            /       \        =====>       /       \
- * viol-> [[B]]        [H] <-keep        [D]         [J]
- *        /   \       /   \             /   \        / \
- *       A     C     F    <J>         [B]    F      I   K   
- *                  / \   / \         / \   / \
- *                 E   G I   K       A   C E   G 
- * # exchange the color of D with H
- * # set J's color BLACK
- * # left rotate D 
- * # and break loop
+ *              |                             |
+ *             ?B?c                          ?B?c
+ *          __/   \__                     __/   \__
+ *         /         \        =====>     /         \
+ *     x{A}           [D]w           x{A}           [C]new w 
+ *     /   \         /   \           /   \         /   \
+ *    a     b     (C)     [E]       a     b       c    (D)
+ *                / \     / \                         /   \
+ *               c   d   e   f                       d     [E]
+ *                                                         / \
+ *                                                        e   f
+ *
+ * 情况4: x的兄弟结点w是黑色的, 且w的右孩子是红色的
+ *
+ *              |                                |
+ *             ?B?c                             ?D?c
+ *          __/   \__                        __/   \__
+ *         /         \        =====>        /         \
+ *     x{A}           [D]w               [B]           [E]
+ *     /   \         /   \              /   \          / \
+ *    a     b     ?C?c'   (E)        [A]     ?C?c'    e   f
+ *                / \     / \        / \     / \
+ *               c   d   e   f      a   b   c   d 
+ *                                                new x = tree.root
  *
  */
 
