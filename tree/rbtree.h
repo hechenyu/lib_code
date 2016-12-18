@@ -230,19 +230,19 @@ void tree_insert_fixup(RBTree_base &tree, RBTree_link z)
  * 用一个以v为根的子树来替换一棵以u为根的子树时,
  * 结点u的父结点就变为v的父结点, 并且最后v成为u的父结点的相应孩子.
  *
- *         q            
- *         |           |
- *         B u         E v
- *       /   \       /   \
- *      A     C     D     F
+ *         q           
+ *         |         |
+ *         B u       E v
+ *        / \       / \
+ *       A   C     D   F
  *
  *              ||
  *              \/
- *         q             
- *         |           |  
- *         E v         B u
- *       /   \       /   \
- *      D     F     A     C
+ *         q           
+ *         |         |  
+ *         E v       B u
+ *        / \       / \
+ *       D   F     A   C
  *
  */
 inline
@@ -266,9 +266,10 @@ void tree_transplant(RBTree &tree, RBTree_link u, RBTree_link v)
  * 2)如果z只有一个孩子, 那么将这个孩子提升到树中z的位置上, 
  *   并修改z的父结点, 用z的孩子还替换z;
  * 3)如果z有两个孩子, 那么找z的后继y(一定在z的右子树中),
- *   并让y占据树中z的位置; z的原来右子树部分成为y
- * Case 1)
+ *   并让y占据树中z的位置; z的原来右子树部分成为y的新的右子树,
+ *   并且z的左子树成为y的新的左子树.
  *
+ * a): 情况1和情况2的一部分(z只有一个右孩子)
  *        q             q
  *        |             |
  *        A z  =====>   B r
@@ -276,39 +277,43 @@ void tree_transplant(RBTree &tree, RBTree_link u, RBTree_link v)
  *     NIL  B r
  *         / \
  *
- * Case 2)
- *          q             q
- *          |             |
- *   node-> B    =====>   A
- *         / \           / \
- *        A  NIL
- *       / \
+ * b): 情况2的另一部分(z只有一个左孩子)
+ *        q             q
+ *        |             |
+ *        B z  =====>   A l
+ *       / \           / \
+ *    l A  NIL
+ *     / \
  *
- * Case 3)
+ * c): 情况3的一部分(z的后继y正好为z的右孩子)
  *           q                       q
  *           |                       |
- *    node-> B                       C <-keep
- *         /   \       =====>      /   \
+ *           B z                     C y
+ *        __/ \__     =====>      __/ \__
  *       /       \               /       \
- *      A         C <-keep      A         D 
+ *    l A         C y         l A         D x
  *    /   \     /   \         /   \     /   \
- *            NIL    D
+ *            NIL    D x
  *                  / \
  *
- * Case 4)
- *         q                   q                      q
- *         |                   |                      |
- *  node-> B            node-> B                      C <-keep
- *       /   \    =====>     /            =====>    /   \
- *     /       \           /        C <-keep      /       \
- *    A         E         A       /   \          A         E
- *  /   \     /   \     /   \   NIL    E       /   \     /   \
- *           C <-keep                /   \              D
- *          / \                     D                  / \
- *        NIL  D                   / \
- *            / \
+ * d): 情况3的另一部分(z的后继y不是z的右孩子)
+ *         q                       q                             q
+ *         |                       |                             |
+ *         B z                     B z       C y                 C y
+ *     __/   \__    ======>    __/         /   \   =====>    __/   \__
+ *    /         \             /          NIL    E r         /         \
+ * l A           E r       l A                /   \      l A           E r
+ * /   \       /   \       /   \           x D           /   \       /   \
+ *          y C                             / \                   x D
+ *          /   \                                                  / \
+ *        NIL  x D                   
+ *              / \
  */
 
+
+ 
+   
+ 
 
 template <typename T>
 struct RBTree_node : public RBTree_node_base {
