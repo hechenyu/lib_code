@@ -16,20 +16,20 @@ enum {
 // 以及颜色属性
 // 不包含数据
 struct RBTree_node_base {
-    RBTree_link left;   // 指向左子树的指针
-    RBTree_link rigth;  // 指向右子树的指针
+    RBTree_link left;   // 指向左孩子的指针
+    RBTree_link rigth;  // 指向右孩子的指针
     RBTree_link parent; // 指向父结点的指针
     int         color;  // 结点颜色
 };
 
 // 红黑树为满足如下性质的二叉搜索树:
-// 每个结点或是红色的, 或是黑色的;
-// 根结点是黑色的;
-// 每个叶结点(NIL)是黑色的;
-// 如果一个结点是红色的, 则它的两个子结点都是黑色的,
-// (任何路径上不存在连续的红色结点);
-// 对每个结点, 从该结点到其所有后代叶结点的简单路径上,
-// 均包含相同数目的黑色结点.
+// 1)每个结点或是红色的, 或是黑色的;
+// 2)根结点是黑色的;
+// 3)每个叶结点(NIL)是黑色的;
+// 4)如果一个结点是红色的, 则它的两个子结点都是黑色的,
+//   (任何路径上不存在连续的红色结点);
+// 5)对每个结点, 从该结点到其所有后代叶结点的简单路径上,
+//   均包含相同数目的黑色结点.
 struct RBTree_base {
     RBTree_link      root;  // 指向根结点的指针
     RBTree_node_base nil;   // 哨兵结点
@@ -44,7 +44,7 @@ void tree_init(RBTree_node_base &tree)
     tree.root = &tree.nil;
 }
 
-// 判断rbtree是否为空, 
+// 判断红黑树是否为空, 
 inline
 bool tree_is_empty(const RBTree_node_base &tree)
 {
@@ -70,8 +70,10 @@ RBTree_link tree_maximum(RBTree_node_base &tree, RBTree_link x)
 }
 
 /**
- * 左旋指定结点x,
- * 前置条件: x的右子树不为空, 且根结点的父结点为nil结点
+ * 左旋指定结点x:
+ * 当在某个结点x上做左旋时, 假设它的右孩子为y而不是NIL结点;
+ * 左旋以x到y的链为“支轴”进行; 
+ * 它使y成为该子树新的根结点, x成为y的左孩子, y的左孩子成为x的右孩子;
  * 
  *       |              |         
  *       y              x
@@ -84,31 +86,30 @@ inline
 void tree_left_rotate(RBTree_base &tree, RBTree_link x)
 {
     assert(x->right != &tree.nil);
-    assert(tree.root->parent == &tree.nil);
 
-    // 将x结点的右子树的左子树, 挂接成为x结点的右子树
+    // 取x的右孩子为y结点, 并将y的左孩子成为x的右孩子;
     auto y = x->right;
     x->right = y->left;
     if (y->left != &tree.nil)
         y->left->parent = x;
 
-    // 将x结点的原先的右子树挂接到x的父节点下
+    // 将y成为该子树新的根结点
     y->parent = x->parent;
-    if (x->parent == &tree.nil)     // x结点为根结点, (这里用到了根结点的父节点为nil结点的前置条件)
+    if (x->parent == &tree.nil)     // x为整棵树根结点
         tree.root = y;
-    else if (x == x->parent->left)  // x为父结点的左子树
+    else if (x == x->parent->left)  // x为父结点的左孩子
         x->parent->left = y;
-    else                            // x为父结点的右子树
+    else                            // x为父结点的右孩子
         x->parent->right = y;
 
-    // 将x结点挂接成为原先的右子树结点的左子树
+    // 将x成为y的左孩子
     y->left = x;
     x->parent = y;
 }
 
 /**
- * 右旋指定结点y,
- * 前置条件: y的左子树不为空, 且根结点的父结点为nil结点
+ * 右旋指定结点y:
+ * 同左旋镜像
  * 
  *       |              |         
  *       y              x
@@ -121,24 +122,23 @@ inline
 void tree_right_rotate(RBTree_base &tree, RBTree_link y)
 {
     assert(y->left != &tree.nil);
-    assert(tree.root->parent == &tree.nil);
 
-    // 将y结点的左子树的右子树, 挂接成为y结点的左子树
+    // 取y的左孩子为x结点, 并将x的右孩子成为y的左孩子;
     auto x = y->left;
     y->left = x->right;
     if (x->right != &tree.nil)
         x->right->parent = y;
 
-    // 将y结点的原先的左子树挂接到y的父节点下
+    // 将x成为该子树新的根结点
     x->parent = y->parent;
-    if (y->parent == &tree.nil)     // y结点为根结点, (这里用到了根结点的父节点为nil结点的前置条件)
+    if (y->parent == &tree.nil)     // y为整棵树根结点
         tree.root = x;
-    else if (x == x->parent->left)  // y为父结点的左子树
+    else if (x == x->parent->left)  // y为父结点的左孩子
         x->parent->left = y;
-    else                            // y为父结点的右子树
+    else                            // y为父结点的右孩子
         x->parent->right = y;
 
-    // 将y结点挂接成为原先的左子树结点的右子树
+    // 将y成为x的右孩子
     x->right = y;
     y->parent = x;
 }
@@ -192,30 +192,30 @@ void tree_insert_fixup(RBTree_base &tree, RBTree_link z)
     assert(z->color == RED);
 
     while (z->parent->color == RED) {
-        if (z->parent == z->parent->parent->left) { // z的父结点为左子树
-            auto y = z->parent->parent->right;      // y为z的叔结点
+        if (z->parent == z->parent->parent->left) {     // z为父结点的左孩子
+            auto y = z->parent->parent->right;          // y为z的叔结点
             if (y->color == RED) {
-                z->parent->color = BLACK;       // 情况1
-                y->color = BLACK;               // 情况1
-                z->parent->parent->color = RED; // 情况1
-                z = z->parent->parent;          // 情况1
+                z->parent->color = BLACK;               // 情况1
+                y->color = BLACK;                       // 情况1
+                z->parent->parent->color = RED;         // 情况1
+                z = z->parent->parent;                  // 情况1
             } else if (z == z->parent->right) {
-                z = z->parent;              // 情况2
-                tree_left_rotate(tree, z);  // 情况2
+                z = z->parent;                          // 情况2
+                tree_left_rotate(tree, z);              // 情况2
             }
             z->parent->color = BLACK;                   // 情况3
             z->parent->parent->color = RED;             // 情况3
             tree_right_rotate(tree, z->parent->parent); // 情况3
-        } else {                                    // z的父结点为右子树
-            auto y = z->parent->parent->left;       // y为z的叔结点
+        } else {                                        // z的父结点为右孩子
+            auto y = z->parent->parent->left;           // y为z的叔结点
             if (y->color == RED) {
-                z->parent->color = BLACK;       // 情况1
-                y->color = BLACK;               // 情况1
-                z->parent->parent->color = RED; // 情况1
-                z = z->parent->parent;          // 情况1
+                z->parent->color = BLACK;               // 情况1
+                y->color = BLACK;                       // 情况1
+                z->parent->parent->color = RED;         // 情况1
+                z = z->parent->parent;                  // 情况1
             } else if (z == z->parent->left) {
-                z = z->parent;              // 情况2
-                tree_right_rotate(tree, z); // 情况2
+                z = z->parent;                          // 情况2
+                tree_right_rotate(tree, z);             // 情况2
             }
             z->parent->color = BLACK;                   // 情况3
             z->parent->parent->color = RED;             // 情况3
@@ -226,17 +226,18 @@ void tree_insert_fixup(RBTree_base &tree, RBTree_link z)
 }
 
 /**
- * 用另一棵子树替换一棵子树并成为其双亲的孩子结点:
+ * 用另一棵子树替换一棵子树并成为其父结点的孩子结点:
  * 用一个以v为根的子树来替换一棵以u为根的子树时,
- * 结点u的双亲就变为v的双亲, 并且最后v成为u的双亲的相应孩子.
+ * 结点u的父结点就变为v的父结点, 并且最后v成为u的父结点的相应孩子.
  *
  *         q            
  *         |           |
  *         B u         E v
  *       /   \       /   \
  *      A     C     D     F
- *             ||
- *             \/
+ *
+ *              ||
+ *              \/
  *         q             
  *         |           |  
  *         E v         B u
@@ -258,6 +259,55 @@ void tree_transplant(RBTree &tree, RBTree_link u, RBTree_link v)
 	v->parent = u->parent;
 }
 
+/**
+ * 从一棵二叉搜索树中删除一个结点z, 整个策略分为三种基本情况:
+ * 1)如果z没有孩子结点, 那么只是简单的将它删除, 并修改它的父结点, 
+ *   用NIL作为孩子来替换z;
+ * 2)如果z只有一个孩子, 那么将这个孩子提升到树中z的位置上, 
+ *   并修改z的父结点, 用z的孩子还替换z;
+ * 3)如果z有两个孩子, 那么找z的后继y(一定在z的右子树中),
+ *   并让y占据树中z的位置; z的原来右子树部分成为y
+ * Case 1)
+ *
+ *        q             q
+ *        |             |
+ *        A z  =====>   B r
+ *       / \           / \
+ *     NIL  B r
+ *         / \
+ *
+ * Case 2)
+ *          q             q
+ *          |             |
+ *   node-> B    =====>   A
+ *         / \           / \
+ *        A  NIL
+ *       / \
+ *
+ * Case 3)
+ *           q                       q
+ *           |                       |
+ *    node-> B                       C <-keep
+ *         /   \       =====>      /   \
+ *       /       \               /       \
+ *      A         C <-keep      A         D 
+ *    /   \     /   \         /   \     /   \
+ *            NIL    D
+ *                  / \
+ *
+ * Case 4)
+ *         q                   q                      q
+ *         |                   |                      |
+ *  node-> B            node-> B                      C <-keep
+ *       /   \    =====>     /            =====>    /   \
+ *     /       \           /        C <-keep      /       \
+ *    A         E         A       /   \          A         E
+ *  /   \     /   \     /   \   NIL    E       /   \     /   \
+ *           C <-keep                /   \              D
+ *          / \                     D                  / \
+ *        NIL  D                   / \
+ *            / \
+ */
 
 
 template <typename T>
@@ -269,12 +319,17 @@ template <typename T>
 struct RBTree : public RBTree_base {
 };
 
-// 向红黑树里插入一个结点z(假设z的value属性已被事先赋值)
+/**
+ * 向红黑树里插入一个结点z(假设z的value属性已被事先赋值):
+ * 插入结点z的位置搜索方式同二叉搜索树,
+ * 插入结点z后, z的颜色被设置为红色, 
+ * 所以有可能破环性质4, 需要调用tree_insert_fixup调整树结构
+ */
 template <typename T>
 void tree_insert(RBTree<T> &tree, RBTree_node<T> *z) 
 {
-    auto y = &tree.nil;     // y为要插入位置的父结点
-    auto x = tree.root;     // x遍历树
+    auto y = &tree.nil;                                         // y为要插入位置的父结点
+    auto x = tree.root;                                         // x遍历树
     while (x != &tree.nil) {
         y = x;
         if (z.value < static_cast<RBTree_node<T> *>(x).value)
@@ -283,15 +338,15 @@ void tree_insert(RBTree<T> &tree, RBTree_node<T> *z)
             x = x->right;
     }
     z->parent = y;
-    if (y == &tree.nil)     // 树为空
+    if (y == &tree.nil)                                         // 树为空
         tree.root = z;
     else if (z.value < static_cast<RBTree_node<T> *>(y).value)  // z插入到左子树
         y->left = z;
-    else                    // z插入到右子树
+    else                                                        // z插入到右子树
         y->right =z;
-    z->left = z->right = &tree.nil; // z的左右子树指向nil
+    z->left = z->right = &tree.nil;                             // z的左右子结点均为NIL
     z.color = RED; 
-    tree_insert_fixup(tree, z); // 调整树
+    tree_insert_fixup(tree, z);                                 // 调整树
 }
 
 #endif
