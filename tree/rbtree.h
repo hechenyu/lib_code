@@ -144,8 +144,8 @@ void tree_right_rotate(RBTree_base &tree, RBTree_link y)
 }
 
 /**
- * 对结点重新着色并旋转, 以保持红黑性质
- * ------------------------------------
+ * 插入结点后, 对结点重新着色并旋转, 以保持红黑性质
+ * ------------------------------------------------
  * () -> 红色结点 
  * [] -> 黑色结点
  *
@@ -260,6 +260,77 @@ void tree_transplant(RBTree &tree, RBTree_link u, RBTree_link v)
 }
 
 /**
+ * 在删除结点后, 恢复搜索树的红黑性质:
+ * 将额外的黑色沿树上移, 直到:
+ * 1.x指向红黑结点, 此时将x着为(单个)黑色,
+ * 2.x指向根结点, 此时可以简单地“移除”额外的黑色,
+ * 3.执行适当的旋转和重新着色;
+ * ----------------------------------
+ * () -> 红色结点 
+ * [] -> 黑色结点
+ * {} -> 双重黑色结点
+ *
+ * 情况1: x的兄弟结点w是红色的
+ * 
+ *              |                                |
+ *             [B]                              [D]
+ *          __/   \__                        __/   \__
+ *         /         \        =====>        /         \
+ *     x{A}           (D)w               (B)           [E]
+ *     /   \         /   \              /   \         /   \
+ *    a     b     [C]     [E]       x{A}new w[C]     e     f   
+ *                / \     / \        / \     / \
+ *               c   d   e   f      a   b   c   d   
+ *
+ * 情况2: x的兄弟结点w是黑色的, 而且w的两个子结点都是黑色的
+ *
+ *              |                             |             
+ *             ?B?c                     new x?B?c
+ *          __/   \__                     __/   \__         
+ *         /         \        =====>     /         \
+ *     x{A}           [D]w            [A]           (D)
+ *     /   \         /   \           /   \         /   \
+ *    a     b     [C]     [E]       a     b     [C]     [E] 
+ *                / \     / \                   / \     / \
+ *               c   d   e   f                 c   d   e   f
+ *                                                        
+ * Case 3)
+ *                q                                q
+ *                |                                |
+ *                D                                D
+ *              /   \                            /   \
+ *            /       \        =====>          /       \
+ * viol-> [[B]]        [H] <-keep   viol-> [[B]]        [F] 
+ *        /   \       /   \                /   \       /   \
+ *       A     C    <F>   [J]             A     C     E    <H>
+ *                  / \   / \                             /   \
+ *                 E   G I   K                           G    [J]
+ *                                                            / \
+ *                                                           I   K
+ * # exchange the color of F with H
+ * # right rotate H
+ * # goto Case 4
+ *
+ * Case 4)
+ *                q                             q
+ *                |                             |
+ *                D                             H
+ *              /   \                         /   \
+ *            /       \        =====>       /       \
+ * viol-> [[B]]        [H] <-keep        [D]         [J]
+ *        /   \       /   \             /   \        / \
+ *       A     C     F    <J>         [B]    F      I   K   
+ *                  / \   / \         / \   / \
+ *                 E   G I   K       A   C E   G 
+ * # exchange the color of D with H
+ * # set J's color BLACK
+ * # left rotate D 
+ * # and break loop
+ *
+ */
+
+
+/**
  * 从一棵二叉搜索树中删除一个结点z, 整个策略分为三种基本情况:
  * 1)如果z没有孩子结点, 那么只是简单的将它删除, 并修改它的父结点, 
  *   用NIL作为孩子来替换z;
@@ -308,12 +379,39 @@ void tree_transplant(RBTree &tree, RBTree_link u, RBTree_link v)
  *          /   \                                                  / \
  *        NIL  x D                   
  *              / \
+ *
+ * PS: 结点x可能引起红黑性质的破坏.
  */
-
-
- 
-   
- 
+inline
+void tree_remove(RBTree &tree, RBTree_link z)
+{
+    auto y = z;
+    auto y_original_color = y->color;
+    if (z->left == &tree.nil) {
+        x = z->right;
+        tree_transplant(tree, z, z->right);
+    } else if (z->right == &tree.nil) {
+        x = z->left;
+        tree_transplant(tree, z, z->left);
+    } else {
+        y = tree_minimum(tree, z->right);
+        y_original_color = y->color;
+        x = y->right;
+        if (y->parent == z) {   // x有可能是NIL
+            x->parent = y;
+        } else {
+            tree_transplant(tree, y, y->right);
+            y->right = z->right;
+            z->right->parent = y;
+        }
+        tree_transplant(tree, z, y);
+        y->left = z->left;
+        z->left->parent = y;
+        y->color = z->color;
+    }
+    if (y_original_color == BLACK)
+        tree_remove_fixup(tree, x);
+}
 
 template <typename T>
 struct RBTree_node : public RBTree_node_base {
