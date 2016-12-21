@@ -323,7 +323,61 @@ void tree_transplant(RBTree &tree, RBTree_link u, RBTree_link v)
  *                                                new x = tree.root
  *
  */
-
+inline
+void tree_remove_fixup(RBTree &tree, RBTree_link x)
+{
+    while (x != tree.root && x->color == BLACK) {
+        if (x == x->parent->left) {                 // x为父结点的左孩子
+            auto w == x->parent->right;             // w为x的兄弟结点
+            if (w->color == RED) {
+                w->color = BLACK;                   // 情况1
+                x->parent->color = RED;             // 情况1
+                tree_left_rotate(tree, x->parent);  // 情况1
+                w = x->parent->right;               // 情况1
+            }
+            if (w->left->color == BLACK && w->right == BLACK) {
+                w->color = RED;                     // 情况2
+                x = x->parent;                      // 情况2
+            } else {
+                if (w->right->color == BLACK) {
+                    w->left->color = BLACK;         // 情况3
+                    w->color = RED;                 // 情况3
+                    tree_right_rotate(tree, w);     // 情况3
+                    w = x->parent->right;           // 情况3
+                }
+                w->color = x->parent->color;        // 情况4
+                x->parent->color = BLACK;           // 情况4
+                w->right->color = BLACK;            // 情况4
+                tree_left_rotate(tree, x->parent);  // 情况4
+                x = tree.root;                      // 情况4
+            }
+        } else {                                    // x为父结点的右孩子
+            auto w == x->parent->left;              // w为x的兄弟结点
+            if (w->color == RED) {
+                w->color = BLACK;                   // 情况1
+                x->parent->color = RED;             // 情况1
+                tree_right_rotate(tree, x->parent); // 情况1
+                w = x->parent->left;                // 情况1
+            }
+            if (w->left->color == BLACK && w->right == BLACK) {
+                w->color = RED;                     // 情况2
+                x = x->parent;                      // 情况2
+            } else {
+                if (w->left->color == BLACK) {
+                    w->right->color = BLACK;        // 情况3
+                    w->color = RED;                 // 情况3
+                    tree_left_rotate(tree, w);      // 情况3
+                    w = x->parent->left;            // 情况3
+                }
+                w->color = x->parent->color;        // 情况4
+                x->parent->color = BLACK;           // 情况4
+                w->left->color = BLACK;             // 情况4
+                tree_right_rotate(tree, x->parent); // 情况4
+                x = tree.root;                      // 情况4
+            }
+        }
+    }
+}
 
 /**
  * 从一棵二叉搜索树中删除一个结点z, 整个策略分为三种基本情况:
