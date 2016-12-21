@@ -37,7 +37,7 @@ struct RBTree_base {
 
 // 初始化红黑树
 inline
-void tree_init(RBTree_node_base &tree)
+void tree_init(RBTree_base &tree)
 {
     tree.nil.parent = tree.nil.left = tree.nil.right = &tree.nil;
     tree.nil.color = BLACK;
@@ -46,14 +46,14 @@ void tree_init(RBTree_node_base &tree)
 
 // 判断红黑树是否为空, 
 inline
-bool tree_is_empty(const RBTree_node_base &tree)
+bool tree_is_empty(const RBTree_base &tree)
 {
     return (tree.root == &tree.nil);
 }
 
 // 返回以结点x为根的子树的最小元素的指针,
 inline
-RBTree_link tree_minimum(RBTree_node_base &tree, RBTree_link x)
+RBTree_link tree_minimum(RBTree_base &tree, RBTree_link x)
 {
     while (x->left != &tree.nil)
         x = x->left;
@@ -62,7 +62,7 @@ RBTree_link tree_minimum(RBTree_node_base &tree, RBTree_link x)
 
 // 返回以结点x为根的子树的最大元素的指针,
 inline
-RBTree_link tree_maximum(RBTree_node_base &tree, RBTree_link x)
+RBTree_link tree_maximum(RBTree_base &tree, RBTree_link x)
 {
     while (x->right != &tree.nil)
         x = x->right;
@@ -246,7 +246,7 @@ void tree_insert_fixup(RBTree_base &tree, RBTree_link z)
  *
  */
 inline
-void tree_transplant(RBTree &tree, RBTree_link u, RBTree_link v)
+void tree_transplant(RBTree_base &tree, RBTree_link u, RBTree_link v)
 {
 	if (u->parent == &tree.nil) {       // u为树的根结点
 		tree->root = v;
@@ -324,7 +324,7 @@ void tree_transplant(RBTree &tree, RBTree_link u, RBTree_link v)
  *
  */
 inline
-void tree_remove_fixup(RBTree &tree, RBTree_link x)
+void tree_remove_fixup(RBTree_base &tree, RBTree_link x)
 {
     while (x != tree.root && x->color == BLACK) {
         if (x == x->parent->left) {                 // x为父结点的左孩子
@@ -432,7 +432,7 @@ void tree_remove_fixup(RBTree &tree, RBTree_link x)
  * PS: 结点x可能引起红黑性质的破坏.
  */
 inline
-void tree_remove(RBTree &tree, RBTree_link z)
+void tree_remove(RBTree_base &tree, RBTree_link z)
 {
     auto y = z;
     auto y_original_color = y->color;
@@ -499,6 +499,53 @@ void tree_insert(RBTree<T> &tree, RBTree_node<T> *z)
     z->left = z->right = &tree.nil;                             // z的左右子结点均为NIL
     z.color = RED; 
     tree_insert_fixup(tree, z);                                 // 调整树
+}
+
+/**
+ * 从红黑树中从x为根结点的子树向下查找等于特定值的结点
+ * 如果未找到, 返回tree.nil
+ * 迭代实现
+ */
+template <typename T>
+RBTree_link tree_iterative_search(RBTree<T> &tree, RBTree_link x, const T &v)
+{
+	while (x != &tree.nil && static_cast<RBTree_node<T> *>(x)->value != v) {
+        if (v < static_cast<RBTree_node<T> *>(x)->value) {
+            x = x->left;
+        } else {
+            x = x->right;
+        }
+	}
+	return x;
+}
+
+template <typename T>
+RBTree_link tree_iterative_search(RBTree<T> &tree, const T &v)
+{
+    return tree_iterative_search(tree, tree.root, v);
+}
+
+/**
+ * 从红黑树中从x为根结点的子树向下查找等于特定值的结点
+ * 如果未找到, 返回tree.nil
+ * 递归实现
+ */
+template <typename T>
+RBTree_link tree_search(RBTree<T> &tree, RBTree_link x, const T &v)
+{
+    if (x == &tree.nil || static_cast<RBTree_node<T> *>(x)->value = v) 
+        return x;
+
+    if (v < static_cast<RBTree_node<T> *>(x)->value)
+        return tree_search(tree, x->left, v);
+    else
+        return tree_search(tree, x->right, v);
+}
+
+template <typename T>
+RBTree_link tree_search(RBTree<T> &tree, const T &v)
+{
+    return tree_search(tree, tree.root, v);
 }
 
 #endif
