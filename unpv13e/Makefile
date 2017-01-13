@@ -1,5 +1,5 @@
 
-SUBDIRS = lib intro
+SUBDIRS = lib intro tcpcliserv
 
 all:
 	@$(MAKE) $(MFLAGS) WHAT_TO_MAKE=$@ common
