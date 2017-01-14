@@ -82,7 +82,7 @@ void list_insert_next(Slist_link x, Slist_link t)
  *             ^-x           ^-t
  */
 inline
-void list_remove_next(Slist_link x)
+void list_delete_next(Slist_link x)
 {
 	auto t = x->next;
 	x->next = t->next;
@@ -120,10 +120,10 @@ void list_insert_front(Slist<T> &list, Slist_node<T> *x)
 
 // 在链表头删除结点
 template <typename T>
-Slist_node<T> *list_remove_front(Slist<T> &list)
+Slist_node<T> *list_delete_front(Slist<T> &list)
 {
     auto x = list.head.next;
-    list_remove_next(&list.head);
+    list_delete_next(&list.head);
     return static_cast<Slist_node<T> *>(x);
 }
 

@@ -32,7 +32,7 @@ int main(int argc, char *argv[])
 		auto y = static_cast<Node *>(x->next);
 		if (y != nullptr) {
 			cout << "next val is: " << y->value << endl;
-			list_remove_next(x);
+			list_delete_next(x);
         	list_free_node(y);
 		}
 		auto t = list_new_node(static_cast<Node *>(x)->value);
@@ -43,7 +43,7 @@ int main(int argc, char *argv[])
 
     cout << "free list: ";
     while (!list_is_empty(list)) {
-		auto node = list_remove_front(list);
+		auto node = list_delete_front(list);
 		cout << node->value << ", ";
         list_free_node(node);
     }

@@ -1,6 +1,7 @@
 #ifndef __stl_list_h
 #define __stl_list_h
 
+#include <stddef.h>
 #include <iterator>
 #include "dlist.h"
 
@@ -166,6 +167,7 @@ public:
         int count = 0;
         auto count_node = [&count](node_type *node) { ++count; };
         list_for_each(list_, count_node);
+        return count;
 	}
 
     // 获取list头节点元素值, 如果list为空, 结果为未定义
@@ -202,7 +204,7 @@ public:
         if (list_is_empty(list_))
             return;
 
-        auto node = list_remove_front(list_);
+        auto node = list_delete_front(list_);
         list_free_node(node);
 	}
 
@@ -212,7 +214,7 @@ public:
         if (list_is_empty(list_))
             return;
 
-        auto node = list_remove_back(list_);
+        auto node = list_delete_back(list_);
         list_free_node(node);
 	}
 
@@ -246,7 +248,7 @@ public:
 	{
         auto node = static_cast<node_type *>(position.link_);
 		auto keep = node->next;
-		list_remove(node);
+		list_delete(node);
         list_free_node(node);
 		return iterator(keep);
 	}
@@ -258,7 +260,7 @@ public:
         while (iter != last) {
             auto node = static_cast<node_type *>(iter.link_);
             ++iter;
-            list_remove(node);
+            list_delete(node);
             list_free_node(node);
         }
 		return last;
@@ -281,7 +283,7 @@ private:
     void destroy()
     {
         while (!list_is_empty(list_)) {
-            auto node = list_remove_front(list_);
+            auto node = list_delete_front(list_);
             list_free_node(node);
         }
     }

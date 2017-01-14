@@ -99,7 +99,7 @@ void list_insert(Dlist_link x, Dlist_link t)
  *             '--------------------'
  */
 inline
-void list_remove(Dlist_link x)
+void list_delete(Dlist_link x)
 {
 	x->prev->next = x->next;
 	x->next->prev = x->prev;
@@ -202,19 +202,19 @@ void list_insert_back(Dlist<T> &list, Dlist_node<T> *x)
 
 // 在链表头删除节点
 template <typename T>
-Dlist_node<T> *list_remove_front(Dlist<T> &list)
+Dlist_node<T> *list_delete_front(Dlist<T> &list)
 {
     auto x = list.nil.next;
-    list_remove(x);
+    list_delete(x);
     return static_cast<Dlist_node<T> *>(x);
 }
 
 // 在链表尾删除节点
 template <typename T>
-Dlist_node<T> *list_remove_back(Dlist<T> &list)
+Dlist_node<T> *list_delete_back(Dlist<T> &list)
 {
     auto x = list.nil.prev;
-    list_remove(x);
+    list_delete(x);
     return static_cast<Dlist_node<T> *>(x);
 }
 
