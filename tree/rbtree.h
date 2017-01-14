@@ -193,34 +193,38 @@ void tree_insert_fixup(RBTree_base &tree, RBTree_link z)
     assert(z->color == RED);
 
     while (z->parent->color == RED) {
-        if (z->parent == z->parent->parent->left) {     // z为父结点的左孩子
-            auto y = z->parent->parent->right;          // y为z的叔结点
+        if (z->parent == z->parent->parent->left) {         // z为父结点的左孩子
+            auto y = z->parent->parent->right;              // y为z的叔结点
             if (y->color == RED) {
-                z->parent->color = BLACK;               // 情况1
-                y->color = BLACK;                       // 情况1
-                z->parent->parent->color = RED;         // 情况1
-                z = z->parent->parent;                  // 情况1
-            } else if (z == z->parent->right) {
-                z = z->parent;                          // 情况2
-                tree_left_rotate(tree, z);              // 情况2
+                z->parent->color = BLACK;                   // 情况1
+                y->color = BLACK;                           // 情况1
+                z->parent->parent->color = RED;             // 情况1
+                z = z->parent->parent;                      // 情况1
+            } else { 
+                if (z == z->parent->right) {
+                    z = z->parent;                          // 情况2
+                    tree_left_rotate(tree, z);              // 情况2
+                }
+                z->parent->color = BLACK;                   // 情况3
+                z->parent->parent->color = RED;             // 情况3
+                tree_right_rotate(tree, z->parent->parent); // 情况3
             }
-            z->parent->color = BLACK;                   // 情况3
-            z->parent->parent->color = RED;             // 情况3
-            tree_right_rotate(tree, z->parent->parent); // 情况3
-        } else {                                        // z的父结点为右孩子
-            auto y = z->parent->parent->left;           // y为z的叔结点
+        } else {                                            // z的父结点为右孩子
+            auto y = z->parent->parent->left;               // y为z的叔结点
             if (y->color == RED) {
-                z->parent->color = BLACK;               // 情况1
-                y->color = BLACK;                       // 情况1
-                z->parent->parent->color = RED;         // 情况1
-                z = z->parent->parent;                  // 情况1
-            } else if (z == z->parent->left) {
-                z = z->parent;                          // 情况2
-                tree_right_rotate(tree, z);             // 情况2
+                z->parent->color = BLACK;                   // 情况1
+                y->color = BLACK;                           // 情况1
+                z->parent->parent->color = RED;             // 情况1
+                z = z->parent->parent;                      // 情况1
+            } else {
+                if (z == z->parent->left) {
+                    z = z->parent;                          // 情况2
+                    tree_right_rotate(tree, z);             // 情况2
+                }
+                z->parent->color = BLACK;                   // 情况3
+                z->parent->parent->color = RED;             // 情况3
+                tree_left_rotate(tree, z->parent->parent);  // 情况3
             }
-            z->parent->color = BLACK;                   // 情况3
-            z->parent->parent->color = RED;             // 情况3
-            tree_left_rotate(tree, z->parent->parent);  // 情况3
         }
     }
     tree.root->color = BLACK;
@@ -500,11 +504,21 @@ void tree_insert(RBTree<T> &tree, RBTree_node<T> *z)
     auto x = tree.root;                                         // x遍历树
     while (x != &tree.nil) {
         y = x;
+#ifndef NDEBUG
+        auto debug = static_cast<RBTree_node<T> *>(x);
+        (void) debug;
+#endif
         if (z->value < static_cast<RBTree_node<T> *>(x)->value)
             x = x->left;
         else
             x = x->right;
     }
+
+#ifndef NDEBUG
+    auto debug = static_cast<RBTree_node<T> *>(y);
+    (void) debug;
+#endif
+
     z->parent = y;
     if (y == &tree.nil)                                         // 树为空
         tree.root = z;
@@ -526,6 +540,10 @@ template <typename T>
 RBTree_link tree_iterative_search(RBTree<T> &tree, RBTree_link x, const T &v)
 {
 	while (x != &tree.nil && static_cast<RBTree_node<T> *>(x)->value != v) {
+#ifndef NDEBUG
+        auto debug = static_cast<RBTree_node<T> *>(x);
+        (void) debug;
+#endif
         if (v < static_cast<RBTree_node<T> *>(x)->value) {
             x = x->left;
         } else {
@@ -549,6 +567,11 @@ RBTree_link tree_iterative_search(RBTree<T> &tree, const T &v)
 template <typename T>
 RBTree_link tree_search(RBTree<T> &tree, RBTree_link x, const T &v)
 {
+#ifndef NDEBUG
+    auto debug = static_cast<RBTree_node<T> *>(x);
+    (void) debug;
+#endif
+
     if (x == &tree.nil || static_cast<RBTree_node<T> *>(x)->value == v) 
         return x;
 
