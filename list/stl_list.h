@@ -13,8 +13,8 @@ class list;
 template <typename T>
 class list_iterator {
 private:
-    typedef Dlist_link link_type;
-	typedef Dlist_node<T> node_type;
+    typedef DList_link link_type;
+	typedef DList_node<T> node_type;
 	typedef list_iterator<T> this_type;
 
     // 成员变量
@@ -82,9 +82,9 @@ public:
 
 template <typename T>
 class list {
-	typedef Dlist_link link_type;
-	typedef Dlist_node<T> node_type;
-	typedef Dlist<T> list_type;
+	typedef DList_link link_type;
+	typedef DList_node<T> node_type;
+	typedef DList<T> list_type;
 
     // 成员变量
 	list_type list_;

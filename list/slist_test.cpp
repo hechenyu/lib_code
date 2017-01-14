@@ -6,8 +6,8 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
-    typedef Slist<string> List;
-    typedef Slist_node<string> Node;
+    typedef SList<string> List;
+    typedef SList_node<string> Node;
 
     List list;
     list_init(list);

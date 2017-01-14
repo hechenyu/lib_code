@@ -7,26 +7,26 @@
  * [head] -> [N1] -> [N2] -> ... -> NIL
  *             ^head
  */
-typedef struct Slist_node_base *Slist_link;
+typedef struct SList_node_base *SList_link;
 
-struct Slist_node_base {
-    Slist_link next;
+struct SList_node_base {
+    SList_link next;
 };
 
-struct Slist_base {
-    Slist_node_base head;
+struct SList_base {
+    SList_node_base head;
 };
 
 // 初始化链表
 inline
-void list_init(Slist_base &list)
+void list_init(SList_base &list)
 {
     list.head.next = nullptr;
 }
 
 // 判断list是否为空, 
 inline
-bool list_is_empty(const Slist_base &list)
+bool list_is_empty(const SList_base &list)
 {
 	return (list.head.next == nullptr);
 }
@@ -61,7 +61,7 @@ bool list_is_empty(const Slist_base &list)
  *                       ^-t       
  */
 inline 
-void list_insert_next(Slist_link x, Slist_link t)
+void list_insert_next(SList_link x, SList_link t)
 {
 	t->next = x->next;
 	x->next = t;
@@ -82,65 +82,65 @@ void list_insert_next(Slist_link x, Slist_link t)
  *             ^-x           ^-t
  */
 inline
-void list_delete_next(Slist_link x)
+void list_delete_next(SList_link x)
 {
 	auto t = x->next;
 	x->next = t->next;
 }
 
 template <typename T>
-struct Slist_node : public Slist_node_base {
+struct SList_node : public SList_node_base {
     T value;
 };
 
 template <typename T>
-struct Slist : public Slist_base {
+struct SList : public SList_base {
 };
 
 template <typename T>
-Slist_node<T> *list_new_node(const T &val)
+SList_node<T> *list_new_node(const T &val)
 {
-    auto x = new Slist_node<T>;
+    auto x = new SList_node<T>;
     x->value = val;
     return x;
 }
 
 template <typename T>
-void list_free_node(Slist_node<T> *x)
+void list_free_node(SList_node<T> *x)
 {
     delete x;
 }
 
 // 在链表头插入结点
 template <typename T>
-void list_insert_front(Slist<T> &list, Slist_node<T> *x)
+void list_insert_front(SList<T> &list, SList_node<T> *x)
 {
     list_insert_next(&list.head, x);
 }
 
 // 在链表头删除结点
 template <typename T>
-Slist_node<T> *list_delete_front(Slist<T> &list)
+SList_node<T> *list_delete_front(SList<T> &list)
 {
     auto x = list.head.next;
     list_delete_next(&list.head);
-    return static_cast<Slist_node<T> *>(x);
+    return static_cast<SList_node<T> *>(x);
 }
 
 template <typename T, typename Function>
-void list_for_each(Slist<T> &list, Function fn)
+void list_for_each(SList<T> &list, Function fn)
 {
-    for (Slist_link x = list.head.next; x != nullptr; x = x->next)
-        fn(static_cast<Slist_node<T> *>(x));
+    for (SList_link x = list.head.next; x != nullptr; x = x->next)
+        fn(static_cast<SList_node<T> *>(x));
 }
 
 template <typename T>
-Slist_node<T> *list_search(Slist<T> &list, const T &val)
+SList_node<T> *list_search(SList<T> &list, const T &val)
 {
-    Slist_link x = list.head.next; 
-    while (x != nullptr && static_cast<Slist_node<T> *>(x)->value != val)
+    SList_link x = list.head.next; 
+    while (x != nullptr && static_cast<SList_node<T> *>(x)->value != val)
         x = x->next;
-    return static_cast<Slist_node<T> *>(x); 
+    return static_cast<SList_node<T> *>(x); 
 }
 
 #endif
