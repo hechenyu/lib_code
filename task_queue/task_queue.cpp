@@ -74,6 +74,12 @@ void print_string(std::string str)
 	std::cout << __func__ << "(" << str << ")" << std::endl;
 }
 
+void print_string_ref(std::string &str)
+{
+    std::cout << __func__ << "(" << str << ")" << std::endl;
+    str += ".";
+}
+
 class Foo {
 	int n_;
 public:
@@ -97,9 +103,11 @@ int main()
 
 	Task_queue task_queue;
 	std::thread proc_thread(processor, std::ref(task_queue));
+    std::string str = "hello";
 	for (int i = 0; i < 10; i++) {
 		task_queue.post_task(make_task(print_int, i));
 		task_queue.post_task(make_task(print_string, std::string("hello")));
+		task_queue.post_task(make_task(print_string_ref, std::ref(str)));
 		task_queue.post_task(make_task(&Foo::print, &foo));
 	}
 	task_queue.post_task(make_task(process_exit));
