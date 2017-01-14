@@ -38,6 +38,15 @@ void print_node_info(const RBTree<T> &tree, const RBTree_node<T> *node)
     cout << endl;
 }
 
+template <typename T>
+void print_tree_inorder(RBTree<T> &tree) 
+{
+    cout << "============================================================================\n";
+    cout << "tree: \n";
+    tree_inorder_walk(tree, &print_node_info<T>);
+    cout << "============================================================================\n";
+}
+
 int main(int argc, char *argv[])
 {
     typedef RBTree<string> RBTree;
@@ -66,6 +75,7 @@ int main(int argc, char *argv[])
     if (tree_is_empty(tree)) {
         cout << "tree is empty!" << endl;
     } else {
+        print_tree_inorder(tree);
     }
 
     cout << "entry val for search: ";
@@ -74,6 +84,11 @@ int main(int argc, char *argv[])
     auto x = tree_search(tree, val);
     if (x != &tree.nil) {
         cout << "found it!" << endl;
+        tree_delete(tree, x);
+        cout << "after delete " << val << " from tree\n";
+        print_tree_inorder(tree);
+        x = tree_search(tree, val);
+        assert(x == &tree.nil);
     } else {
         cout << "not found!" << endl;
     }

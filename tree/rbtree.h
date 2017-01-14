@@ -329,7 +329,7 @@ void tree_transplant(RBTree_base &tree, RBTree_link u, RBTree_link v)
  *
  */
 inline
-void tree_remove_fixup(RBTree_base &tree, RBTree_link x)
+void tree_delete_fixup(RBTree_base &tree, RBTree_link x)
 {
     while (x != tree.root && x->color == BLACK) {
         if (x == x->parent->left) {                 // x为父结点的左孩子
@@ -437,7 +437,7 @@ void tree_remove_fixup(RBTree_base &tree, RBTree_link x)
  * PS: 结点x可能引起红黑性质的破坏.
  */
 inline
-void tree_remove(RBTree_base &tree, RBTree_link z)
+void tree_delete(RBTree_base &tree, RBTree_link z)
 {
     auto y = z;
     auto y_original_color = y->color;
@@ -465,7 +465,7 @@ void tree_remove(RBTree_base &tree, RBTree_link z)
         y->color = z->color;
     }
     if (y_original_color == BLACK)
-        tree_remove_fixup(tree, x);
+        tree_delete_fixup(tree, x);
 }
 
 template <typename T>
@@ -585,6 +585,25 @@ template <typename T>
 RBTree_link tree_search(RBTree<T> &tree, const T &v)
 {
     return tree_search(tree, tree.root, v);
+}
+
+/**
+ * 中序遍历树: 先处理左子树, 然后处理当前结点, 然后处理右子树
+ */
+template <typename T, typename Func>
+void tree_inorder_walk(RBTree<T> &tree, RBTree_link x, Func func)
+{
+    if (x != &tree.nil) {
+        tree_inorder_walk(tree, x->left, func);
+        func(tree, static_cast<RBTree_node<T> *>(x));
+        tree_inorder_walk(tree, x->right, func);
+    }
+}
+
+template <typename T, typename Func>
+void tree_inorder_walk(RBTree<T> &tree, Func func)
+{
+    tree_inorder_walk(tree, tree.root, func);
 }
 
 #endif
