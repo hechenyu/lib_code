@@ -2,7 +2,7 @@ RM = rm -f
 CC = gcc
 CFLAGS = -Wall -g -I../lib -O2
 INCLUDE = -I../lib/
-LIBS =../libunp.a -lpthread
+LIBS = ../libunp.a -lpthread
 
 PROGS =	daytimetcpcli daytimetcpcli1 daytimetcpcli2 daytimetcpcli3 \
 		daytimetcpsrv daytimetcpsrv1 daytimetcpsrv2 daytimetcpsrv3 \

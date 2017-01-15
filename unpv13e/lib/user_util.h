@@ -29,5 +29,8 @@
 #define UNIXSTR_PATH    "/tmp/unix.str" /* Unix domain stream */
 #define UNIXDG_PATH     "/tmp/unix.dg"  /* Unix domain datagram */
 
+#define min(a,b)    ((a) < (b) ? (a) : (b))
+#define max(a,b)    ((a) > (b) ? (a) : (b))
+
 #endif
 
