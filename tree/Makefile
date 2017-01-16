@@ -7,7 +7,7 @@ INCLUDE =
 LDFLAGS = 
 LDPATH = 
 
-TARGETS = rbtree_test
+TARGETS = bstree_test rbtree_test
 
 .PHONY: all
 all: $(TARGETS)
@@ -16,6 +16,9 @@ all: $(TARGETS)
 clean:
 	rm -rf $(TARGETS) *.exe *.dSYM
 
-rtbree_test: rbtree_test.cpp
+bstree_test: bstree_test.cpp
+	$(CXX) -o $@ $^ $(CXXFLAGS) $(INCLUDE) $(LDFLAGS) $(LDPATH)
+
+rbtree_test: rbtree_test.cpp
 	$(CXX) -o $@ $^ $(CXXFLAGS) $(INCLUDE) $(LDFLAGS) $(LDPATH)
 

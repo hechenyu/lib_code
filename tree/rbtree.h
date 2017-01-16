@@ -45,7 +45,7 @@ void tree_init(RBTree_base &tree)
     tree.root = &tree.nil;
 }
 
-// 判断红黑树是否为空, 
+// 判断红黑树是否为空,
 inline
 bool tree_is_empty(const RBTree_base &tree)
 {
@@ -468,6 +468,25 @@ void tree_delete(RBTree_base &tree, RBTree_link z)
         tree_delete_fixup(tree, x);
 }
 
+/**
+ * 中序遍历树: 先处理左子树, 然后处理当前结点, 然后处理右子树
+ */
+template <typename Func>
+void tree_inorder_walk(RBTree_base &tree, RBTree_link x, Func func)
+{
+    if (x != &tree.nil) {
+        tree_inorder_walk(tree, x->left, func);
+        func(tree, x);
+        tree_inorder_walk(tree, x->right, func);
+    }
+}
+
+template <typename Func>
+void tree_inorder_walk(RBTree_base &tree, Func func)
+{
+    tree_inorder_walk(tree, tree.root, func);
+}
+
 template <typename T>
 struct RBTree_node : public RBTree_node_base {
     T value;
@@ -539,7 +558,7 @@ void tree_insert(RBTree<T> &tree, RBTree_node<T> *z)
 template <typename T>
 RBTree_link tree_iterative_search(RBTree<T> &tree, RBTree_link x, const T &v)
 {
-	while (x != &tree.nil && static_cast<RBTree_node<T> *>(x)->value != v) {
+	while (x != &tree.nil && v != static_cast<RBTree_node<T> *>(x)->value) {
 #ifndef NDEBUG
         auto debug = static_cast<RBTree_node<T> *>(x);
         (void) debug;
@@ -572,7 +591,7 @@ RBTree_link tree_search(RBTree<T> &tree, RBTree_link x, const T &v)
     (void) debug;
 #endif
 
-    if (x == &tree.nil || static_cast<RBTree_node<T> *>(x)->value == v) 
+    if (x == &tree.nil || v == static_cast<RBTree_node<T> *>(x)->value) 
         return x;
 
     if (v < static_cast<RBTree_node<T> *>(x)->value)
@@ -587,23 +606,5 @@ RBTree_link tree_search(RBTree<T> &tree, const T &v)
     return tree_search(tree, tree.root, v);
 }
 
-/**
- * 中序遍历树: 先处理左子树, 然后处理当前结点, 然后处理右子树
- */
-template <typename T, typename Func>
-void tree_inorder_walk(RBTree<T> &tree, RBTree_link x, Func func)
-{
-    if (x != &tree.nil) {
-        tree_inorder_walk(tree, x->left, func);
-        func(tree, static_cast<RBTree_node<T> *>(x));
-        tree_inorder_walk(tree, x->right, func);
-    }
-}
-
-template <typename T, typename Func>
-void tree_inorder_walk(RBTree<T> &tree, Func func)
-{
-    tree_inorder_walk(tree, tree.root, func);
-}
-
 #endif
+

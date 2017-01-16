@@ -1,57 +1,56 @@
 #include <string>
 #include <vector>
 #include <iostream>
-#include "rbtree.h"
+#include "bstree.h"
 
 using namespace std;
 
 template <typename T>
-void print_node_info(RBTree<T> &tree, RBTree_node<T> *node) 
+void print_node_info(const BSTree_node<T> *node) 
 {
-    cout << "node(" << (void *) node << "): value[" << node->value << "]"
-        << ", color[" << ((node->color == BLACK) ? "black" : "red") << "]";
+    cout << "node(" << (void *) node << "): value[" << node->value << "]";
 
     cout << ", ";
     cout << "left[";
-    if (node->left == &tree.nil)
-        cout << "NIL";
+    if (node->left)
+        cout << static_cast<const BSTree_node<T> *>(node->left)->value;
     else
-        cout << static_cast<const RBTree_node<T> *>(node->left)->value;
+        cout << "NIL";
     cout << "]";
 
     cout << ", ";
     cout << "right[";
-    if (node->right == &tree.nil)
-        cout << "NIL";
+    if (node->right)
+        cout << static_cast<const BSTree_node<T> *>(node->right)->value;
     else
-        cout << static_cast<const RBTree_node<T> *>(node->right)->value;
+        cout << "NIL";
     cout << "]";
 
     cout << ", ";
     cout << "parent[";
-    if (node->parent == &tree.nil)
-        cout << "NIL";
+    if (node->parent)
+        cout << static_cast<const BSTree_node<T> *>(node->parent)->value;
     else
-        cout << static_cast<const RBTree_node<T> *>(node->parent)->value;
+        cout << "NIL";
     cout << "]";
 
     cout << endl;
 }
 
 template <typename T>
-void print_node_info_aux(RBTree_base &tree, RBTree_link link)
+void print_node_info_aux(const BSTree_link link) 
 {
-    print_node_info(*static_cast<RBTree<T> *>(&tree), static_cast<RBTree_node<T> *>(link));
+    print_node_info<T>(static_cast<BSTree_node<T> *>(link));
 }
 
 template <typename T>
-void print_tree_inorder(RBTree<T> &tree) 
+void print_tree_inorder(BSTree<T> &tree) 
 {
     cout << "============================================================================\n";
     cout << "tree: \n";
-    if (tree.root != &tree.nil) {
+    if (tree.root) {
         cout << "root ";
-        print_node_info_aux<T>(tree, tree.root);
+        print_node_info_aux<T>(tree.root);
     }
     tree_inorder_walk(tree, &print_node_info_aux<T>);
     cout << "============================================================================\n";
@@ -59,14 +58,14 @@ void print_tree_inorder(RBTree<T> &tree)
 
 int main(int argc, char *argv[])
 {
-    typedef RBTree<string> RBTree;
-    typedef RBTree_node<string> Node;
+    typedef BSTree<string> BSTree;
+    typedef BSTree_node<string> Node;
 
 #ifndef NDEBUG
     vector<Node *> node_list;
 #endif
 
-    RBTree tree;
+    BSTree tree;
     tree_init(tree);
     for (int i = 1; i < argc; i++) {
         Node *node = tree_new_node(string(argv[i]));
@@ -93,7 +92,7 @@ int main(int argc, char *argv[])
     cin >> val;
     auto x = tree_search(tree, val);
     assert(x == tree_iterative_search(tree, val));
-    if (x != &tree.nil) {
+    if (x) {
         cout << "found it!" << endl;
         tree_delete(tree, x);
         cout << "after delete " << val << " from tree\n";
