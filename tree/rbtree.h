@@ -2,6 +2,7 @@
 #define __rbtree_h
 
 #include <stddef.h>
+#include <assert.h>
 
 typedef struct RBTree_node_base *RBTree_link;
 
@@ -17,7 +18,7 @@ enum {
 // 不包含数据
 struct RBTree_node_base {
     RBTree_link left;   // 指向左孩子的指针
-    RBTree_link rigth;  // 指向右孩子的指针
+    RBTree_link right;  // 指向右孩子的指针
     RBTree_link parent; // 指向父结点的指针
     int         color;  // 结点颜色
 };
@@ -249,7 +250,7 @@ inline
 void tree_transplant(RBTree_base &tree, RBTree_link u, RBTree_link v)
 {
 	if (u->parent == &tree.nil) {       // u为树的根结点
-		tree->root = v;
+		tree.root = v;
 	} else if (u == u->parent->left) {  // u为父结点的左子树
 		u->parent->left = v;
 	} else {                            // u为父结点的右子树
@@ -328,14 +329,14 @@ void tree_remove_fixup(RBTree_base &tree, RBTree_link x)
 {
     while (x != tree.root && x->color == BLACK) {
         if (x == x->parent->left) {                 // x为父结点的左孩子
-            auto w == x->parent->right;             // w为x的兄弟结点
+            auto w = x->parent->right;              // w为x的兄弟结点
             if (w->color == RED) {
                 w->color = BLACK;                   // 情况1
                 x->parent->color = RED;             // 情况1
                 tree_left_rotate(tree, x->parent);  // 情况1
                 w = x->parent->right;               // 情况1
             }
-            if (w->left->color == BLACK && w->right == BLACK) {
+            if (w->left->color == BLACK && w->right->color == BLACK) {
                 w->color = RED;                     // 情况2
                 x = x->parent;                      // 情况2
             } else {
@@ -352,14 +353,14 @@ void tree_remove_fixup(RBTree_base &tree, RBTree_link x)
                 x = tree.root;                      // 情况4
             }
         } else {                                    // x为父结点的右孩子
-            auto w == x->parent->left;              // w为x的兄弟结点
+            auto w = x->parent->left;               // w为x的兄弟结点
             if (w->color == RED) {
                 w->color = BLACK;                   // 情况1
                 x->parent->color = RED;             // 情况1
                 tree_right_rotate(tree, x->parent); // 情况1
                 w = x->parent->left;                // 情况1
             }
-            if (w->left->color == BLACK && w->right == BLACK) {
+            if (w->left->color == BLACK && w->right->color == BLACK) {
                 w->color = RED;                     // 情况2
                 x = x->parent;                      // 情况2
             } else {
@@ -436,6 +437,7 @@ void tree_remove(RBTree_base &tree, RBTree_link z)
 {
     auto y = z;
     auto y_original_color = y->color;
+    RBTree_link x = NULL;
     if (z->left == &tree.nil) {
         x = z->right;
         tree_transplant(tree, z, z->right);
@@ -471,6 +473,20 @@ template <typename T>
 struct RBTree : public RBTree_base {
 };
 
+template <typename T>
+RBTree_node<T> *tree_new_node(const T &val)
+{
+    auto x = new RBTree_node<T>;
+    x->value = val;
+    return x;
+}
+
+template <typename T>
+void tree_free_node(RBTree_node<T> *x)
+{
+    delete x;
+}
+
 /**
  * 向红黑树里插入一个结点z(假设z的value属性已被事先赋值):
  * 插入结点z的位置搜索方式同二叉搜索树,
@@ -484,7 +500,7 @@ void tree_insert(RBTree<T> &tree, RBTree_node<T> *z)
     auto x = tree.root;                                         // x遍历树
     while (x != &tree.nil) {
         y = x;
-        if (z.value < static_cast<RBTree_node<T> *>(x).value)
+        if (z->value < static_cast<RBTree_node<T> *>(x)->value)
             x = x->left;
         else
             x = x->right;
@@ -492,12 +508,12 @@ void tree_insert(RBTree<T> &tree, RBTree_node<T> *z)
     z->parent = y;
     if (y == &tree.nil)                                         // 树为空
         tree.root = z;
-    else if (z.value < static_cast<RBTree_node<T> *>(y).value)  // z插入到左子树
+    else if (z->value < static_cast<RBTree_node<T> *>(y)->value)// z插入到左子树
         y->left = z;
     else                                                        // z插入到右子树
         y->right =z;
     z->left = z->right = &tree.nil;                             // z的左右子结点均为NIL
-    z.color = RED; 
+    z->color = RED; 
     tree_insert_fixup(tree, z);                                 // 调整树
 }
 
@@ -533,7 +549,7 @@ RBTree_link tree_iterative_search(RBTree<T> &tree, const T &v)
 template <typename T>
 RBTree_link tree_search(RBTree<T> &tree, RBTree_link x, const T &v)
 {
-    if (x == &tree.nil || static_cast<RBTree_node<T> *>(x)->value = v) 
+    if (x == &tree.nil || static_cast<RBTree_node<T> *>(x)->value == v) 
         return x;
 
     if (v < static_cast<RBTree_node<T> *>(x)->value)
