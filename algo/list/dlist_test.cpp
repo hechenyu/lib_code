@@ -7,7 +7,7 @@
 #define NAME(list) #list
 
 template <typename T>
-void insert_inorder(Dlist<T> &list, std::initializer_list<T> il, const std::string &list_name="list")
+void insert_inorder(DList<T> &list, std::initializer_list<T> il, const std::string &list_name="list")
 {
     std::cout << "insert inorder " << list_name << ": ";
     for (auto &val : il) {
@@ -18,7 +18,7 @@ void insert_inorder(Dlist<T> &list, std::initializer_list<T> il, const std::stri
 }
 
 template <typename T>
-void insert_reverse(Dlist<T> &list, std::initializer_list<T> il, const std::string &list_name="list")
+void insert_reverse(DList<T> &list, std::initializer_list<T> il, const std::string &list_name="list")
 {
     std::cout << "insert reverse " << list_name << ": ";
     for (auto &val : il) {
@@ -29,11 +29,11 @@ void insert_reverse(Dlist<T> &list, std::initializer_list<T> il, const std::stri
 }
 
 template <typename T>
-void remove_inorder(Dlist<T> &list, const std::string &list_name="list")
+void delete_inorder(DList<T> &list, const std::string &list_name="list")
 {
     std::cout << "free inorder " << list_name << ": ";
     while (!list_is_empty(list)) {
-        auto node = list_remove_front(list);
+        auto node = list_delete_front(list);
         std::cout << node->value << ", ";
        	list_free_node(node);
     }
@@ -41,11 +41,11 @@ void remove_inorder(Dlist<T> &list, const std::string &list_name="list")
 }
 
 template <typename T>
-void remove_reverse(Dlist<T> &list, const std::string &list_name="list")
+void delete_reverse(DList<T> &list, const std::string &list_name="list")
 {
     std::cout << "free reverse " << list_name << ": ";
     while (!list_is_empty(list)) {
-        auto node = list_remove_back(list);
+        auto node = list_delete_back(list);
         std::cout << node->value << ", ";
        	list_free_node(node);
     }
@@ -53,15 +53,15 @@ void remove_reverse(Dlist<T> &list, const std::string &list_name="list")
 }
 
 template <typename T>
-void print(Dlist<T> &list, const std::string &beg="", const std::string &end="")
+void print(DList<T> &list, const std::string &beg="", const std::string &end="")
 {
     std::cout << beg;
-    list_for_each(list, [](Dlist_node<T> *node) { std::cout << node->value << ", "; });
+    list_for_each(list, [](DList_node<T> *node) { std::cout << node->value << ", "; });
     std::cout << end;
 }
 
 template <typename T>
-void print_list(Dlist<T> &list, const std::string &list_name="list")
+void print_list(DList<T> &list, const std::string &list_name="list")
 {
     if (list_is_empty(list)) {
         std::cout << list_name << " is empty!";
@@ -72,7 +72,7 @@ void print_list(Dlist<T> &list, const std::string &list_name="list")
 }
 
 template <typename T>
-bool test_replace(Dlist<T> &list, T val, T new_val, const std::string &list_name="list")
+bool test_replace(DList<T> &list, T val, T new_val, const std::string &list_name="list")
 {
     auto x = list_search(list, val);
     if (x == &list.nil) {
@@ -85,7 +85,7 @@ bool test_replace(Dlist<T> &list, T val, T new_val, const std::string &list_name
     std::cout << "replace " << val << " with " << new_val << std::endl;
     auto t = list_new_node(new_val);
     list_insert(x, t);
-    list_remove(x);
+    list_delete(x);
     print(list, "after replace, "+list_name+": [", "]");
     std::cout << std::endl;
     return true;
@@ -93,8 +93,8 @@ bool test_replace(Dlist<T> &list, T val, T new_val, const std::string &list_name
 
 int main(int argc, char *argv[])
 {
-    typedef Dlist<int> List;
-    typedef Dlist_node<int> Node;
+    typedef DList<int> List;
+    typedef DList_node<int> Node;
 
     List list1, list2;
     list_init(list1);
@@ -146,14 +146,14 @@ int main(int argc, char *argv[])
     }
 
     std::cout << "---------------------------" << std::endl;
-    std::cout << "test remove" << std::endl;
-    remove_inorder(list1);
+    std::cout << "test delete" << std::endl;
+    delete_inorder(list1);
     assert(list_is_empty(list1));
-    remove_reverse(list2);
+    delete_reverse(list2);
     assert(list_is_empty(list2));
 
     std::cout << "---------------------------" << std::endl;
-    std::cout << "after remove" << std::endl;
+    std::cout << "after delete" << std::endl;
     print_list(list1, NAME(list1));
     print_list(list2, NAME(list2));
 
