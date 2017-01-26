@@ -1,8 +1,11 @@
-#ifndef __dlist_h
-#define __dlist_h
+#ifndef __dclist_h
+#define __dclist_h
 
+#include <assert.h>
+
+// Double Chain List
 // 双向循环链表节点, 不包含数据
-typedef struct DList_node_base *DList_link;
+typedef struct DCList_node_base *DCList_link;
 
 /**
  * 双向链表节点基类
@@ -11,14 +14,14 @@ typedef struct DList_node_base *DList_link;
  *     <-----|___|       
  *       prev
  */
-struct DList_node_base {
-	DList_link next;
-	DList_link prev;
+struct DCList_node_base {
+	DCList_link next;
+	DCList_link prev;
 };
 
 // 带哨兵节点的双向循环链表
-struct DList_base {
-	DList_node_base nil;	// 哨兵节点
+struct DCList_base {
+	DCList_node_base nil;	// 哨兵节点
 };
 
 /**
@@ -31,7 +34,7 @@ struct DList_base {
  *   |____|     
  */
 inline 
-void list_init(DList_base &list)
+void list_init(DCList_base &list)
 {
 	// 初始化nil节点
 	list.nil.prev = list.nil.next = &list.nil;
@@ -39,7 +42,7 @@ void list_init(DList_base &list)
 
 // 判断list是否为空, 
 inline
-bool list_is_empty(const DList_base &list)
+bool list_is_empty(const DCList_base &list)
 {
 	return (list.nil.next == &list.nil);
 }
@@ -74,8 +77,9 @@ bool list_is_empty(const DList_base &list)
  *                   ^-t
  */
 inline
-void list_insert(DList_link x, DList_link t)
+void list_insert(DCList_link x, DCList_link t)
 {
+    assert(x != NULL && t != NULL);
 	t->prev = x->prev;
 	t->next = x;
 	x->prev->next = t;
@@ -99,8 +103,9 @@ void list_insert(DList_link x, DList_link t)
  *             '--------------------'
  */
 inline
-void list_delete(DList_link x)
+void list_delete(DCList_link x)
 {
+    assert(x != NULL);
 	x->prev->next = x->next;
 	x->next->prev = x->prev;
 }
@@ -131,7 +136,7 @@ void list_delete(DList_link x)
  *                                             ^-x       
  */
 inline
-void list_transfer(DList_link x, DList_link a, DList_link b)
+void list_transfer(DCList_link x, DCList_link a, DCList_link b)
 {
     // 先将[a,b]从之前的链表上摘除
     a->prev->next = b->next;
@@ -148,9 +153,9 @@ void list_transfer(DList_link x, DList_link a, DList_link b)
  * 交换两个链表的所有节点(除了nil节点)
  */
 inline
-void list_swap(DList_base &list1, DList_base &list2)
+void list_swap(DCList_base &list1, DCList_base &list2)
 {
-    DList_base temp;
+    DCList_base temp;
     list_init(temp);
 
     if (!list_is_empty(list1)) // temp = list1
@@ -162,79 +167,79 @@ void list_swap(DList_base &list1, DList_base &list2)
 }
 
 template <typename T>
-struct DList_node : public DList_node_base {
+struct DCList_node : public DCList_node_base {
     T value;
 };
 
 template <typename T>
-struct DList : public DList_base {
+struct DCList : public DCList_base {
 };
 
 // 在堆上动态分配一个节点
 template <typename T>
-DList_node<T> *list_new_node(const T &val)
+DCList_node<T> *list_new_node(const T &val)
 {
-    auto x = new DList_node<T>;
+    auto x = new DCList_node<T>;
     x->value = val;
     return x;
 }
 
 // 将一个节点释放回堆
 template <typename T>
-void list_free_node(DList_node<T> *x)
+void list_free_node(DCList_node<T> *x)
 {
     delete x;
 }
 
 // 在链表头插入节点
 template <typename T>
-void list_insert_front(DList<T> &list, DList_node<T> *x)
+void list_insert_front(DCList<T> &list, DCList_node<T> *x)
 {
     list_insert(list.nil.next, x);
 }
 
 // 在链表尾插入节点
 template <typename T>
-void list_insert_back(DList<T> &list, DList_node<T> *x)
+void list_insert_back(DCList<T> &list, DCList_node<T> *x)
 {
     list_insert(&list.nil, x);
 }
 
 // 在链表头删除节点
 template <typename T>
-DList_node<T> *list_delete_front(DList<T> &list)
+DCList_node<T> *list_delete_front(DCList<T> &list)
 {
     auto x = list.nil.next;
     list_delete(x);
-    return static_cast<DList_node<T> *>(x);
+    return static_cast<DCList_node<T> *>(x);
 }
 
 // 在链表尾删除节点
 template <typename T>
-DList_node<T> *list_delete_back(DList<T> &list)
+DCList_node<T> *list_delete_back(DCList<T> &list)
 {
     auto x = list.nil.prev;
     list_delete(x);
-    return static_cast<DList_node<T> *>(x);
+    return static_cast<DCList_node<T> *>(x);
 }
 
 // 遍历链表, 为每个节点调用fn
 template <typename T, typename Function>
-void list_for_each(DList<T> &list, Function fn)
+void list_for_each(DCList<T> &list, Function fn)
 {
     for (auto x = list.nil.next; x != &list.nil; x = x->next)
-        fn(static_cast<DList_node<T> *>(x));
+        fn(static_cast<DCList_node<T> *>(x));
 }
 
 // 查找值等于val的第一个节点的地址, 
 // 如果没有等于val的节点, 返回nil的地址
 template <typename T>
-DList_node<T> *list_search(DList<T> &list, const T &val)
+DCList_node<T> *list_search(DCList<T> &list, const T &val)
 {
     auto x = list.nil.next; 
-    while (x != &list.nil && static_cast<DList_node<T> *>(x)->value != val)
+    while (x != &list.nil && static_cast<DCList_node<T> *>(x)->value != val)
         x = x->next;
-    return static_cast<DList_node<T> *>(x); 
+    return static_cast<DCList_node<T> *>(x); 
 }
 
 #endif

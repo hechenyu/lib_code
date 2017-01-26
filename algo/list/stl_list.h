@@ -3,7 +3,7 @@
 
 #include <stddef.h>
 #include <iterator>
-#include "dlist.h"
+#include "dclist.h"
 
 namespace stl {
 
@@ -13,8 +13,8 @@ class list;
 template <typename T>
 class list_iterator {
 private:
-    typedef DList_link link_type;
-	typedef DList_node<T> node_type;
+    typedef DCList_link link_type;
+	typedef DCList_node<T> node_type;
 	typedef list_iterator<T> this_type;
 
     // 成员变量
@@ -82,9 +82,9 @@ public:
 
 template <typename T>
 class list {
-	typedef DList_link link_type;
-	typedef DList_node<T> node_type;
-	typedef DList<T> list_type;
+	typedef DCList_link link_type;
+	typedef DCList_node<T> node_type;
+	typedef DCList<T> list_type;
 
     // 成员变量
 	list_type list_;

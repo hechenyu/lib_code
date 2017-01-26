@@ -7,7 +7,7 @@ INCLUDE =
 LDFLAGS = 
 LDPATH = 
 
-TARGETS = slist_test dlist_test stl_list_test
+TARGETS = sclist_test dclist_test stl_list_test
 
 .PHONY: all
 all: $(TARGETS)
@@ -16,10 +16,10 @@ all: $(TARGETS)
 clean:
 	rm -rf $(TARGETS) *.exe *.dSYM
 
-slist_test: slist_test.cpp
+sclist_test: sclist_test.cpp
 	$(CXX) -o $@ $^ $(CXXFLAGS) $(INCLUDE) $(LDFLAGS) $(LDPATH)
 
-dlist_test: dlist_test.cpp
+dclist_test: dclist_test.cpp
 	$(CXX) -o $@ $^ $(CXXFLAGS) $(INCLUDE) $(LDFLAGS) $(LDPATH)
 
 stl_list_test: stl_list_test.cpp

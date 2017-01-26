@@ -1,4 +1,4 @@
-#include "dlist.h"
+#include "dclist.h"
 #include <cassert>
 #include <iostream>
 #include <string>
@@ -7,7 +7,7 @@
 #define NAME(list) #list
 
 template <typename T>
-void insert_inorder(DList<T> &list, std::initializer_list<T> il, const std::string &list_name="list")
+void insert_inorder(DCList<T> &list, std::initializer_list<T> il, const std::string &list_name="list")
 {
     std::cout << "insert inorder " << list_name << ": ";
     for (auto &val : il) {
@@ -18,7 +18,7 @@ void insert_inorder(DList<T> &list, std::initializer_list<T> il, const std::stri
 }
 
 template <typename T>
-void insert_reverse(DList<T> &list, std::initializer_list<T> il, const std::string &list_name="list")
+void insert_reverse(DCList<T> &list, std::initializer_list<T> il, const std::string &list_name="list")
 {
     std::cout << "insert reverse " << list_name << ": ";
     for (auto &val : il) {
@@ -29,7 +29,7 @@ void insert_reverse(DList<T> &list, std::initializer_list<T> il, const std::stri
 }
 
 template <typename T>
-void delete_inorder(DList<T> &list, const std::string &list_name="list")
+void delete_inorder(DCList<T> &list, const std::string &list_name="list")
 {
     std::cout << "free inorder " << list_name << ": ";
     while (!list_is_empty(list)) {
@@ -41,7 +41,7 @@ void delete_inorder(DList<T> &list, const std::string &list_name="list")
 }
 
 template <typename T>
-void delete_reverse(DList<T> &list, const std::string &list_name="list")
+void delete_reverse(DCList<T> &list, const std::string &list_name="list")
 {
     std::cout << "free reverse " << list_name << ": ";
     while (!list_is_empty(list)) {
@@ -53,15 +53,15 @@ void delete_reverse(DList<T> &list, const std::string &list_name="list")
 }
 
 template <typename T>
-void print(DList<T> &list, const std::string &beg="", const std::string &end="")
+void print(DCList<T> &list, const std::string &beg="", const std::string &end="")
 {
     std::cout << beg;
-    list_for_each(list, [](DList_node<T> *node) { std::cout << node->value << ", "; });
+    list_for_each(list, [](DCList_node<T> *node) { std::cout << node->value << ", "; });
     std::cout << end;
 }
 
 template <typename T>
-void print_list(DList<T> &list, const std::string &list_name="list")
+void print_list(DCList<T> &list, const std::string &list_name="list")
 {
     if (list_is_empty(list)) {
         std::cout << list_name << " is empty!";
@@ -72,7 +72,7 @@ void print_list(DList<T> &list, const std::string &list_name="list")
 }
 
 template <typename T>
-bool test_replace(DList<T> &list, T val, T new_val, const std::string &list_name="list")
+bool test_replace(DCList<T> &list, T val, T new_val, const std::string &list_name="list")
 {
     auto x = list_search(list, val);
     if (x == &list.nil) {
@@ -93,8 +93,8 @@ bool test_replace(DList<T> &list, T val, T new_val, const std::string &list_name
 
 int main(int argc, char *argv[])
 {
-    typedef DList<int> List;
-    typedef DList_node<int> Node;
+    typedef DCList<int> List;
+    typedef DCList_node<int> Node;
 
     List list1, list2;
     list_init(list1);

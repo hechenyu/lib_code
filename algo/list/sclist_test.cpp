@@ -1,13 +1,13 @@
+#include "sclist.h"
 #include <string>
 #include <iostream>
-#include "slist.h"
 
 using namespace std;
 
 int main(int argc, char *argv[])
 {
-    typedef SList<string> List;
-    typedef SList_node<string> Node;
+    typedef SCList<string> List;
+    typedef SCList_node<string> Node;
 
     List list;
     list_init(list);
@@ -27,15 +27,17 @@ int main(int argc, char *argv[])
     string val;
     cin >> val;
     auto x = list_search(list, val);
-    if (x != nullptr) {
+    if (x != NULL) {
         cout << "found it!" << endl;
 		auto y = static_cast<Node *>(x->next);
-		if (y != nullptr) {
-			cout << "next val is: " << y->value << endl;
+		if (y != NULL) {
+            cout << "delete next node: " << static_cast<Node *>(y)->value << endl;
 			list_delete_next(x);
         	list_free_node(y);
 		}
-		auto t = list_new_node(static_cast<Node *>(x)->value);
+        cout << "insert new next node: ";
+        cin >> val;
+		auto t = list_new_node(val);
 		list_insert_next(x, t);
     } else {
         cout << "not found!" << endl;
