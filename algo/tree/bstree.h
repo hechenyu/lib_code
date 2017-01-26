@@ -235,6 +235,13 @@ void tree_free_node(BSTree_node<T> *x)
     delete x;
 }
 
+// 将BSTree_link强转成子类指针
+template <typename T>
+BSTree_node<T> *tree_link_cast(BSTree_link x)
+{
+    return static_cast<BSTree_node<T> *>(x);
+}
+
 /**
  * 从二叉搜索树中从x为根结点的子树向下查找等于特定值的结点
  * 如果未找到, 返回NULL
@@ -243,8 +250,8 @@ void tree_free_node(BSTree_node<T> *x)
 template <typename T>
 BSTree_link tree_iterative_search(BSTree_link x, const T &v)
 {
-	while (x != NULL && v != static_cast<BSTree_node<T> *>(x)->value) {
-        if (v < static_cast<BSTree_node<T> *>(x)->value) {
+	while (x != NULL && v != tree_link_cast<T>(x)->value) {
+        if (v < tree_link_cast<T>(x)->value) {
             x = x->left;
         } else {
             x = x->right;
@@ -267,10 +274,10 @@ BSTree_link tree_iterative_search(BSTree<T> &tree, const T &v)
 template <typename T>
 BSTree_link tree_search(BSTree_link x, const T &v)
 {
-    while (x == NULL || v == static_cast<BSTree_node<T> *>(x)->value)
+    while (x == NULL || v == tree_link_cast<T>(x)->value)
         return x;
 
-    if (v < static_cast<BSTree_node<T> *>(x)->value)
+    if (v < tree_link_cast<T>(x)->value)
         return tree_search(x->left, v);
     else
         return tree_search(x->right, v);
@@ -293,7 +300,7 @@ void tree_insert(BSTree<T> &tree, BSTree_node<T> *z)
     auto x = tree.root;             // x遍历树
     while (x != NULL) {
         y = x;
-        if (z->value < static_cast<BSTree_node<T> *>(x)->value)
+        if (z->value < tree_link_cast<T>(x)->value)
             x = x->left;
         else
             x = x->right;
@@ -302,7 +309,7 @@ void tree_insert(BSTree<T> &tree, BSTree_node<T> *z)
     z->parent = y;
     if (y == NULL)
         tree.root = z;              // 树为空
-    else if (z->value < static_cast<BSTree_node<T> *>(y)->value)
+    else if (z->value < tree_link_cast<T>(y)->value)
         y->left = z;
     else
         y->right =z;

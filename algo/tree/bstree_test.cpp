@@ -6,14 +6,14 @@
 using namespace std;
 
 template <typename T>
-void print_node_info(const BSTree_node<T> *node) 
+void print_node_info(BSTree_node<T> *node) 
 {
     cout << "node(" << (void *) node << "): value[" << node->value << "]";
 
     cout << ", ";
     cout << "left[";
     if (node->left)
-        cout << static_cast<const BSTree_node<T> *>(node->left)->value;
+        cout << tree_link_cast<T>(node->left)->value;
     else
         cout << "NIL";
     cout << "]";
@@ -21,7 +21,7 @@ void print_node_info(const BSTree_node<T> *node)
     cout << ", ";
     cout << "right[";
     if (node->right)
-        cout << static_cast<const BSTree_node<T> *>(node->right)->value;
+        cout << tree_link_cast<T>(node->right)->value;
     else
         cout << "NIL";
     cout << "]";
@@ -29,7 +29,7 @@ void print_node_info(const BSTree_node<T> *node)
     cout << ", ";
     cout << "parent[";
     if (node->parent)
-        cout << static_cast<const BSTree_node<T> *>(node->parent)->value;
+        cout << tree_link_cast<T>(node->parent)->value;
     else
         cout << "NIL";
     cout << "]";
@@ -38,21 +38,16 @@ void print_node_info(const BSTree_node<T> *node)
 }
 
 template <typename T>
-void print_node_info_aux(const BSTree_link link) 
-{
-    print_node_info<T>(static_cast<BSTree_node<T> *>(link));
-}
-
-template <typename T>
 void print_tree_inorder(BSTree<T> &tree) 
 {
+    auto print_func = [](BSTree_link x) { print_node_info(tree_link_cast<T>(x)); };
     cout << "============================================================================\n";
     cout << "tree: \n";
     if (tree.root) {
         cout << "root ";
-        print_node_info_aux<T>(tree.root);
+        print_func(tree.root);
     }
-    tree_inorder_walk(tree, &print_node_info_aux<T>);
+    tree_inorder_walk(tree, print_func);
     cout << "============================================================================\n";
 }
 

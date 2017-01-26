@@ -52,6 +52,13 @@ bool tree_is_empty(const RBTree_base &tree)
     return (tree.root == &tree.nil);
 }
 
+// 返回红黑色的NIL结点
+inline
+RBTree_link tree_nil(RBTree_base &tree)
+{
+    return &tree.nil;
+}
+
 // 返回以结点x为根的子树的最小元素的指针,
 inline
 RBTree_link tree_minimum(RBTree_base &tree, RBTree_link x)
@@ -510,6 +517,13 @@ void tree_free_node(RBTree_node<T> *x)
     delete x;
 }
 
+// 将RBTree_link强转成子类指针
+template <typename T>
+RBTree_node<T> *tree_link_cast(RBTree_link x)
+{
+    return static_cast<RBTree_node<T> *>(x);
+}
+
 /**
  * 向红黑树里插入一个结点z(假设z的value属性已被事先赋值):
  * 插入结点z的位置搜索方式同二叉搜索树,
@@ -524,24 +538,24 @@ void tree_insert(RBTree<T> &tree, RBTree_node<T> *z)
     while (x != &tree.nil) {
         y = x;
 #ifndef NDEBUG
-        auto debug = static_cast<RBTree_node<T> *>(x);
+        auto debug = tree_link_cast<T>(x);
         (void) debug;
 #endif
-        if (z->value < static_cast<RBTree_node<T> *>(x)->value)
+        if (z->value < tree_link_cast<T>(x)->value)
             x = x->left;
         else
             x = x->right;
     }
 
 #ifndef NDEBUG
-    auto debug = static_cast<RBTree_node<T> *>(y);
+    auto debug = tree_link_cast<T>(y);
     (void) debug;
 #endif
 
     z->parent = y;
     if (y == &tree.nil)                                         // 树为空
         tree.root = z;
-    else if (z->value < static_cast<RBTree_node<T> *>(y)->value)// z插入到左子树
+    else if (z->value < tree_link_cast<T>(y)->value)// z插入到左子树
         y->left = z;
     else                                                        // z插入到右子树
         y->right =z;
@@ -558,12 +572,12 @@ void tree_insert(RBTree<T> &tree, RBTree_node<T> *z)
 template <typename T>
 RBTree_link tree_iterative_search(RBTree<T> &tree, RBTree_link x, const T &v)
 {
-	while (x != &tree.nil && v != static_cast<RBTree_node<T> *>(x)->value) {
+	while (x != &tree.nil && v != tree_link_cast<T>(x)->value) {
 #ifndef NDEBUG
-        auto debug = static_cast<RBTree_node<T> *>(x);
+        auto debug = tree_link_cast<T>(x);
         (void) debug;
 #endif
-        if (v < static_cast<RBTree_node<T> *>(x)->value) {
+        if (v < tree_link_cast<T>(x)->value) {
             x = x->left;
         } else {
             x = x->right;
@@ -587,14 +601,14 @@ template <typename T>
 RBTree_link tree_search(RBTree<T> &tree, RBTree_link x, const T &v)
 {
 #ifndef NDEBUG
-    auto debug = static_cast<RBTree_node<T> *>(x);
+    auto debug = tree_link_cast<T>(x);
     (void) debug;
 #endif
 
-    if (x == &tree.nil || v == static_cast<RBTree_node<T> *>(x)->value) 
+    if (x == &tree.nil || v == tree_link_cast<T>(x)->value) 
         return x;
 
-    if (v < static_cast<RBTree_node<T> *>(x)->value)
+    if (v < tree_link_cast<T>(x)->value)
         return tree_search(tree, x->left, v);
     else
         return tree_search(tree, x->right, v);

@@ -13,47 +13,45 @@ void print_node_info(RBTree<T> &tree, RBTree_node<T> *node)
 
     cout << ", ";
     cout << "left[";
-    if (node->left == &tree.nil)
+    if (node->left == tree_nil(tree))
         cout << "NIL";
     else
-        cout << static_cast<const RBTree_node<T> *>(node->left)->value;
+        cout << tree_link_cast<T>(node->left)->value;
     cout << "]";
 
     cout << ", ";
     cout << "right[";
-    if (node->right == &tree.nil)
+    if (node->right == tree_nil(tree))
         cout << "NIL";
     else
-        cout << static_cast<const RBTree_node<T> *>(node->right)->value;
+        cout << tree_link_cast<T>(node->right)->value;
     cout << "]";
 
     cout << ", ";
     cout << "parent[";
-    if (node->parent == &tree.nil)
+    if (node->parent == tree_nil(tree))
         cout << "NIL";
     else
-        cout << static_cast<const RBTree_node<T> *>(node->parent)->value;
+        cout << tree_link_cast<T>(node->parent)->value;
     cout << "]";
 
     cout << endl;
 }
 
 template <typename T>
-void print_node_info_aux(RBTree_base &tree, RBTree_link link)
-{
-    print_node_info(*static_cast<RBTree<T> *>(&tree), static_cast<RBTree_node<T> *>(link));
-}
-
-template <typename T>
 void print_tree_inorder(RBTree<T> &tree) 
 {
+    auto print_func = [](RBTree_base &tree, RBTree_link x) {
+        print_node_info(*static_cast<RBTree<T> *>(&tree), tree_link_cast<T>(x));
+    };
+
     cout << "============================================================================\n";
     cout << "tree: \n";
-    if (tree.root != &tree.nil) {
+    if (tree.root != tree_nil(tree)) {
         cout << "root ";
-        print_node_info_aux<T>(tree, tree.root);
+        print_func(tree, tree.root);
     }
-    tree_inorder_walk(tree, &print_node_info_aux<T>);
+    tree_inorder_walk(tree, print_func);
     cout << "============================================================================\n";
 }
 
@@ -93,13 +91,13 @@ int main(int argc, char *argv[])
     cin >> val;
     auto x = tree_search(tree, val);
     assert(x == tree_iterative_search(tree, val));
-    if (x != &tree.nil) {
+    if (x != tree_nil(tree)) {
         cout << "found it!" << endl;
         tree_delete(tree, x);
         cout << "after delete " << val << " from tree\n";
         print_tree_inorder(tree);
         x = tree_search(tree, val);
-        assert(x == &tree.nil);
+        assert(x == tree_nil(tree));
     } else {
         cout << "not found!" << endl;
     }
