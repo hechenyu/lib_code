@@ -7,7 +7,7 @@ INCLUDE =
 LDFLAGS = 
 LDPATH = 
 
-TARGETS = sclist_test dclist_test stl_list_test
+TARGETS = sclist_test dclist_test stl_list_test stack_test queue_test
 
 .PHONY: all
 all: $(TARGETS)
@@ -23,5 +23,11 @@ dclist_test: dclist_test.cpp
 	$(CXX) -o $@ $^ $(CXXFLAGS) $(INCLUDE) $(LDFLAGS) $(LDPATH)
 
 stl_list_test: stl_list_test.cpp
+	$(CXX) -o $@ $^ $(CXXFLAGS) $(INCLUDE) $(LDFLAGS) $(LDPATH)
+
+stack_test: stack_test.cpp
+	$(CXX) -o $@ $^ $(CXXFLAGS) $(INCLUDE) $(LDFLAGS) $(LDPATH)
+
+queue_test: queue_test.cpp
 	$(CXX) -o $@ $^ $(CXXFLAGS) $(INCLUDE) $(LDFLAGS) $(LDPATH)
 
