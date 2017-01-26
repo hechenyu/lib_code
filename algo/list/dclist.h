@@ -19,7 +19,12 @@ struct DCList_node_base {
 	DCList_link prev;
 };
 
-// 带哨兵节点的双向循环链表
+/**
+ * 带哨兵节点的双向循环链表
+ *
+ * ... <=> [Nt] <=> [nil] <=> [N1] <=> [N2] <=> [N3] <=> ...
+ *           ^tail              ^head
+ */
 struct DCList_base {
 	DCList_node_base nil;	// 哨兵节点
 };
@@ -45,6 +50,27 @@ inline
 bool list_is_empty(const DCList_base &list)
 {
 	return (list.nil.next == &list.nil);
+}
+
+// 返回nil地址
+inline
+DCList_link list_nil(DCList_base &list)
+{
+    return &list.nil;
+}
+
+// 返回链表的头结点地址
+inline
+DCList_link list_head(DCList_base &list)
+{
+    return list.nil.next;
+}
+
+// 返回链表的尾结点地址
+inline
+DCList_link list_tail(DCList_base &list)
+{
+    return list.nil.prev;
 }
 
 /**
@@ -149,6 +175,36 @@ void list_transfer(DCList_link x, DCList_link a, DCList_link b)
     x->prev = b;
 }
 
+// 在链表头插入节点
+inline
+void list_insert_front(DCList_base &list, DCList_link x)
+{
+    list_insert(list_head(list), x);
+}
+
+// 在链表尾插入节点
+inline
+void list_insert_back(DCList_base &list, DCList_link x)
+{
+    list_insert(list_nil(list), x);
+}
+
+// 在链表头删除节点
+inline
+void list_delete_front(DCList_base &list)
+{
+    assert(!list_is_empty(list));
+    list_delete(list_head(list));
+}
+
+// 在链表尾删除节点
+inline
+void list_delete_back(DCList_base &list)
+{
+    assert(!list_is_empty(list));
+    list_delete(list_tail(list));
+}
+
 /**
  * 交换两个链表的所有节点(除了nil节点)
  */
@@ -191,35 +247,10 @@ void list_free_node(DCList_node<T> *x)
     delete x;
 }
 
-// 在链表头插入节点
+// 将DCList_link强转成子类指针
 template <typename T>
-void list_insert_front(DCList<T> &list, DCList_node<T> *x)
+DCList_node<T> *list_link_cast(DCList_link x)
 {
-    list_insert(list.nil.next, x);
-}
-
-// 在链表尾插入节点
-template <typename T>
-void list_insert_back(DCList<T> &list, DCList_node<T> *x)
-{
-    list_insert(&list.nil, x);
-}
-
-// 在链表头删除节点
-template <typename T>
-DCList_node<T> *list_delete_front(DCList<T> &list)
-{
-    auto x = list.nil.next;
-    list_delete(x);
-    return static_cast<DCList_node<T> *>(x);
-}
-
-// 在链表尾删除节点
-template <typename T>
-DCList_node<T> *list_delete_back(DCList<T> &list)
-{
-    auto x = list.nil.prev;
-    list_delete(x);
     return static_cast<DCList_node<T> *>(x);
 }
 

@@ -283,7 +283,8 @@ private:
     void destroy()
     {
         while (!list_is_empty(list_)) {
-            auto node = list_delete_front(list_);
+            auto node = list_link_cast<T>(list_head(list_));
+            list_delete_front(list_);
             list_free_node(node);
         }
     }
