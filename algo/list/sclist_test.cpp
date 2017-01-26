@@ -29,27 +29,28 @@ int main(int argc, char *argv[])
     auto x = list_search(list, val);
     if (x != NULL) {
         cout << "found it!" << endl;
-		auto y = static_cast<Node *>(x->next);
-		if (y != NULL) {
-            cout << "delete next node: " << static_cast<Node *>(y)->value << endl;
-			list_delete_next(x);
-        	list_free_node(y);
-		}
+        auto y = list_link_cast<string>(x->next);
+        if (y != NULL) {
+            cout << "delete next node: " << y->value << endl;
+            list_delete_next(x);
+            list_free_node(y);
+        }
         cout << "insert new next node: ";
         cin >> val;
-		auto t = list_new_node(val);
-		list_insert_next(x, t);
+        auto t = list_new_node(val);
+        list_insert_next(x, t);
     } else {
         cout << "not found!" << endl;
     }
 
     cout << "free list: ";
     while (!list_is_empty(list)) {
-		auto node = list_delete_front(list);
-		cout << node->value << ", ";
+        auto node = list_link_cast<string>(list_head(list));
+        list_delete_front(list);
+        cout << node->value << ", ";
         list_free_node(node);
     }
-	cout << endl;
+    cout << endl;
 
     cout << "after free list" << endl;
     if (list_is_empty(list)) {
@@ -58,5 +59,5 @@ int main(int argc, char *argv[])
         cout << "list is not empty!" << endl;
     }
 
-	return 0;
+    return 0;
 }

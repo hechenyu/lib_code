@@ -11,25 +11,30 @@ typedef struct SCList_node_base *SCList_link;
 /**
  * 单向链表节点基类
  *    ___     
- *   |   | next  
- *   |___|------>       
- *  
+ *   |   |------>
+ *   |___| next  
+ * 
  */
 struct SCList_node_base {
     SCList_link next;
 };
 
 /**
- * 有哑源头结点, 尾结点为空
+ * 有哑源头结点, 尾结点的next为空
  *
  * [head] -> [N1] -> [N2] -> ... -> NIL
- *             ^head
+ *  
  */
 struct SCList_base {
     SCList_node_base head;
 };
 
-// 初始化链表
+/**
+ * 初始化链表
+ *
+ * [head] -> NIL
+ *
+ */
 inline
 void list_init(SCList_base &list)
 {
@@ -102,6 +107,27 @@ void list_delete_next(SCList_link x)
 	x->next = t->next;
 }
 
+// 返回列表头部第一个结点(不包含哑结点)
+inline
+SCList_link list_head(SCList_base &list)
+{
+    return list.head.next;
+}
+
+// 在链表头插入结点
+inline
+void list_insert_front(SCList_base &list, SCList_link x)
+{
+    list_insert_next(&list.head, x);
+}
+
+// 在链表头删除结点
+inline
+void list_delete_front(SCList_base &list)
+{
+    list_delete_next(&list.head);
+}
+
 template <typename T>
 struct SCList_node : public SCList_node_base {
     T value;
@@ -125,36 +151,27 @@ void list_free_node(SCList_node<T> *x)
     delete x;
 }
 
-// 在链表头插入结点
+// 将SCList_link强转成子类指针
 template <typename T>
-void list_insert_front(SCList<T> &list, SCList_node<T> *x)
+SCList_node<T> *list_link_cast(SCList_link x)
 {
-    list_insert_next(&list.head, x);
-}
-
-// 在链表头删除结点
-template <typename T>
-SCList_node<T> *list_delete_front(SCList<T> &list)
-{
-    auto x = list.head.next;
-    list_delete_next(&list.head);
     return static_cast<SCList_node<T> *>(x);
 }
 
 template <typename T, typename Function>
 void list_for_each(SCList<T> &list, Function fn)
 {
-    for (SCList_link x = list.head.next; x != NULL; x = x->next)
-        fn(static_cast<SCList_node<T> *>(x));
+    for (auto x = list_head(list); x != NULL; x = x->next)
+        fn(list_link_cast<T>(x));
 }
 
 template <typename T>
 SCList_node<T> *list_search(SCList<T> &list, const T &val)
 {
-    SCList_link x = list.head.next; 
-    while (x != NULL && static_cast<SCList_node<T> *>(x)->value != val)
+    auto x = list_head(list);
+    while (x != NULL && list_link_cast<T>(x)->value != val)
         x = x->next;
-    return static_cast<SCList_node<T> *>(x); 
+    return list_link_cast<T>(x); 
 }
 
 #endif
