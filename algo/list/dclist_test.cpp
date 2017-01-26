@@ -6,6 +6,22 @@
 
 #define NAME(list) #list
 
+// 在堆上动态分配一个节点
+template <typename T>
+DCList_node<T> *list_new_node(const T &val)
+{
+    auto x = new DCList_node<T>;
+    x->value = val;
+    return x;
+}
+
+// 将一个节点释放回堆
+template <typename T>
+void list_free_node(DCList_node<T> *x)
+{
+    delete x;
+}
+
 template <typename T>
 void insert_inorder(DCList<T> &list, std::initializer_list<T> il, const std::string &list_name="list")
 {

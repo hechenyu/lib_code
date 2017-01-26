@@ -124,8 +124,8 @@ public:
 	void assign(InputIterator first, InputIterator last)
 	{
         for (auto iter = first; iter != last; ++iter) {
-            auto new_node = list_new_node(*iter);
-            list_insert_back(list_, new_node);
+            auto node = new_node(*iter);
+            list_insert_back(list_, node);
         }
 	}
 
@@ -187,15 +187,15 @@ public:
     // 在list头插入元素
 	void push_front(const value_type &val)
 	{
-        auto new_node = list_new_node(val);
-        list_insert_front(list_, new_node);
+        auto node = new_node(val);
+        list_insert_front(list_, node);
 	}
 
     // 在list尾插入元素
 	void push_back(const value_type &val)
 	{
-        auto new_node = list_new_node(val);
-        list_insert_back(list_, new_node);
+        auto node = new_node(val);
+        list_insert_back(list_, node);
 	}
 
     // 删除list头元素
@@ -205,7 +205,7 @@ public:
             return;
 
         auto node = list_delete_front(list_);
-        list_free_node(node);
+        free_node(node);
 	}
 
     // 删除list尾节点
@@ -215,16 +215,16 @@ public:
             return;
 
         auto node = list_delete_back(list_);
-        list_free_node(node);
+        free_node(node);
 	}
 
     // 在position前插入值为val的元素, 返回指向第一个被插入元素的迭代器
 	iterator insert(iterator position, const value_type &val)
 	{
-        auto new_node = list_new_node(val);
-        list_insert(position.link_, new_node);
+        auto node = new_node(val);
+        list_insert(position.link_, node);
 
-		return iterator(new_node);
+		return iterator(node);
 	}
 
     // 在position前插入[first, last)个元素, 返回指向第一个被插入元素的迭代器
@@ -234,7 +234,7 @@ public:
 	{
 		auto keep = &list_.nil;
 		for (auto iter = first; iter != last; ++iter) {
-			auto node = list_new_node(*iter);
+			auto node = new_node(*iter);
 			if (iter == first) {
 				keep = node;
 			}
@@ -249,7 +249,7 @@ public:
         auto node = list_link_cast<T>(position.link_);
 		auto keep = node->next;
 		list_delete(node);
-        list_free_node(node);
+        free_node(node);
 		return iterator(keep);
 	}
 
@@ -261,7 +261,7 @@ public:
             auto node = list_link_cast<T>(iter.link_);
             ++iter;
             list_delete(node);
-            list_free_node(node);
+            free_node(node);
         }
 		return last;
 	}
@@ -285,8 +285,22 @@ private:
         while (!list_is_empty(list_)) {
             auto node = list_link_cast<T>(list_head(list_));
             list_delete_front(list_);
-            list_free_node(node);
+            free_node(node);
         }
+    }
+
+    // 在堆上动态分配一个节点
+    node_type *new_node(const T &val)
+    {
+        auto node = new node_type;
+        node->value = val;
+        return node;
+    }
+
+    // 将一个节点释放回堆
+    void free_node(node_type *node)
+    {
+        delete node;
     }
 };
 

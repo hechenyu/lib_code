@@ -239,22 +239,6 @@ template <typename T>
 struct DCList : public DCList_base {
 };
 
-// 在堆上动态分配一个节点
-template <typename T>
-DCList_node<T> *list_new_node(const T &val)
-{
-    auto x = new DCList_node<T>;
-    x->value = val;
-    return x;
-}
-
-// 将一个节点释放回堆
-template <typename T>
-void list_free_node(DCList_node<T> *x)
-{
-    delete x;
-}
-
 // 将DCList_link强转成子类指针
 template <typename T>
 DCList_node<T> *list_link_cast(DCList_link x)

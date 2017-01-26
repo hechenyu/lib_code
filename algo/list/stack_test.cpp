@@ -4,6 +4,20 @@
 
 using namespace std;
 
+template <typename T>
+SCList_node<T> *list_new_node(const T &val)
+{
+    auto x = new SCList_node<T>;
+    x->value = val;
+    return x;
+}
+
+template <typename T>
+void list_free_node(SCList_node<T> *x)
+{
+    delete x;
+}
+
 int main(int argc, char *argv[])
 {
     SCList<string> stack;

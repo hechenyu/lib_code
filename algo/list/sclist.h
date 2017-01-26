@@ -145,20 +145,6 @@ template <typename T>
 struct SCList : public SCList_base {
 };
 
-template <typename T>
-SCList_node<T> *list_new_node(const T &val)
-{
-    auto x = new SCList_node<T>;
-    x->value = val;
-    return x;
-}
-
-template <typename T>
-void list_free_node(SCList_node<T> *x)
-{
-    delete x;
-}
-
 // 将SCList_link强转成子类指针
 template <typename T>
 SCList_node<T> *list_link_cast(SCList_link x)
