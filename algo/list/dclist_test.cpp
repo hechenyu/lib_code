@@ -58,7 +58,7 @@ template <typename T>
 void print(DCList<T> &list, const std::string &beg="", const std::string &end="")
 {
     std::cout << beg;
-    list_for_each(list, [](DCList_node<T> *node) { std::cout << node->value << ", "; });
+    list_for_each(list, [](DCList_link x) { std::cout << list_link_cast<T>(x)->value << ", "; });
     std::cout << end;
 }
 

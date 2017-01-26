@@ -128,6 +128,14 @@ void list_delete_front(SCList_base &list)
     list_delete_next(&list.head);
 }
 
+// 遍历list所有结点
+template <typename Function>
+void list_for_each(SCList_base &list, Function fn)
+{
+    for (auto x = list_head(list); x != NULL; x = x->next)
+        fn(x);
+}
+
 template <typename T>
 struct SCList_node : public SCList_node_base {
     T value;
@@ -156,13 +164,6 @@ template <typename T>
 SCList_node<T> *list_link_cast(SCList_link x)
 {
     return static_cast<SCList_node<T> *>(x);
-}
-
-template <typename T, typename Function>
-void list_for_each(SCList<T> &list, Function fn)
-{
-    for (auto x = list_head(list); x != NULL; x = x->next)
-        fn(list_link_cast<T>(x));
 }
 
 template <typename T>

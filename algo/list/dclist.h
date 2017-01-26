@@ -222,6 +222,14 @@ void list_swap(DCList_base &list1, DCList_base &list2)
         list_transfer(&list2.nil, temp.nil.next, temp.nil.prev);
 }
 
+// 遍历链表, 为每个节点调用fn
+template <typename Function>
+void list_for_each(DCList_base &list, Function fn)
+{
+    for (auto x = list_head(list); x != list_nil(list); x = x->next)
+        fn(x);
+}
+
 template <typename T>
 struct DCList_node : public DCList_node_base {
     T value;
@@ -254,23 +262,15 @@ DCList_node<T> *list_link_cast(DCList_link x)
     return static_cast<DCList_node<T> *>(x);
 }
 
-// 遍历链表, 为每个节点调用fn
-template <typename T, typename Function>
-void list_for_each(DCList<T> &list, Function fn)
-{
-    for (auto x = list.nil.next; x != &list.nil; x = x->next)
-        fn(static_cast<DCList_node<T> *>(x));
-}
-
 // 查找值等于val的第一个节点的地址, 
 // 如果没有等于val的节点, 返回nil的地址
 template <typename T>
 DCList_node<T> *list_search(DCList<T> &list, const T &val)
 {
-    auto x = list.nil.next; 
-    while (x != &list.nil && static_cast<DCList_node<T> *>(x)->value != val)
+    auto x = list_head(list);
+    while (x != list_nil(list) && list_link_cast<T>(x)->value != val)
         x = x->next;
-    return static_cast<DCList_node<T> *>(x); 
+    return list_link_cast<T>(x); 
 }
 
 #endif

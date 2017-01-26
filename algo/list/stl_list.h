@@ -35,12 +35,12 @@ public:
 
 	reference operator *() const 
 	{
-		return static_cast<node_type *>(link_)->value;
+		return list_link_cast<T>(link_)->value;
 	}
 
 	pointer operator ->() const 
 	{
-		return &static_cast<node_type *>(link_)->value;
+		return &list_link_cast<T>(link_)->value;
 	}
 
 	this_type &operator ++()	// prefix increment
@@ -173,14 +173,14 @@ public:
     // 获取list头节点元素值, 如果list为空, 结果为未定义
 	reference front()
 	{
-        auto node = static_cast<node_type *>(list_.nil.next);
+        auto node = list_link_cast<T>(list_.nil.next);
 		return node->value;
 	}
 
     // 获取list尾节点元素值, 如果list为空, 结果为未定义
 	reference back()
 	{
-        auto node = static_cast<node_type *>(list_.nil.prev);
+        auto node = list_link_cast<T>(list_.nil.prev);
         return node->value;
 	}
 
@@ -246,7 +246,7 @@ public:
     // 删除position指向的元素节点, 返回被删除节点的下一个节点位置
 	iterator erase(iterator position)
 	{
-        auto node = static_cast<node_type *>(position.link_);
+        auto node = list_link_cast<T>(position.link_);
 		auto keep = node->next;
 		list_delete(node);
         list_free_node(node);
@@ -258,7 +258,7 @@ public:
 	{
         auto iter = first;
         while (iter != last) {
-            auto node = static_cast<node_type *>(iter.link_);
+            auto node = list_link_cast<T>(iter.link_);
             ++iter;
             list_delete(node);
             list_free_node(node);

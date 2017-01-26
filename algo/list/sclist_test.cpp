@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
         cout << "list is empty!" << endl;
     } else {
         cout << "list: [";
-        list_for_each(list, [](Node *node) { cout << node->value << ", "; });
+        list_for_each(list, [](SCList_link x) { cout << list_link_cast<string>(x)->value << ", "; });
         cout << "]" << endl;
     }
 
