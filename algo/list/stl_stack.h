@@ -3,6 +3,7 @@
 
 #include "sclist.h"
 #include <stddef.h>
+#include <assert.h>
 
 namespace stl {
 
@@ -67,6 +68,8 @@ public:
     // pop element out of the stack
     void pop() 
     {
+        assert(!empty());
+
         free_node(list_link_cast<T>(list_delete_front(list_)));
         size_--;
     }
@@ -74,6 +77,8 @@ public:
     // return value of next element
     T& top() 
     {
+        assert(!empty());
+
         return list_link_cast<T>(list_head(list_))->value;
     }
 };

@@ -3,6 +3,7 @@
 
 #include "dclist.h"
 #include <stddef.h>
+#include <assert.h>
 
 namespace stl {
 
@@ -67,6 +68,8 @@ public:
     // remove next element from the queue
     void pop()
     {
+        assert(!empty());
+
         free_node(list_link_cast<T>(list_delete_front(list_)));
         size_--;
     }
@@ -74,12 +77,16 @@ public:
     // return value of next element
     T& front()
     {
+        assert(!empty());
+
         return list_link_cast<T>(list_head(list_))->value;
     }
 
     // return value of last element
     T& back()
     {
+        assert(!empty());
+
         return list_link_cast<T>(list_tail(list_))->value;
     }
 };

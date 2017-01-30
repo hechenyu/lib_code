@@ -172,12 +172,16 @@ public:
     // 获取list头节点元素值, 如果list为空, 结果为未定义
 	reference front()
 	{
+        assert(!empty());
+
         return list_link_cast<T>(list_head(list_))->value;
 	}
 
     // 获取list尾节点元素值, 如果list为空, 结果为未定义
 	reference back()
 	{
+        assert(!empty());
+
         return list_link_cast<T>(list_tail(list_))->value;
 	}
 
@@ -196,8 +200,7 @@ public:
     // 删除list头元素
 	void pop_front()
 	{
-        if (list_is_empty(list_))
-            return;
+        assert(!empty());
 
         free_node(list_link_cast<T>(list_delete_front(list_)));
 	}
@@ -205,8 +208,7 @@ public:
     // 删除list尾节点
 	void pop_back()
 	{
-        if (list_is_empty(list_))
-            return;
+        assert(!empty());
 
         free_node(list_link_cast<T>(list_delete_back(list_)));
 	}
