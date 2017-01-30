@@ -136,6 +136,18 @@ void list_for_each(SCList_base &list, Function fn)
         fn(x);
 }
 
+// 遍历list所有结点
+template <typename Function>
+void list_destroy(SCList_base &list, Function fn)
+{
+    auto x = list_head(list);
+    while (x != NULL) {
+        auto y = x;
+        x = x->next;
+        fn(y);
+    }
+}
+
 template <typename T>
 struct SCList_node : public SCList_node_base {
     T value;

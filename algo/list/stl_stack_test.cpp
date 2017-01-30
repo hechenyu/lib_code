@@ -1,6 +1,5 @@
-// stack::empty
-#include <iostream>       // std::cout
-#include "stl_stack.h"    // std::stack
+#include <iostream>
+#include "stl_stack.h"
 
 using namespace stl;
 
@@ -65,5 +64,7 @@ int main()
     test_push_pop();
     test_size();
     test_top();
+
+    return 0;
 }
 

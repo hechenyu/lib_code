@@ -230,6 +230,17 @@ void list_for_each(DCList_base &list, Function fn)
         fn(x);
 }
 
+// 遍历链表, 为每个节点调用fn
+template <typename Function>
+void list_destroy(DCList_base &list, Function fn)
+{
+    auto x = list_head(list);
+    while (x != list_nil(list)) {
+        x = x->next;
+        fn(x->prev);
+    }
+}
+
 template <typename T>
 struct DCList_node : public DCList_node_base {
     T value;
