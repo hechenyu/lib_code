@@ -20,21 +20,23 @@ void list_free_node(SCList_node<T> *x)
 
 int main(int argc, char *argv[])
 {
-    SCList<string> stack;
-    list_init(stack);
+    SCList<string> list;
+    list_init(list);
 
+    // push front
     for (int i = 1; i < argc; i++) {
-        auto item = list_new_node(string(argv[i]));
-        list_insert_front(stack, item);
+        auto node = list_new_node(string(argv[i]));
+        list_insert_front(list, node);
+        cout << node->value << " ";
     }
+    cout << endl;
 
-    while (!list_is_empty(stack)) {
-        auto item = list_link_cast<string>(list_head(stack));
-        cout << item->value << " ";
-        list_delete_front(stack);
-        list_free_node(item);
+    // pop front
+    while (!list_is_empty(list)) {
+        auto node = list_link_cast<string>(list_delete_front(list));
+        cout << node->value << " ";
+        list_free_node(node);
     }
-    
     cout << endl;
 
     return 0;

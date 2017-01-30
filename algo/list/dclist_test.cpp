@@ -49,10 +49,9 @@ void delete_inorder(DCList<T> &list, const std::string &list_name="list")
 {
     std::cout << "free inorder " << list_name << ": ";
     while (!list_is_empty(list)) {
-        auto node = list_link_cast<T>(list_head(list));
+        auto node = list_link_cast<T>(list_delete_front(list));
         std::cout << node->value << ", ";
-        list_delete_front(list);
-       	list_free_node(node);
+        list_free_node(node);
     }
     std::cout << std::endl;
 }
@@ -62,10 +61,9 @@ void delete_reverse(DCList<T> &list, const std::string &list_name="list")
 {
     std::cout << "free reverse " << list_name << ": ";
     while (!list_is_empty(list)) {
-        auto node = list_link_cast<T>(list_tail(list));
+        auto node = list_link_cast<T>(list_delete_back(list));
         std::cout << node->value << ", ";
-        list_delete_back(list);
-       	list_free_node(node);
+        list_free_node(node);
     }
     std::cout << std::endl;
 }
@@ -175,5 +173,5 @@ int main(int argc, char *argv[])
     print_list(list1, NAME(list1));
     print_list(list2, NAME(list2));
 
-	return 0;
+    return 0;
 }

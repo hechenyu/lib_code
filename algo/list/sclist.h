@@ -123,9 +123,11 @@ void list_insert_front(SCList_base &list, SCList_link x)
 
 // 在链表头删除结点
 inline
-void list_delete_front(SCList_base &list)
+SCList_link list_delete_front(SCList_base &list)
 {
+    auto x = list.head.next;
     list_delete_next(&list.head);
+    return x;
 }
 
 // 遍历list所有结点

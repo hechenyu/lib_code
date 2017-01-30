@@ -59,8 +59,7 @@ int main(int argc, char *argv[])
 
     cout << "free list: ";
     while (!list_is_empty(list)) {
-        auto node = list_link_cast<string>(list_head(list));
-        list_delete_front(list);
+        auto node = list_link_cast<string>(list_delete_front(list));
         cout << node->value << ", ";
         list_free_node(node);
     }

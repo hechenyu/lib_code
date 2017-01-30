@@ -98,7 +98,10 @@ public:
 	typedef size_t size_type;
 
     // default constructor
-    list() { list_init(list_); }
+    list()
+    {
+        init();
+    }
 
     // 用[first, last)区间元素构造list
 	template <typename InputIterator>
@@ -124,18 +127,15 @@ public:
 	void assign(InputIterator first, InputIterator last)
 	{
         for (auto iter = first; iter != last; ++iter) {
-            auto node = new_node(*iter);
-            list_insert_back(list_, node);
+            list_insert_back(list_, new_node(*iter));
         }
 	}
 
     // 重载=运算符, 
 	list &operator =(const list &x)
 	{
-		if (this == &x)
-			return *this;
-
-		assign(x.begin(), x.end());
+        if (this != &x)
+    		assign(x.begin(), x.end());
 		return *this;
 	}
 
@@ -149,13 +149,13 @@ public:
     // 头迭代器
 	iterator begin()
 	{
-		return iterator(list_.nil.next);
+		return iterator(list_head(list_));
 	}
 
     // 逾尾迭代器
     iterator end()
     {
-        return iterator(&list_.nil);
+        return iterator(list_nil(list_));
     }
 
     // 判断list是否为空
@@ -165,37 +165,32 @@ public:
 	size_type size() const
 	{
         int count = 0;
-        auto count_node = [&count](node_type *node) { ++count; };
-        list_for_each(list_, count_node);
+        list_for_each(list_, [&count](node_type *node) { ++count; });
         return count;
 	}
 
     // 获取list头节点元素值, 如果list为空, 结果为未定义
 	reference front()
 	{
-        auto node = list_link_cast<T>(list_.nil.next);
-		return node->value;
+        return list_link_cast<T>(list_head(list_))->value;
 	}
 
     // 获取list尾节点元素值, 如果list为空, 结果为未定义
 	reference back()
 	{
-        auto node = list_link_cast<T>(list_.nil.prev);
-        return node->value;
+        return list_link_cast<T>(list_tail(list_))->value;
 	}
 
     // 在list头插入元素
 	void push_front(const value_type &val)
 	{
-        auto node = new_node(val);
-        list_insert_front(list_, node);
+        list_insert_front(list_, new_node(val));
 	}
 
     // 在list尾插入元素
 	void push_back(const value_type &val)
 	{
-        auto node = new_node(val);
-        list_insert_back(list_, node);
+        list_insert_back(list_, new_node(val));
 	}
 
     // 删除list头元素
@@ -204,8 +199,7 @@ public:
         if (list_is_empty(list_))
             return;
 
-        auto node = list_delete_front(list_);
-        free_node(node);
+        free_node(list_link_cast<T>(list_delete_front(list_)));
 	}
 
     // 删除list尾节点
@@ -214,8 +208,7 @@ public:
         if (list_is_empty(list_))
             return;
 
-        auto node = list_delete_back(list_);
-        free_node(node);
+        free_node(list_link_cast<T>(list_delete_back(list_)));
 	}
 
     // 在position前插入值为val的元素, 返回指向第一个被插入元素的迭代器
@@ -223,7 +216,6 @@ public:
 	{
         auto node = new_node(val);
         list_insert(position.link_, node);
-
 		return iterator(node);
 	}
 
@@ -232,7 +224,7 @@ public:
 	iterator insert(iterator position, 
             InputIterator first, InputIterator last)
 	{
-		auto keep = &list_.nil;
+		auto keep = list_nil(list_);
 		for (auto iter = first; iter != last; ++iter) {
 			auto node = new_node(*iter);
 			if (iter == first) {
@@ -270,6 +262,7 @@ public:
 	void clear()
 	{
         destroy();
+        init();
 	}
 
     // 交换两个list的元素
@@ -279,14 +272,16 @@ public:
 	}
 
 private:
+    // 初始化一个链表
+    void init()
+    {
+        list_init(list_);
+    }
+
     // 销毁list中所有节点, 使list变成一个空list
     void destroy()
     {
-        while (!list_is_empty(list_)) {
-            auto node = list_link_cast<T>(list_head(list_));
-            list_delete_front(list_);
-            free_node(node);
-        }
+        list_destroy(list_, [=](link_type x) { this->free_node(list_link_cast<T>(x)); });
     }
 
     // 在堆上动态分配一个节点

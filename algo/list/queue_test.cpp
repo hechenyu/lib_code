@@ -22,21 +22,23 @@ void list_free_node(DCList_node<T> *x)
 
 int main(int argc, char *argv[])
 {
-    DCList<string> queue;
-    list_init(queue);
+    DCList<string> list;
+    list_init(list);
 
+    // push back
     for (int i = 1; i < argc; i++) {
-        auto item = list_new_node(string(argv[i]));
-        list_insert_back(queue, item);
+        auto node = list_new_node(string(argv[i]));
+        list_insert_back(list, node);
+        cout << node->value << " ";
     }
+    cout << endl;
 
-    while (!list_is_empty(queue)) {
-        auto item = list_link_cast<string>(list_head(queue));
-        cout << item->value << " ";
-        list_delete_front(queue);
-        list_free_node(item);
+    // pop front
+    while (!list_is_empty(list)) {
+        auto node = list_link_cast<string>(list_delete_front(list));
+        cout << node->value << " ";
+        list_free_node(node);
     }
-    
     cout << endl;
 
     return 0;

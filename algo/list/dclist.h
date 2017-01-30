@@ -191,18 +191,22 @@ void list_insert_back(DCList_base &list, DCList_link x)
 
 // 在链表头删除节点
 inline
-void list_delete_front(DCList_base &list)
+DCList_link list_delete_front(DCList_base &list)
 {
     assert(!list_is_empty(list));
-    list_delete(list_head(list));
+    auto x= list_head(list);
+    list_delete(x);
+    return x;
 }
 
 // 在链表尾删除节点
 inline
-void list_delete_back(DCList_base &list)
+DCList_link list_delete_back(DCList_base &list)
 {
     assert(!list_is_empty(list));
-    list_delete(list_tail(list));
+    auto x = list_tail(list);
+    list_delete(x);
+    return x;
 }
 
 /**

@@ -42,8 +42,7 @@ public:
     // destroy stack
     ~stack()
     {
-        auto free_func = [=](link_type x) { this->free_node(list_link_cast<T>(x)); };
-        list_destroy(list_, free_func);
+        list_destroy(list_, [=](link_type x) { this->free_node(list_link_cast<T>(x)); });
     }
 
     // number of elements
@@ -68,17 +67,14 @@ public:
     // pop element out of the stack
     void pop() 
     {
-        auto node = list_link_cast<T>(list_head(list_));
-        list_delete_front(list_);
-        free_node(node);
+        free_node(list_link_cast<T>(list_delete_front(list_)));
         size_--;
     }
 
     // return value of next element
     T& top() 
     {
-        auto node = list_link_cast<T>(list_head(list_));
-        return node->value;
+        return list_link_cast<T>(list_head(list_))->value;
     }
 };
 
