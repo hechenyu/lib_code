@@ -1,7 +1,6 @@
 #ifndef	__stack_h
 #define	__stack_h
 
-#include <stddef.h>
 #include <assert.h>
 
 // 数组实现的栈
@@ -12,16 +11,23 @@ template <typename T>
 struct Stack {
 	int top;	// 栈顶下标
 	int length;	// 栈大小
-	T *array;	// 栈实际空间
+	T * array;	// 栈实际空间
 };
 
 // 初始化栈
 template <typename T>
 void stack_init(Stack<T> &stack, T *array, int length)
 {
+    assert(length > 0);
     stack.top = -1;
     stack.length = length;
     stack.array = array;
+}
+
+template <typename T>
+T *stack_data(Stack<T> &stack)
+{
+    return stack.array;
 }
 
 // 扩展栈

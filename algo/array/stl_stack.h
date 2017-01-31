@@ -50,7 +50,7 @@ public:
     // destroy stack
     ~stack()
     {
-        free_array(stack_.array);
+        free_array(stack_data(stack_));
     }
 
     // number of elements

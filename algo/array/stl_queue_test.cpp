@@ -1,0 +1,107 @@
+#include <iostream>
+#include <string>
+#include "stl_queue.h"
+
+using namespace stl;
+
+void test_empty()
+{
+    queue<int> myqueue;
+    int sum (0);
+
+    for (int i=1;i<=10;i++) myqueue.push(i);
+
+    while (!myqueue.empty())
+    {
+        sum += myqueue.front();
+        myqueue.pop();
+    }
+
+    std::cout << "total: " << sum << '\n';
+}
+
+void test_push_pop()
+{
+    queue<int> myqueue;
+
+    for (int i=0; i<5; ++i) myqueue.push(i);
+
+    std::cout << "Popping out elements...";
+    while (!myqueue.empty())
+    {
+        std::cout << ' ' << myqueue.front();
+        myqueue.pop();
+    }
+    std::cout << '\n';
+}
+
+void test_size()
+{
+    queue<int> myints;
+    std::cout << "0. size: " << myints.size() << '\n';
+
+    for (int i=0; i<5; i++) myints.push(i);
+    std::cout << "1. size: " << myints.size() << '\n';
+
+    myints.pop();
+    std::cout << "2. size: " << myints.size() << '\n';
+}
+
+void test_front()
+{
+    queue<int> myqueue;
+
+    myqueue.push(77);
+    myqueue.push(16);
+
+    myqueue.front() -= myqueue.back();    // 77-16=61
+
+    std::cout << "myqueue.front() is now " << myqueue.front() << '\n';
+}
+
+void test_back()
+{
+    queue<int> myqueue;
+
+    myqueue.push(12);
+    myqueue.push(75);   // this is now the back
+
+    myqueue.back() -= myqueue.front();
+
+    std::cout << "myqueue.back() is now " << myqueue.back() << '\n';
+}
+
+void test_main(int argc, char *argv[])
+{
+    using std::string;
+    using std::cout;
+    using std::endl;
+
+    queue<string> myqueue;
+
+    // push back
+    for (int i = 1; i < argc; i++) {
+        myqueue.push(argv[i]);
+        cout << argv[i] << " ";
+    }
+    cout << endl;
+
+    // pop front
+    while (!myqueue.empty()) {
+        cout << myqueue.front() << " ";
+        myqueue.pop();
+    }
+    cout << endl;
+}
+
+int main(int argc, char *argv[])
+{
+    test_empty();
+    test_push_pop();
+    test_size();
+    test_front();
+    test_back();
+    test_main(argc, argv);
+
+    return 0;
+}
