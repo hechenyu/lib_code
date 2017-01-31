@@ -1,4 +1,5 @@
 #include <iostream>
+#include <string>
 #include "stl_stack.h"
 
 using namespace stl;
@@ -58,12 +59,36 @@ void test_top()
     std::cout << "mystack.top() is now " << mystack.top() << '\n';
 }
 
-int main()
+void main_test(int argc, char *argv[])
+{
+    using std::string;
+    using std::cout;
+    using std::endl;
+
+    stack<string> mystack;
+
+    // push front
+    for (int i = 1; i < argc; i++) {
+        mystack.push(argv[i]);
+        cout << argv[i] << " ";
+    }
+    cout << endl;
+
+    // pop front
+    while (!mystack.empty()) {
+        cout << mystack.top() << " ";
+        mystack.pop();
+    }
+    cout << endl;
+}
+
+int main(int argc, char *argv[])
 {
     test_empty();
     test_push_pop();
     test_size();
     test_top();
+    main_test(argc, argv);
 
     return 0;
 }
