@@ -25,9 +25,8 @@ int main(int argc, char *argv[])
 
     // push front
     for (int i = 1; i < argc; i++) {
-        auto node = list_new_node(string(argv[i]));
-        list_insert_front(list, node);
-        cout << node->value << " ";
+        list_insert_front(list, list_new_node(string(argv[i]));
+        cout << argv[i] << " ";
     }
     cout << endl;
 

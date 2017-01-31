@@ -27,9 +27,8 @@ int main(int argc, char *argv[])
 
     // push back
     for (int i = 1; i < argc; i++) {
-        auto node = list_new_node(string(argv[i]));
-        list_insert_back(list, node);
-        cout << node->value << " ";
+        list_insert_back(list, list_new_node(string(argv[i]));
+        cout << argv[i] << " ";
     }
     cout << endl;
 
