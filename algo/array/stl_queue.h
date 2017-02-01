@@ -30,7 +30,7 @@ protected:
     void extend()
     {
         auto new_length = queue_max_size(queue_) * EXTAND_FACTOR;
-        auto old_array = queue_extend(queue_, new_array(new_length), new_length);
+        auto old_array = queue_extend(queue_, new_array(new_length+1), new_length+1);
         free_array(old_array);
     }
 
@@ -44,7 +44,7 @@ public:
     // construct an empty queue
     queue()
     {
-        queue_init(queue_, new_array(DEFAULT_SIZE), DEFAULT_SIZE);  
+        queue_init(queue_, new_array(DEFAULT_SIZE+1), DEFAULT_SIZE+1);
     }
 
     // destroy queue

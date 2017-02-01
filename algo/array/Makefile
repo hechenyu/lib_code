@@ -7,7 +7,8 @@ INCLUDE =
 LDFLAGS = 
 LDPATH = 
 
-TARGETS = stack_test queue_test stl_stack_test stl_queue_test
+TARGETS = stack_test queue_test stl_stack_test stl_queue_test \
+		  max_heap_test
 
 .PHONY: all
 all: $(TARGETS)
@@ -26,5 +27,8 @@ stl_stack_test: stl_stack_test.cpp
 	$(CXX) -o $@ $^ $(CXXFLAGS) $(INCLUDE) $(LDFLAGS) $(LDPATH)
 
 stl_queue_test: stl_queue_test.cpp
+	$(CXX) -o $@ $^ $(CXXFLAGS) $(INCLUDE) $(LDFLAGS) $(LDPATH)
+
+max_heap_test: max_heap_test.cpp
 	$(CXX) -o $@ $^ $(CXXFLAGS) $(INCLUDE) $(LDFLAGS) $(LDPATH)
 
