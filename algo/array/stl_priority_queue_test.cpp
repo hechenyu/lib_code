@@ -1,20 +1,21 @@
 #include <iostream>
 #include <string>
-#include "stl_stack.h"
+#include <stdlib.h>
+#include "stl_priority_queue.h"
 
 using namespace stl;
 
 void test_empty()
 {
-    stack<int> mystack;
+    priority_queue<int> mypq;
     int sum (0);
 
-    for (int i=1;i<=10;i++) mystack.push(i);
+    for (int i=1;i<=10;i++) mypq.push(i);
 
-    while (!mystack.empty())
+    while (!mypq.empty())
     {
-        sum += mystack.top();
-        mystack.pop();
+        sum += mypq.top();
+        mypq.pop();
     }
 
     std::cout << "total: " << sum << '\n';
@@ -22,22 +23,25 @@ void test_empty()
 
 void test_push_pop()
 {
-    stack<int> mystack;
+    priority_queue<int> mypq;
 
-    for (int i=0; i<5; ++i) mystack.push(i);
+    mypq.push(30);
+    mypq.push(100);
+    mypq.push(25);
+    mypq.push(40);
 
     std::cout << "Popping out elements...";
-    while (!mystack.empty())
+    while (!mypq.empty())
     {
-        std::cout << ' ' << mystack.top();
-        mystack.pop();
+        std::cout << ' ' << mypq.top();
+        mypq.pop();
     }
     std::cout << '\n';
 }
 
 void test_size()
 {
-    stack<int> myints;
+    priority_queue<int> myints;
     std::cout << "0. size: " << myints.size() << '\n';
 
     for (int i=0; i<5; i++) myints.push(i);
@@ -49,37 +53,32 @@ void test_size()
 
 void test_top()
 {
-    stack<int> mystack;
+    priority_queue<int> mypq;
 
-    mystack.push(10);
-    mystack.push(20);
+    mypq.push(10);
+    mypq.push(20);
+    mypq.push(15);
 
-    mystack.top() -= 5;
-
-    std::cout << "mystack.top() is now " << mystack.top() << '\n';
+    std::cout << "mypq.top() is now " << mypq.top() << '\n';
 }
 
 void test_main(int argc, char *argv[])
 {
-    using std::string;
-    using std::cout;
-    using std::endl;
-
-    stack<string> mystack;
+    priority_queue<int> mypq;
 
     // push front
     for (int i = 1; i < argc; i++) {
-        mystack.push(argv[i]);
-        cout << argv[i] << " ";
+        mypq.push(atoi(argv[i]));
+        std::cout << atoi(argv[i]) << " ";
     }
-    cout << endl;
+    std::cout << std::endl;
 
     // pop front
-    while (!mystack.empty()) {
-        cout << mystack.top() << " ";
-        mystack.pop();
+    while (!mypq.empty()) {
+        std::cout << mypq.top() << " ";
+        mypq.pop();
     }
-    cout << endl;
+    std::cout << std::endl;
 }
 
 int main(int argc, char *argv[])
@@ -92,4 +91,3 @@ int main(int argc, char *argv[])
 
     return 0;
 }
-

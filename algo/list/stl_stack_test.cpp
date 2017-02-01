@@ -59,7 +59,7 @@ void test_top()
     std::cout << "mystack.top() is now " << mystack.top() << '\n';
 }
 
-void main_test(int argc, char *argv[])
+void test_main(int argc, char *argv[])
 {
     using std::string;
     using std::cout;
@@ -88,7 +88,7 @@ int main(int argc, char *argv[])
     test_push_pop();
     test_size();
     test_top();
-    main_test(argc, argv);
+    test_main(argc, argv);
 
     return 0;
 }

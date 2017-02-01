@@ -35,7 +35,7 @@ protected:
     }
 
 private:
-	MAXHeap<T> heap_;	// 最大堆
+	mutable MAXHeap<T> heap_;	// 最大堆
 
 public:
 	// 创建优先级队列

@@ -111,7 +111,7 @@ T *heap_extend(MAXHeap<T> &heap, T *array, int length)
     assert(heap.length <= length);
 
     auto old_array = heap.array;
-    for (int i = 1; i < heap.heap_size; i++) {
+    for (int i = 1; i <= heap.heap_size; i++) {
         array[i] = heap.array[i];
     }
     heap.array = array;
