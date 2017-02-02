@@ -8,6 +8,9 @@ using namespace std;
 template <typename T>
 void print_node_info(RBTree<T> &tree, RBTree_node<T> *node) 
 {
+    using RBTree_node_color::RED;
+    using RBTree_node_color::BLACK;
+
     cout << "node(" << (void *) node << "): value[" << node->value << "]"
         << ", color[" << ((node->color == BLACK) ? "black" : "red") << "]";
 
