@@ -175,6 +175,22 @@ SCList_node<T> *list_search(SCList<T> &list, const T &val)
     return list_link_cast<T>(x); 
 }
 
+template <typename T>
+SCList_node<T> *list_delete(SCList<T> &list, const T &val)
+{
+    auto y = &list.head;
+    auto x = list_head(list);
+    while (x != NULL && list_link_cast<T>(x)->value != val) {
+        x = x->next;
+        y = y->next;
+    }
+    if (x != NULL) {
+        assert(y->next == x);
+        list_delete_next(y);
+    }
+    return list_link_cast<T>(x); 
+}
+
 namespace sclist {
 
 // 在堆上动态分配一个节点

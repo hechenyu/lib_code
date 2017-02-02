@@ -88,6 +88,7 @@ bool test_replace(DCList<T> &list, T val, T new_val, const std::string &list_nam
     auto t = new_node(new_val);
     list_insert(x, t);
     list_delete(x);
+    free_node(x);
     print(list, "after replace, "+list_name+": [", "]");
     std::cout << std::endl;
     return true;
