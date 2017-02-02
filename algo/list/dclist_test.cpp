@@ -6,21 +6,7 @@
 
 #define NAME(list) #list
 
-// 在堆上动态分配一个节点
-template <typename T>
-DCList_node<T> *list_new_node(const T &val)
-{
-    auto x = new DCList_node<T>;
-    x->value = val;
-    return x;
-}
-
-// 将一个节点释放回堆
-template <typename T>
-void list_free_node(DCList_node<T> *x)
-{
-    delete x;
-}
+using namespace dclist;
 
 template <typename T>
 void insert_inorder(DCList<T> &list, std::initializer_list<T> il, const std::string &list_name="list")
@@ -28,7 +14,7 @@ void insert_inorder(DCList<T> &list, std::initializer_list<T> il, const std::str
     std::cout << "insert inorder " << list_name << ": ";
     for (auto &val : il) {
         std::cout << val << ", ";
-        list_insert_back(list, list_new_node(val));
+        list_insert_back(list, new_node(val));
     }
     std::cout << std::endl;
 }
@@ -39,7 +25,7 @@ void insert_reverse(DCList<T> &list, std::initializer_list<T> il, const std::str
     std::cout << "insert reverse " << list_name << ": ";
     for (auto &val : il) {
         std::cout << val << ", ";
-        list_insert_front(list, list_new_node(val));
+        list_insert_front(list, new_node(val));
     }
     std::cout << std::endl;
 }
@@ -51,7 +37,7 @@ void delete_inorder(DCList<T> &list, const std::string &list_name="list")
     while (!list_is_empty(list)) {
         auto node = list_link_cast<T>(list_delete_front(list));
         std::cout << node->value << ", ";
-        list_free_node(node);
+        free_node(node);
     }
     std::cout << std::endl;
 }
@@ -63,7 +49,7 @@ void delete_reverse(DCList<T> &list, const std::string &list_name="list")
     while (!list_is_empty(list)) {
         auto node = list_link_cast<T>(list_delete_back(list));
         std::cout << node->value << ", ";
-        list_free_node(node);
+        free_node(node);
     }
     std::cout << std::endl;
 }
@@ -99,7 +85,7 @@ bool test_replace(DCList<T> &list, T val, T new_val, const std::string &list_nam
     std::cout << "found " << val << " in " 
         << list_name << "!" << std::endl;
     std::cout << "replace " << val << " with " << new_val << std::endl;
-    auto t = list_new_node(new_val);
+    auto t = new_node(new_val);
     list_insert(x, t);
     list_delete(x);
     print(list, "after replace, "+list_name+": [", "]");

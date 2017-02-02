@@ -6,10 +6,10 @@
 
 typedef struct RBTree_node_base *RBTree_link;
 
-namespace RBTree_node_color {
+namespace rbtree {
 
 // 红黑树结点颜色
-enum Color {
+enum node_color {
     RED,
     BLACK
 };
@@ -44,8 +44,8 @@ struct RBTree_base {
 inline
 void tree_init(RBTree_base &tree)
 {
-    using RBTree_node_color::RED;
-    using RBTree_node_color::BLACK;
+    using rbtree::RED;
+    using rbtree::BLACK;
 
     tree.nil.parent = tree.nil.left = tree.nil.right = &tree.nil;
     tree.nil.color = BLACK;
@@ -204,8 +204,8 @@ void tree_right_rotate(RBTree_base &tree, RBTree_link y)
 inline
 void tree_insert_fixup(RBTree_base &tree, RBTree_link z) 
 {
-    using RBTree_node_color::RED;
-    using RBTree_node_color::BLACK;
+    using rbtree::RED;
+    using rbtree::BLACK;
 
     assert(z->color == RED);
 
@@ -348,8 +348,8 @@ void tree_transplant(RBTree_base &tree, RBTree_link u, RBTree_link v)
 inline
 void tree_delete_fixup(RBTree_base &tree, RBTree_link x)
 {
-    using RBTree_node_color::RED;
-    using RBTree_node_color::BLACK;
+    using rbtree::RED;
+    using rbtree::BLACK;
 
     while (x != tree.root && x->color == BLACK) {
         if (x == x->parent->left) {                 // x为父结点的左孩子
@@ -459,8 +459,8 @@ void tree_delete_fixup(RBTree_base &tree, RBTree_link x)
 inline
 void tree_delete(RBTree_base &tree, RBTree_link z)
 {
-    using RBTree_node_color::RED;
-    using RBTree_node_color::BLACK;
+    using rbtree::RED;
+    using rbtree::BLACK;
 
     auto y = z;
     auto y_original_color = y->color;
@@ -519,8 +519,10 @@ template <typename T>
 struct RBTree : public RBTree_base {
 };
 
+namespace rbtree {
+
 template <typename T>
-RBTree_node<T> *tree_new_node(const T &val)
+RBTree_node<T> *new_node(const T &val)
 {
     auto x = new RBTree_node<T>;
     x->value = val;
@@ -528,10 +530,12 @@ RBTree_node<T> *tree_new_node(const T &val)
 }
 
 template <typename T>
-void tree_free_node(RBTree_node<T> *x)
+void free_node(RBTree_node<T> *x)
 {
     delete x;
 }
+
+}   // namespace rbtree
 
 // 将RBTree_link强转成子类指针
 template <typename T>
@@ -549,8 +553,8 @@ RBTree_node<T> *tree_link_cast(RBTree_link x)
 template <typename T>
 void tree_insert(RBTree<T> &tree, RBTree_node<T> *z) 
 {
-    using RBTree_node_color::RED;
-    using RBTree_node_color::BLACK;
+    using rbtree::RED;
+    using rbtree::BLACK;
 
     auto y = &tree.nil;                                         // y为要插入位置的父结点
     auto x = tree.root;                                         // x遍历树

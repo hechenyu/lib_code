@@ -4,13 +4,11 @@
 #include "rbtree.h"
 
 using namespace std;
+using namespace rbtree;
 
 template <typename T>
 void print_node_info(RBTree<T> &tree, RBTree_node<T> *node) 
 {
-    using RBTree_node_color::RED;
-    using RBTree_node_color::BLACK;
-
     cout << "node(" << (void *) node << "): value[" << node->value << "]"
         << ", color[" << ((node->color == BLACK) ? "black" : "red") << "]";
 
@@ -70,7 +68,7 @@ int main(int argc, char *argv[])
     RBTree tree;
     tree_init(tree);
     for (int i = 1; i < argc; i++) {
-        Node *node = tree_new_node(string(argv[i]));
+        Node *node = new_node(string(argv[i]));
 #ifndef NDEBUG
         node_list.push_back(node);
 #endif

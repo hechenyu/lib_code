@@ -4,6 +4,7 @@
 #include "bstree.h"
 
 using namespace std;
+using namespace bstree;
 
 template <typename T>
 void print_node_info(BSTree_node<T> *node) 
@@ -63,7 +64,7 @@ int main(int argc, char *argv[])
     BSTree tree;
     tree_init(tree);
     for (int i = 1; i < argc; i++) {
-        Node *node = tree_new_node(string(argv[i]));
+        Node *node = new_node(string(argv[i]));
 #ifndef NDEBUG
         node_list.push_back(node);
 #endif

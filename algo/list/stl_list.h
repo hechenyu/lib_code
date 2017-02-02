@@ -82,6 +82,7 @@ public:
 
 template <typename T>
 class list {
+private:
 	typedef DCList_link link_type;
 	typedef DCList_node<T> node_type;
 	typedef DCList<T> list_type;
@@ -126,6 +127,8 @@ public:
 	template <typename InputIterator>
 	void assign(InputIterator first, InputIterator last)
 	{
+        using dclist::new_node;
+
         for (auto iter = first; iter != last; ++iter) {
             list_insert_back(list_, new_node(*iter));
         }
@@ -283,21 +286,8 @@ private:
     // 销毁list中所有节点, 使list变成一个空list
     void destroy()
     {
-        list_destroy(list_, [=](link_type x) { this->free_node(list_link_cast<T>(x)); });
-    }
-
-    // 在堆上动态分配一个节点
-    node_type *new_node(const T &val)
-    {
-        auto node = new node_type;
-        node->value = val;
-        return node;
-    }
-
-    // 将一个节点释放回堆
-    void free_node(node_type *node)
-    {
-        delete node;
+        using dclist::free_node;
+        list_destroy(list_, [](link_type x) { free_node(list_link_cast<T>(x)); });
     }
 };
 

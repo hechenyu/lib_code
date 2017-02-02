@@ -3,20 +3,7 @@
 #include <iostream>
 
 using namespace std;
-
-template <typename T>
-SCList_node<T> *list_new_node(const T &val)
-{
-    auto x = new SCList_node<T>;
-    x->value = val;
-    return x;
-}
-
-template <typename T>
-void list_free_node(SCList_node<T> *x)
-{
-    delete x;
-}
+using namespace sclist;
 
 int main(int argc, char *argv[])
 {
@@ -25,7 +12,7 @@ int main(int argc, char *argv[])
 
     // push front
     for (int i = 1; i < argc; i++) {
-        list_insert_front(list, list_new_node(string(argv[i]));
+        list_insert_front(list, new_node(string(argv[i])));
         cout << argv[i] << " ";
     }
     cout << endl;
@@ -34,7 +21,7 @@ int main(int argc, char *argv[])
     while (!list_is_empty(list)) {
         auto node = list_link_cast<string>(list_delete_front(list));
         cout << node->value << " ";
-        list_free_node(node);
+        free_node(node);
     }
     cout << endl;
 

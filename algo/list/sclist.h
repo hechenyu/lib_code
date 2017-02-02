@@ -175,4 +175,24 @@ SCList_node<T> *list_search(SCList<T> &list, const T &val)
     return list_link_cast<T>(x); 
 }
 
+namespace sclist {
+
+// 在堆上动态分配一个节点
+template <typename T>
+SCList_node<T> *new_node(const T &val)
+{
+    auto x = new SCList_node<T>;
+    x->value = val;
+    return x;
+}
+
+// 将一个节点释放回堆
+template <typename T>
+void free_node(SCList_node<T> *x)
+{
+    delete x;
+}
+
+}   // namespace sclist
+
 #endif

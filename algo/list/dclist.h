@@ -272,4 +272,24 @@ DCList_node<T> *list_search(DCList<T> &list, const T &val)
     return list_link_cast<T>(x); 
 }
 
+namespace dclist {
+
+// 在堆上动态分配一个节点
+template <typename T>
+DCList_node<T> *new_node(const T &val)
+{
+    auto x = new DCList_node<T>;
+    x->value = val;
+    return x;
+}
+
+// 将一个节点释放回堆
+template <typename T>
+void free_node(DCList_node<T> *x)
+{
+    delete x;
+}
+
+}   // namespace dclist
+
 #endif

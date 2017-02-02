@@ -14,18 +14,6 @@ protected:
     typedef SCList_link link_type;
 	typedef SCList_node<T> node_type;
 
-    node_type *new_node(const T &val)
-    {
-        auto x = new node_type;
-        x->value = val;
-        return x;
-    }
-
-    void free_node(node_type *x)
-    {
-        delete x;
-    }
-
 private:
     list_type list_;
     int size_ = 0;
@@ -43,7 +31,8 @@ public:
     // destroy stack
     ~stack()
     {
-        list_destroy(list_, [=](link_type x) { this->free_node(list_link_cast<T>(x)); });
+        using sclist::free_node;
+        list_destroy(list_, [](link_type x) { free_node(list_link_cast<T>(x)); });
     }
 
     // number of elements
@@ -61,6 +50,7 @@ public:
     // push element into the stack
     void push(const T& elem) 
     {
+        using sclist::new_node;
         list_insert_front(list_, new_node(elem));
         size_++;
     }
@@ -70,6 +60,7 @@ public:
     {
         assert(!empty());
 
+        using sclist::free_node;
         free_node(list_link_cast<T>(list_delete_front(list_)));
         size_--;
     }

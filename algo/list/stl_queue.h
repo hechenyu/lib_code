@@ -14,18 +14,6 @@ protected:
     typedef DCList_link link_type;
 	typedef DCList_node<T> node_type;
 
-    node_type *new_node(const T &val)
-    {
-        auto x = new node_type;
-        x->value = val;
-        return x;
-    }
-
-    void free_node(node_type *x)
-    {
-        delete x;
-    }
-
 private:
     list_type list_;
     int size_ = 0;
@@ -43,7 +31,8 @@ public:
     // destroy queue
     ~queue()
     {
-        list_destroy(list_, [=](link_type x) { this->free_node(list_link_cast<T>(x)); });
+        using dclist::free_node;
+        list_destroy(list_, [](link_type x) { free_node(list_link_cast<T>(x)); });
     }
 
     // number of elements
@@ -61,6 +50,7 @@ public:
     // insert element into the queue
     void push(const T& elem) 
     {
+        using dclist::new_node;
         list_insert_back(list_, new_node(elem));
         size_++;
     }
@@ -70,6 +60,7 @@ public:
     {
         assert(!empty());
 
+        using dclist::free_node;
         free_node(list_link_cast<T>(list_delete_front(list_)));
         size_--;
     }

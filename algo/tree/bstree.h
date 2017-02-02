@@ -220,8 +220,11 @@ template <typename T>
 struct BSTree : public BSTree_base {
 };
 
+namespace bstree {
+
+// 在堆上动态分配一个节点
 template <typename T>
-BSTree_node<T> *tree_new_node(const T &val)
+BSTree_node<T> *new_node(const T &val)
 {
     auto x = new BSTree_node<T>;
     x->value = val;
@@ -229,11 +232,14 @@ BSTree_node<T> *tree_new_node(const T &val)
     return x;
 }
 
+// 将一个节点释放回堆
 template <typename T>
-void tree_free_node(BSTree_node<T> *x)
+void free_node(BSTree_node<T> *x)
 {
     delete x;
 }
+
+}   // namespace bstree
 
 // 将BSTree_link强转成子类指针
 template <typename T>
