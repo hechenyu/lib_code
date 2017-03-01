@@ -1,7 +1,7 @@
 #ifndef	__snf_wrap_header_h
 #define	__snf_wrap_header_h
 
-#ifdef USE_LIBNET_HEADERS
+#ifndef USE_NATIVE_HEADERS
 #include <libnet.h>
 
 typedef struct libnet_ethernet_hdr Ether_header;
