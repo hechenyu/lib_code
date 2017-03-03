@@ -1,5 +1,5 @@
 
-SUBDIRS = lib intro tcpcliserv
+SUBDIRS = lib intro tcpcliserv select
 
 all:
 	@$(MAKE) $(MFLAGS) WHAT_TO_MAKE=$@ common
