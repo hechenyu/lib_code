@@ -1,8 +1,8 @@
 RM = rm -f
 CC = gcc
-CFLAGS = -Wall -g -I../lib -O2
-INCLUDE = -I../lib/
-LIBS = ../libunp.a -lpthread
+INCLUDE = -I../../lib/
+CFLAGS = -Wall -g -O2 ${INCLUDE}
+LIBS = ../../lib/libunp.a -lpthread
 
 PROGS =	udpcli01 udpserv01 udpcli02 udpcli03 udpcli04 \
 		udpcli06 udpserv06 udpserv07 udpcli08 udpcli09 udpcli10 \

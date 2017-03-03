@@ -1,8 +1,8 @@
 RM = rm -f
 CC = gcc
-CFLAGS = -Wall -g -I../lib -O2
-INCLUDE = -I../lib/
-LIBS = ../libunp.a -lpthread
+INCLUDE = -I../../lib/
+CFLAGS = -Wall -g -O2 ${INCLUDE}
+LIBS = ../../lib/libunp.a -lpthread
 
 PROGS =	tcpcli01 tcpcli04 tcpcli05 tcpcli06 \
 		tcpcli07 tcpcli08 tcpcli09 tcpcli10 \
