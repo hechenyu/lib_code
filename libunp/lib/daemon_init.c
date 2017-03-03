@@ -33,6 +33,8 @@ daemon_init(const char *pname, int facility)
 
 	chdir("/");				/* change working directory */
 
+	umask(0);				/* clear our file mode creation mask */
+	
 	/* close off file descriptors */
 	for (i = 0; i < MAXFD; i++)
 		close(i);
