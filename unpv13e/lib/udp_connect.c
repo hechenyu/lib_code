@@ -1,5 +1,5 @@
 /* include udp_connect */
-#include	"unp.h"
+#include	"udp_connect.h"
 
 int
 udp_connect(const char *host, const char *serv)

@@ -1,5 +1,5 @@
 
-SUBDIRS = lib intro tcpcliserv select
+SUBDIRS = lib intro tcpcliserv select sockopt udpcliserv
 
 all:
 	@$(MAKE) $(MFLAGS) WHAT_TO_MAKE=$@ common

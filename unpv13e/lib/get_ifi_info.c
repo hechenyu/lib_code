@@ -1,5 +1,5 @@
 /* include get_ifi_info1 */
-#include	"unpifi.h"
+#include	"get_ifi_info.h"
 
 struct ifi_info *
 get_ifi_info(int family, int doaliases)

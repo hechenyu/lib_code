@@ -1,5 +1,5 @@
 /* include tcp_connect */
-#include	"unp.h"
+#include	"tcp_connect.h"
 
 int
 tcp_connect(const char *host, const char *serv)

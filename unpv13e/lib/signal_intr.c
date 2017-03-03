@@ -1,5 +1,5 @@
 /* include signal_intr */
-#include	"unp.h"
+#include	"signal_intr.h"
 
 Sigfunc *
 signal_intr(int signo, Sigfunc *func)

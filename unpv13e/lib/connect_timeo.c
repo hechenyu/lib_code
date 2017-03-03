@@ -1,5 +1,5 @@
 /* include connect_timeo */
-#include	"unp.h"
+#include	"connect_timeo.h"
 
 static void	connect_alarm(int);
 

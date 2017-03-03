@@ -45,7 +45,7 @@ byteorder:	byteorder.o
 		${CC} ${CFLAGS} -o $@ byteorder.o ${LIBS}
 
 clean:
-		rm -f ${PROGS} ${CLEANFILES}
+		rm -f ${PROGS} ${CLEANFILES} *.o
 
 distclean:
 		rm -f ${PROGS} ${CLEANFILES} *.o

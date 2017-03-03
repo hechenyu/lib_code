@@ -1,5 +1,5 @@
 /* include signal */
-#include	"unp.h"
+#include	"wrapsignal.h"
 
 Sigfunc *
 signal(int signo, Sigfunc *func)

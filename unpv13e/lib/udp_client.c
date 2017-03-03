@@ -1,5 +1,5 @@
 /* include udp_client */
-#include	"unp.h"
+#include	"udp_client.h"
 
 int
 udp_client(const char *host, const char *serv, SA **saptr, socklen_t *lenp)

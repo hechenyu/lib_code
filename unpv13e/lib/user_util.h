@@ -1,5 +1,5 @@
-#ifndef EXAMPLE_UTIL_H
-#define EXAMPLE_UTIL_H
+#ifndef __unp_const_def_h
+#define __unp_const_def_h
 
 #include <limits.h>
 
@@ -17,7 +17,7 @@
 
 /* Following could be derived from SOMAXCONN in <sys/socket.h>, but many
    kernels still #define it as 5, while actually supporting many more */
-#define LISTENQ     1024    /* 2nd argument to listen() */
+//#define LISTENQ     1024    /* 2nd argument to listen() */
 
 /* Miscellaneous constants */
 #define MAXLINE     4096    /* max text line length */

@@ -1,5 +1,5 @@
 /* include my_addrs */
-#include	"unp.h"
+#include	"my_addrs.h"
 #include	<sys/utsname.h>
 
 char **

@@ -3,7 +3,7 @@
  * Most are included in the source file for the function itself.
  */
 
-#include	"unp.h"
+#include	"wraplib.h"
 
 const char *
 Inet_ntop(int family, const void *addrptr, char *strptr, size_t len)

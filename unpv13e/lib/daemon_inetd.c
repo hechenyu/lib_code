@@ -1,4 +1,4 @@
-#include	"unp.h"
+#include	"daemon_inetd.h"
 #include	<syslog.h>
 
 extern int	daemon_proc;	/* defined in error.c */

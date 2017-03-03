@@ -2,7 +2,7 @@
  * pthreads wrapper functions.
  */
 
-#include	"unp.h"
+#include	"wrappthread.h"
 #include	"unpthread.h"
 
 void

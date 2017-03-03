@@ -16,7 +16,7 @@
  *warning: passing arg 2 of `connect' discards `const' from pointer target type
  */
 
-#include	"unp.h"
+#include	"wrapunix.h"
 
 void *
 Calloc(size_t n, size_t size)
