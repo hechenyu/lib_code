@@ -1,13 +1,14 @@
 RM = rm -f
 CC = gcc
 INCLUDE = -I../../lib/
-CFLAGS = -Wall -g -O2 ${INCLUDE}
+CFLAGS = -Wall -g -O2 ${INCLUDE} -DHAVE_EPOLL -DNOTDEF
 LIBS = ../../lib/libunp.a -lpthread
 
 PROGS =	tcpcli01 tcpcli04 tcpcli05 tcpcli06 \
 		tcpcli07 tcpcli08 tcpcli09 tcpcli10 \
 		tcpserv01 tcpserv02 tcpserv03 tcpserv04 \
-		tcpserv08 tcpserv09 tcpservselect01 tcpservpoll01 tsigpipe
+		tcpserv08 tcpserv09 tcpservselect01 tcpservpoll01 tsigpipe \
+		tcpservepoll01 
 
 all:	${PROGS}
 
@@ -66,6 +67,9 @@ tcpservpoll01:	tcpservpoll01.o
 
 tsigpipe:	tsigpipe.o
 		${CC} ${CFLAGS} -o $@ tsigpipe.o ${LIBS}
+
+tcpservepoll01:	tcpservepoll01.o
+		${CC} ${CFLAGS} -o $@ tcpservepoll01.o ${LIBS}
 
 clean:
 		rm -f ${PROGS} ${CLEANFILES} *.o
