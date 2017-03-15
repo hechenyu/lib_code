@@ -63,6 +63,7 @@ main(int argc, char **argv)
 #ifdef	NOTDEF
 						printf("client[%d] aborted connection\n", i);
 #endif
+                        Epoll_ctl(epfd, EPOLL_CTL_DEL, sockfd, NULL);
 						Close(sockfd);
 					} else
 						err_sys("read error");
@@ -71,6 +72,7 @@ main(int argc, char **argv)
 #ifdef	NOTDEF
 					printf("client[%d] closed connection\n", i);
 #endif
+                    Epoll_ctl(epfd, EPOLL_CTL_DEL, sockfd, NULL);
 					Close(sockfd);
 				} else
 					Writen(sockfd, buf, n);
