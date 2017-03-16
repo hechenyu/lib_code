@@ -4,7 +4,6 @@
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
-#include <poll.h>
 #include "error.h"
 
 #define	SA	struct sockaddr
@@ -14,6 +13,16 @@
 
 /* Define to 1 if you have the `poll' function. */
 #define HAVE_POLL 1
+
+#ifdef HAVE_POLL 
+#include <poll.h>
+#endif
+
+/* #define HAVE_EPOLL 1 */
+
+#ifdef HAVE_EPOLL
+#include <sys/epoll.h>
+#endif
 
 			/* prototypes for our socket wrapper functions: see {Sec errors} */
 int		 Accept(int, SA *, socklen_t *);
@@ -54,6 +63,13 @@ int		 Sockatmark(int);
 int		 Socket(int, int, int);
 void	 Socketpair(int, int, int, int *);
 void	 Writen(int, void *, size_t);
+
+#ifdef  HAVE_EPOLL
+int      Epoll_create(int size);
+int      Epoll_create1(int flags);
+int      Epoll_ctl(int epfd, int op, int fd, struct epoll_event *ev);
+int      Epoll_wait(int epfd, struct epoll_event *evlist, int maxevents, int timeout);
+#endif
 
 #endif
 
