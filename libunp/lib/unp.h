@@ -1,3 +1,6 @@
+#ifndef __unp_unp_h
+#define __unp_unp_h
+
 #include "error.h"
 #include "wrappthread.h"
 #include "wrapstdio.h"
@@ -49,3 +52,5 @@
 #include "writen.h"
 #include "writable_timeo.h"
 #include "user_util.h"
+
+#endif
