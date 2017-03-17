@@ -7,5 +7,8 @@
 #include "px_ipc_name.h"
 #include "set_concurrency.h"
 #include "set_nonblock.h"
+#include "sleep_us.h"
+#include "signal_rt.h"
+#include "signal_rt_intr.h"
 
 #endif
