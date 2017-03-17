@@ -1,5 +1,5 @@
-#ifndef __unp_const_def_h
-#define __unp_const_def_h
+#ifndef __unp_user_util_h
+#define __unp_user_util_h
 
 #include <limits.h>
 

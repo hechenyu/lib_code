@@ -8,6 +8,7 @@
 #include <sys/wait.h>
 #include <sys/types.h>
 #include <sys/sysctl.h>
+#include <stropts.h>
 #include "error.h"
 
 			/* prototypes for our Unix wrapper functions: see {Sec errors} */

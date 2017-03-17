@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -I. -g -O2 -D_REENTRANT -Wall #-DHAVE_EPOLL
+CFLAGS = -I. -g -O2 -D_REENTRANT -Wall -DHAVE_EPOLL
 RANLIB = ranlib
 
 # Following is the main library, built from all the object files
