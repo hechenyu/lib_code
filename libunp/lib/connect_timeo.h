@@ -10,7 +10,7 @@
 
 #define	SA	struct sockaddr
 
-int connect_timeo(int sockfd, const SA *saptr, socklen_t salen, int nsec);
+int      connect_timeo(int, const SA *, socklen_t, int);
 void	 Connect_timeo(int, const SA *, socklen_t, int);
 
 #endif

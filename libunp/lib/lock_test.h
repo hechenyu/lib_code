@@ -4,8 +4,8 @@
 #include <fcntl.h>
 #include "error.h"
 
-pid_t lock_test(int fd, int type, off_t offset, int whence, off_t len);
-pid_t Lock_test(int fd, int type, off_t offset, int whence, off_t len);
+pid_t   lock_test(int, int, off_t, int, off_t);
+pid_t   Lock_test(int, int, off_t, int, off_t);
 
 #endif
 

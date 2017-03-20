@@ -45,16 +45,16 @@ void	 Close(int);
 void	 Dup2(int, int);
 
 #ifdef	HAVE_FATTACH
-void     Fattach(int fd, const char *path);
+void     Fattach(int, const char *);
 #endif
 
 int      Fcntl(int, int, ...);
 pid_t	 Fork(void);
-long     Fpathconf(int fd, int name);
-void     Fstat(int fd, struct stat *ptr);
+long     Fpathconf(int, int);
+void     Fstat(int, struct stat *);
 
 #ifdef	HAVE_SYS_IPC_H
-key_t    Ftok(const char *pathname, int id);
+key_t    Ftok(const char *, int);
 #endif
 
 void     Ftruncate(int fd, off_t length);
@@ -85,7 +85,7 @@ void     Mq_getattr(mqd_t mqd, struct mq_attr *mqstat);
 void     Mq_setattr(mqd_t mqd, const struct mq_attr *mqstat, struct mq_attr *omqstat);
 #endif
 
-int		 Open(const char *, int, mode_t);
+int      Open(const char *, int , ...);
 void	 Pipe(int *fds);
 ssize_t	 Read(int, void *, size_t);
 void	 Sigaddset(sigset_t *, int);

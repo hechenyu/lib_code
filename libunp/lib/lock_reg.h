@@ -4,8 +4,8 @@
 #include <fcntl.h>
 #include "error.h"
 
-int lock_reg(int fd, int cmd, int type, off_t offset, int whence, off_t len);
-void Lock_reg(int fd, int cmd, int type, off_t offset, int whence, off_t len);
+int     lock_reg(int, int, int, off_t, int, off_t);
+void    Lock_reg(int, int, int, off_t, int, off_t);
 
 #endif
 

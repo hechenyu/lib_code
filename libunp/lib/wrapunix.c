@@ -307,14 +307,75 @@ Mq_setattr(mqd_t mqd, const struct mq_attr *mqstat, struct mq_attr *omqstat)
 }
 #endif	/* HAVE_MQUEUE_H */
 
+#ifdef	HAVE_SYS_MSG_H
 int
-Open(const char *pathname, int oflag, mode_t mode)
+Msgget(key_t key, int flag)
+{
+	int		rc;
+
+	if ( (rc = msgget(key, flag)) == -1)
+		err_sys("msgget error");
+	return(rc);
+}
+
+void
+Msgctl(int id, int cmd, struct msqid_ds *buf)
+{
+	if (msgctl(id, cmd, buf) == -1)
+		err_sys("msgctl error");
+}
+
+void
+Msgsnd(int id, const void *ptr, size_t len, int flag)
+{
+	if (msgsnd(id, ptr, len, flag) == -1)
+		err_sys("msgsnd error");
+}
+
+ssize_t
+Msgrcv(int id, void *ptr, size_t len, int type, int flag)
+{
+	ssize_t	rc;
+
+	if ( (rc = msgrcv(id, ptr, len, type, flag)) == -1)
+		err_sys("msgrcv error");
+	return(rc);
+}
+#endif	/* HAVE_SYS_MSG_H */
+
+int
+Open(const char *pathname, int oflag, ...)
 {
 	int		fd;
+	va_list	ap;
+	mode_t	mode;
 
-	if ( (fd = open(pathname, oflag, mode)) == -1)
-		err_sys("open error for %s", pathname);
+	if (oflag & O_CREAT) {
+		va_start(ap, oflag);		/* init ap to final named argument */
+		mode = va_arg(ap, va_mode_t);
+		if ( (fd = open(pathname, oflag, mode)) == -1)
+			err_sys("open error for %s", pathname);
+		va_end(ap);
+	} else {
+		if ( (fd = open(pathname, oflag)) == -1)
+			err_sys("open error for %s", pathname);
+	}
 	return(fd);
+}
+
+long
+Pathconf(const char *pathname, int name)
+{
+	long	val;
+
+	errno = 0;		/* in case pathconf() does not change this */
+	if ( (val = pathconf(pathname, name)) == -1) {
+		if (errno != 0)
+			err_sys("pathconf error");
+		else
+			err_sys("pathconf: %d not defined", name);
+	}
+	return(val);
 }
 
 void

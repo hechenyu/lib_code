@@ -9,7 +9,7 @@
 /* Define to 1 if the system supports IPv6 */
 #define IPV6    1
 
-int mcast_get_ttl(int sockfd);
-int Mcast_get_ttl(int sockfd);
+int     mcast_get_ttl(int);
+int     Mcast_get_ttl(int);
 
 #endif

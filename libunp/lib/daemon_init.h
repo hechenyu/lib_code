@@ -8,6 +8,6 @@
 #include "wrapunix.h"
 #include "wrapsignal.h"
 
-int daemon_init(const char *pname, int facility);
+int daemon_init(const char *, int);
 
 #endif
