@@ -6,6 +6,50 @@
 #include	"unpthread.h"
 
 void
+Pthread_attr_init(pthread_attr_t *attr)
+{
+	int		n;
+
+	if ( (n = pthread_attr_init(attr)) == 0)
+		return;
+	errno = n;
+	err_sys("pthread_attr_init error");
+}
+
+void
+Pthread_attr_destroy(pthread_attr_t *attr)
+{
+	int		n;
+
+	if ( (n = pthread_attr_destroy(attr)) == 0)
+		return;
+	errno = n;
+	err_sys("pthread_attr_destroy error");
+}
+
+void
+Pthread_attr_setdetachstate(pthread_attr_t *attr, int detach)
+{
+	int		n;
+
+	if ( (n = pthread_attr_setdetachstate(attr, detach)) == 0)
+		return;
+	errno = n;
+	err_sys("pthread_attr_setdetachstate error");
+}
+
+void
+Pthread_attr_setscope(pthread_attr_t *attr, int scope)
+{
+	int		n;
+
+	if ( (n = pthread_attr_setscope(attr, scope)) == 0)
+		return;
+	errno = n;
+	err_sys("pthread_attr_setscope error");
+}
+
+void
 Pthread_create(pthread_t *tid, const pthread_attr_t *attr,
 			   void * (*func)(void *), void *arg)
 {
@@ -61,6 +105,17 @@ Pthread_mutexattr_init(pthread_mutexattr_t *attr)
 	err_sys("pthread_mutexattr_init error");
 }
 
+void
+Pthread_mutexattr_destroy(pthread_mutexattr_t *attr)
+{
+	int		n;
+
+	if ( (n = pthread_mutexattr_destroy(attr)) == 0)
+		return;
+	errno = n;
+	err_sys("pthread_mutexattr_destroy error");
+}
+
 #ifdef	_POSIX_THREAD_PROCESS_SHARED
 void
 Pthread_mutexattr_setpshared(pthread_mutexattr_t *attr, int flag)
@@ -83,6 +138,17 @@ Pthread_mutex_init(pthread_mutex_t *mptr, pthread_mutexattr_t *attr)
 		return;
 	errno = n;
 	err_sys("pthread_mutex_init error");
+}
+
+void
+Pthread_mutex_destroy(pthread_mutex_t *mptr)
+{
+	int		n;
+
+	if ( (n = pthread_mutex_destroy(mptr)) == 0)
+		return;
+	errno = n;
+	err_sys("pthread_mutex_destroy error");
 }
 
 /* include Pthread_mutex_lock */
@@ -108,6 +174,41 @@ Pthread_mutex_unlock(pthread_mutex_t *mptr)
 	errno = n;
 	err_sys("pthread_mutex_unlock error");
 }
+
+void
+Pthread_condattr_init(pthread_condattr_t *attr)
+{
+	int		n;
+
+	if ( (n = pthread_condattr_init(attr)) == 0)
+		return;
+	errno = n;
+	err_sys("pthread_condattr_init error");
+}
+
+void
+Pthread_condattr_destroy(pthread_condattr_t *attr)
+{
+	int		n;
+
+	if ( (n = pthread_condattr_destroy(attr)) == 0)
+		return;
+	errno = n;
+	err_sys("pthread_condattr_destroy error");
+}
+
+#ifdef	_POSIX_THREAD_PROCESS_SHARED
+void
+Pthread_condattr_setpshared(pthread_condattr_t *attr, int flag)
+{
+	int		n;
+
+	if ( (n = pthread_condattr_setpshared(attr, flag)) == 0)
+		return;
+	errno = n;
+	err_sys("pthread_condattr_setpshared error");
+}
+#endif
 
 void
 Pthread_cond_broadcast(pthread_cond_t *cptr)
@@ -177,6 +278,17 @@ Pthread_key_create(pthread_key_t *key, void (*func)(void *))
 }
 
 void
+Pthread_setcancelstate(int state, int *oldstate)
+{
+	int		n;
+
+	if ( (n = pthread_setcancelstate(state, oldstate)) == 0)
+		return;
+	errno = n;
+	err_sys("pthread_setcancelstate error");
+}
+
+void
 Pthread_setspecific(pthread_key_t key, const void *value)
 {
 	int		n;
@@ -186,3 +298,22 @@ Pthread_setspecific(pthread_key_t key, const void *value)
 	errno = n;
 	err_sys("pthread_setspecific error");
 }
+
+/* include pr_thread_id */
+long
+pr_thread_id(pthread_t *ptr)
+{
+#if defined(sun)
+	return((ptr == NULL) ? pthread_self() : *ptr);	/* Solaris */
+
+#elif defined(__osf__) && defined(__alpha)
+	pthread_t	tid;
+
+	tid = (ptr == NULL) ? pthread_self() : *ptr;	/* Digital Unix */
+	return(pthread_getsequence_np(tid));
+#else
+		/* 4everything else */
+	return((ptr == NULL) ? pthread_self() : *ptr);
+#endif
+}
+/* end pr_thread_id */
