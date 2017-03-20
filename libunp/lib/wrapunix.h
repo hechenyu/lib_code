@@ -11,16 +11,24 @@
 #include <sys/ioctl.h>
 #include "error.h"
 
+#define HAVE_MKSTEMP 1
+
 			/* prototypes for our Unix wrapper functions: see {Sec errors} */
 void	*Calloc(size_t, size_t);
 void	 Close(int);
 void	 Dup2(int, int);
-int		 Fcntl(int, int, int);
+#ifdef	HAVE_FATTACH
+void     Fattach(int fd, const char *path);
+#endif
+int		 Fcntli(int, int, int);
+int		 Fcntlv(int, int, void *);
+#define Fcntl(fd, cmd, arg) \
+    ((((cmd) == F_SETLKW) || ((cmd) == F_SETLK)) ? Fcntlv((fd), (cmd), (void *) (arg)) : Fcntli((fd), (cmd), (int) (arg)))
 void	 Gettimeofday(struct timeval *, void *);
 int		 Ioctl(int, int, void *);
 pid_t	 Fork(void);
 void	*Malloc(size_t);
-int	 Mkstemp(char *);
+int	     Mkstemp(char *);
 void	*Mmap(void *, size_t, int, int, int, off_t);
 int		 Open(const char *, int, mode_t);
 void	 Pipe(int *fds);

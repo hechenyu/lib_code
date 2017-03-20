@@ -71,5 +71,8 @@ int      Epoll_ctl(int epfd, int op, int fd, struct epoll_event *ev);
 int      Epoll_wait(int epfd, struct epoll_event *evlist, int maxevents, int timeout);
 #endif
 
+FILE    *Popen(const char *command, const char *mode);
+int      Pclose(FILE *fp);
+
 #endif
 

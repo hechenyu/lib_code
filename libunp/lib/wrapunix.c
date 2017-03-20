@@ -42,8 +42,27 @@ Dup2(int fd1, int fd2)
 		err_sys("dup2 error");
 }
 
+#ifdef	HAVE_FATTACH
+void
+Fattach(int fd, const char *path)
+{
+	if (fattach(fd, path) == -1)
+		err_sys("fattach error");
+}
+#endif
+
 int
-Fcntl(int fd, int cmd, int arg)
+Fcntli(int fd, int cmd, int arg)
+{
+	int	n;
+
+	if ( (n = fcntl(fd, cmd, arg)) == -1)
+		err_sys("fcntl error");
+	return(n);
+}
+
+int
+Fcntlv(int fd, int cmd, void *arg)
 {
 	int	n;
 

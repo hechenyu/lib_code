@@ -50,3 +50,23 @@ Fputs(const char *ptr, FILE *stream)
 	if (fputs(ptr, stream) == EOF)
 		err_sys("fputs error");
 }
+
+FILE *
+Popen(const char *command, const char *mode)
+{
+	FILE	*fp;
+
+	if ( (fp = popen(command, mode)) == NULL)
+		err_sys("popen error");
+	return(fp);
+}
+
+int
+Pclose(FILE *fp)
+{
+	int		n;
+
+	if ( (n = pclose(fp)) == -1)
+		err_sys("pclose error");
+	return(n);
+}
