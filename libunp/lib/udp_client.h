@@ -9,7 +9,7 @@
 
 #define	SA	struct sockaddr
 
-int udp_client(const char *host, const char *serv, SA **saptr, socklen_t *lenp);
-int Udp_client(const char *host, const char *serv, SA **saptr, socklen_t *lenptr);
+int udp_client(const char *, const char *, SA **, socklen_t *);
+int Udp_client(const char *, const char *, SA **, socklen_t *);
 
 #endif

@@ -9,8 +9,8 @@
 /* Devices */                                                                                                                                                           
 #define HAVE_DEV_ZERO 1 
 
-void *my_shm(size_t nbytes);
-void *My_shm(size_t nbytes);
+void *my_shm(size_t);
+void *My_shm(size_t);
 
 #endif
 

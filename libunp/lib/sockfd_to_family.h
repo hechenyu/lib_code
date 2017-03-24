@@ -6,7 +6,7 @@
 
 #define	SA	struct sockaddr
 
-int sockfd_to_family(int sockfd);
-int Sockfd_to_family(int sockfd);
+int sockfd_to_family(int);
+int Sockfd_to_family(int);
 
 #endif

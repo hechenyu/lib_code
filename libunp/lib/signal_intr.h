@@ -6,8 +6,8 @@
 
 typedef	void	Sigfunc(int);	/* for signal handlers */
 
-Sigfunc *signal_intr(int signo, Sigfunc *func);
-Sigfunc *Signal_intr(int signo, Sigfunc *func);
+Sigfunc *signal_intr(int, Sigfunc *);
+Sigfunc *Signal_intr(int, Sigfunc *);
 
 #endif
 

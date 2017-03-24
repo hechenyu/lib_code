@@ -4,7 +4,7 @@
 #include <pthread.h>
 #include "error.h"
 
-int set_concurrency(int level);
-void Set_concurrency(int level);
+int     set_concurrency(int);
+void    Set_concurrency(int);
 
 #endif

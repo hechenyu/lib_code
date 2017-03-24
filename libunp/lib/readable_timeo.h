@@ -4,8 +4,8 @@
 #include <sys/select.h>
 #include "error.h"
 
-int readable_timeo(int fd, int sec);
-int Readable_timeo(int fd, int sec);
+int readable_timeo(int, int);
+int Readable_timeo(int, int);
 
 #endif
 

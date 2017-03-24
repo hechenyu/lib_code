@@ -12,9 +12,9 @@
 /* Define to 1 if the system supports IPv6 */
 #define IPV6    1
 
-int mcast_leave(int sockfd, const SA *grp, socklen_t grplen);
-int mcast_leave_source_group(int sockfd, const SA *src, socklen_t srclen, const SA *grp, socklen_t grplen);
-void Mcast_leave(int sockfd, const SA *grp, socklen_t grplen);
-void Mcast_leave_source_group(int sockfd, const SA *src, socklen_t srclen, const SA *grp, socklen_t grplen);
+int     mcast_leave(int, const SA *, socklen_t);
+int     mcast_leave_source_group(int, const SA *, socklen_t, const SA *, socklen_t);
+void    Mcast_leave(int, const SA *, socklen_t);
+void    Mcast_leave_source_group(int, const SA *, socklen_t, const SA *, socklen_t);
 
 #endif

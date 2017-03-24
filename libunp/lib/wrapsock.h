@@ -65,14 +65,14 @@ void	 Socketpair(int, int, int, int *);
 void	 Writen(int, void *, size_t);
 
 #ifdef  HAVE_EPOLL
-int      Epoll_create(int size);
-int      Epoll_create1(int flags);
-int      Epoll_ctl(int epfd, int op, int fd, struct epoll_event *ev);
-int      Epoll_wait(int epfd, struct epoll_event *evlist, int maxevents, int timeout);
+int      Epoll_create(int);
+int      Epoll_create1(int);
+int      Epoll_ctl(int, int, int, struct epoll_event *);
+int      Epoll_wait(int, struct epoll_event *, int, int);
 #endif
 
-FILE    *Popen(const char *command, const char *mode);
-int      Pclose(FILE *fp);
+FILE    *Popen(const char *, const char *);
+int      Pclose(FILE *);
 
 #endif
 

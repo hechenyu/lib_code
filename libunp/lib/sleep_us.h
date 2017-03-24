@@ -4,7 +4,7 @@
 #include <sys/select.h>
 #include "error.h"
 
-int sleep_us(unsigned int nusecs);
-void Sleep_us(unsigned int nusecs);
+int     sleep_us(unsigned int);
+void    Sleep_us(unsigned int);
 
 #endif

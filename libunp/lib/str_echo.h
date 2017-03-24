@@ -5,6 +5,6 @@
 #include "error.h"
 #include "wrapsock.h"
 
-void str_echo(int sockfd);
+void str_echo(int);
 
 #endif

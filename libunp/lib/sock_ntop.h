@@ -11,8 +11,8 @@
 /* Define to 1 if the system supports IPv6 */
 #define IPV6    1
 
-char *sock_ntop(const struct sockaddr *sa, socklen_t salen);
-char *Sock_ntop(const struct sockaddr *sa, socklen_t salen);
+char *sock_ntop(const struct sockaddr *, socklen_t);
+char *Sock_ntop(const struct sockaddr *, socklen_t);
 
 #endif
 

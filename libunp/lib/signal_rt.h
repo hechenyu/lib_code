@@ -6,7 +6,7 @@
 
 typedef void    Sigfunc_rt(int, siginfo_t *, void *);
 
-Sigfunc_rt *signal_rt(int signo, Sigfunc_rt *func);
-Sigfunc_rt *Signal_rt(int signo, Sigfunc_rt *func);
+Sigfunc_rt *signal_rt(int, Sigfunc_rt *);
+Sigfunc_rt *Signal_rt(int, Sigfunc_rt *);
 
 #endif

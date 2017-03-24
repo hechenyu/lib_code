@@ -8,7 +8,6 @@
 /* Define to 1 if the system supports IPv6 */
 #define IPV6    1
 
-int sock_cmp_addr(const struct sockaddr *sa1, const struct sockaddr *sa2,
-			 socklen_t salen);
+int sock_cmp_addr(const struct sockaddr *, const struct sockaddr *, socklen_t);
 
 #endif

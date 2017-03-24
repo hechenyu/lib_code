@@ -6,7 +6,7 @@
 #include <limits.h>
 #include "error.h"
 
-char *px_ipc_name(const char *name);
-char *Px_ipc_name(const char *name);
+char *px_ipc_name(const char *);
+char *Px_ipc_name(const char *);
 
 #endif

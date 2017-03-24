@@ -4,8 +4,8 @@
 #include <unistd.h>
 #include "error.h"
 
-ssize_t readline(int fd, void *vptr, size_t maxlen);
-ssize_t Readline(int fd, void *ptr, size_t maxlen);
+ssize_t readline(int, void *, size_t);
+ssize_t Readline(int, void *, size_t);
 
 #endif
 

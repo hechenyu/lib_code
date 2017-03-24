@@ -57,32 +57,32 @@ void     Fstat(int, struct stat *);
 key_t    Ftok(const char *, int);
 #endif
 
-void     Ftruncate(int fd, off_t length);
-int      Getopt(int argc, char *const *argv, const char *str);
+void     Ftruncate(int, off_t);
+int      Getopt(int, char *const *, const char *);
 
 void	 Gettimeofday(struct timeval *, void *);
 int		 Ioctl(int, int, void *);
-void     Kill(pid_t pid, int signo);
-off_t    Lseek(int fd, off_t offset, int whence);
+void     Kill(pid_t, int);
+off_t    Lseek(int, off_t, int);
 void	*Malloc(size_t);
-void     Mkfifo(const char *pathname, mode_t mode);
-void     Mktemp(char *template);
+void     Mkfifo(const char *, mode_t);
+void     Mktemp(char *);
 int	     Mkstemp(char *);
 
 #ifdef	HAVE_SYS_MMAN_H
 void	*Mmap(void *, size_t, int, int, int, off_t);
-void     Munmap(void *addr, size_t len);
+void     Munmap(void *, size_t);
 #endif
 
 #ifdef	HAVE_MQUEUE_H
-mqd_t    Mq_open(const char *pathname, int oflag, ...);
-void     Mq_close(mqd_t mqd);
-void     Mq_unlink(const char *pathname);
-void     Mq_send(mqd_t mqd, const char *ptr, size_t len, unsigned int prio);
-ssize_t  Mq_receive(mqd_t mqd, char *ptr, size_t len, unsigned int *prio);
-void     Mq_notify(mqd_t mqd, const struct sigevent *notification);
-void     Mq_getattr(mqd_t mqd, struct mq_attr *mqstat);
-void     Mq_setattr(mqd_t mqd, const struct mq_attr *mqstat, struct mq_attr *omqstat);
+mqd_t    Mq_open(const char *, int, ...);
+void     Mq_close(mqd_t);
+void     Mq_unlink(const char *);
+void     Mq_send(mqd_t, const char *, size_t, unsigned int);
+ssize_t  Mq_receive(mqd_t, char *, size_t, unsigned int *);
+void     Mq_notify(mqd_t, const struct sigevent *);
+void     Mq_getattr(mqd_t, struct mq_attr *);
+void     Mq_setattr(mqd_t, const struct mq_attr *, struct mq_attr *);
 #endif
 
 int      Open(const char *, int , ...);

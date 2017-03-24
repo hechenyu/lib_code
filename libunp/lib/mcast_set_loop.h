@@ -9,8 +9,8 @@
 /* Define to 1 if the system supports IPv6 */
 #define IPV6    1
 
-int mcast_set_loop(int sockfd, int onoff);
-void Mcast_set_loop(int sockfd, int onoff);
+int     mcast_set_loop(int, int);
+void    Mcast_set_loop(int, int);
 
 #endif
 
