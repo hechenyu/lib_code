@@ -70,9 +70,6 @@ public:
         }
     }
 
-    // 获取持有对象的指针
-    virtual void *get_pointer() = 0;
-
     // 获取指向deleter的指针
     virtual void *get_deleter() = 0;
 
