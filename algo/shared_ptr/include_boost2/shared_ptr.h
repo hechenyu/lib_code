@@ -50,7 +50,7 @@ public:
         }
     }
 
-    // 析构函数, 减少共享引用计数
+    // 析构函数, 释放共享引用
     ~shared_ptr()
     {
         if (pi_ != nullptr) pi_->release();
@@ -64,14 +64,14 @@ public:
         if (pi_ != nullptr) pi_->add_ref_copy();
     }
 
-    // 赋值运算符, 释放当前共享引用, 增加对x的共享引用
+    // 赋值运算符, 释放*this共享引用, 增加对x的共享引用
     shared_ptr &operator =(const shared_ptr &x)
     {
         /**
-        if (this != &x) {
-            pi_->release();
+        if (pi_ != x.pi_) {
+            if (x.pi_ != nullptr) x.pi_->add_ref_copy();
+            if (pi_ != nullptr) pi_->release();
             pi_ = x.pi_;
-            pi_->add_ref_copy();
         }
         */
         this_type(x).swap(*this);
