@@ -70,10 +70,13 @@ public:
         }
     }
 
+    // 获取*this管理的资源对象的指针
+    virtual void *get_pointer() = 0;
+
     // 获取指向deleter的指针
     virtual void *get_deleter() = 0;
 
-    // 获取当前引用计数
+    // 获取当前共享引用计数
     long use_count() const
     {
         return use_count_;

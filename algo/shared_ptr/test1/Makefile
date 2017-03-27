@@ -1,5 +1,5 @@
 
-RM = rm -f
+RM = rm -rf
 CXX = g++
 CXXFLAGS = -Wall -g -std=c++11
 INCLUDES = -I../include_boost1
@@ -13,7 +13,7 @@ all: $(PROGS)
 	@echo "PROGS = $(PROGS)" 
 
 clean:
-	$(RM) $(PROGS)
+	$(RM) $(PROGS) *.dSYM
 
 %: %.cpp
 	$(CXX) -o $@ $(CXXFLAGS) $(INCLUDES) $^ $(LDFLAGS) $(LDPATH)
