@@ -6,7 +6,7 @@
 // shared pointer counted base
 class sp_counted_base {
 private:
-    std::atomic<long> use_count_;
+    std::atomic<long> use_count_;   // #shared: 共享引用计数
 
     sp_counted_base(const sp_counted_base &) = delete;
     sp_counted_base &operator =(const sp_counted_base &) = delete;
@@ -16,19 +16,24 @@ public:
 
     virtual ~sp_counted_base() {}
 
-    // 当引用计数递减至0, 释放所持有的对象
+    // 当共享引用计数(use_count_)递减至0, 释放*this所管理的资源对象
     virtual void dispose() = 0;
 
-    // 当引用计数递减至0, 释放计数器本身
-    virtual void destroy() { delete this; }
+    // 当共享引用计数(use_count_)递减至0, 释放*this本身
+    virtual void destroy()
+    {
+        delete this;
+    }
 
-    // 增加持有者, 增加引用计数
+    // 增加共享引用, 共享引用计数(use_count_)+1
     void add_ref_copy()
     {
         ++use_count_;
     }
 
-    // 持有者释放控制, 减少引用计数
+    // 释放共享引用, 将共享引用计数(use_count_)-1
+    // 如果共享引用计数(use_count_)减至0,
+    // 释放*this所管理的资源对象, 并释放*this本身
     void release() 
     {
         if(--use_count_ == 0) {
@@ -44,7 +49,10 @@ public:
     virtual void *get_deleter() = 0;
 
     // 获取当前引用计数
-    long use_count() const { return use_count_; }
+    long use_count() const
+    {
+        return use_count_;
+    }
 };
 
 #endif
