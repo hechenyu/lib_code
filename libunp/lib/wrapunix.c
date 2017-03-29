@@ -191,8 +191,16 @@ Mkfifo(const char *pathname, mode_t mode)
 void
 Mktemp(char *template)
 {
+#ifdef HAVE_MKSTEMP
+	int i;
+
+	if ((i = mkstemp(template)) < 0)
+		err_quit("mkstemp error");
+    Close(i);
+#else
 	if (mktemp(template) == NULL || template[0] == 0)
 		err_quit("mktemp error");
+#endif
 }
 
 int

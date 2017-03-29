@@ -6,8 +6,6 @@
 #include <signal.h>
 #include <errno.h>
 
-#define _POSIX_THREAD_PROCESS_SHARED 1
-
 void    Pthread_attr_init(pthread_attr_t *);
 void    Pthread_attr_destroy(pthread_attr_t *);
 void    Pthread_attr_setdetachstate(pthread_attr_t *, int);
