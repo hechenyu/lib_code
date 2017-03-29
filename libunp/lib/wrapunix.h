@@ -1,5 +1,5 @@
-#ifndef	__unp_wrapunix_h
-#define	__unp_wrapunix_h
+#ifndef __unp_wrapunix_h
+#define __unp_wrapunix_h
 
 #include <unistd.h>
 #include <fcntl.h>
@@ -39,42 +39,42 @@
 #endif
 /* $$.ix [va_mode_t]~datatype,~definition~of$$ */
 
-			/* prototypes for our Unix wrapper functions: see {Sec errors} */
-void	*Calloc(size_t, size_t);
-void	 Close(int);
-void	 Dup2(int, int);
+/* prototypes for our Unix wrapper functions: see {Sec errors} */
+void    *Calloc(size_t, size_t);
+void     Close(int);
+void     Dup2(int, int);
 
-#ifdef	HAVE_FATTACH
+#ifdef HAVE_FATTACH
 void     Fattach(int, const char *);
 #endif
 
 int      Fcntl(int, int, ...);
-pid_t	 Fork(void);
+pid_t    Fork(void);
 long     Fpathconf(int, int);
 void     Fstat(int, struct stat *);
 
-#ifdef	HAVE_SYS_IPC_H
+#ifdef HAVE_SYS_IPC_H
 key_t    Ftok(const char *, int);
 #endif
 
 void     Ftruncate(int, off_t);
 int      Getopt(int, char *const *, const char *);
 
-void	 Gettimeofday(struct timeval *, void *);
-int		 Ioctl(int, int, void *);
+void     Gettimeofday(struct timeval *, void *);
+int      Ioctl(int, int, void *);
 void     Kill(pid_t, int);
 off_t    Lseek(int, off_t, int);
-void	*Malloc(size_t);
+void    *Malloc(size_t);
 void     Mkfifo(const char *, mode_t);
 void     Mktemp(char *);
-int	     Mkstemp(char *);
+int      Mkstemp(char *);
 
-#ifdef	HAVE_SYS_MMAN_H
-void	*Mmap(void *, size_t, int, int, int, off_t);
+#ifdef HAVE_SYS_MMAN_H
+void    *Mmap(void *, size_t, int, int, int, off_t);
 void     Munmap(void *, size_t);
 #endif
 
-#ifdef	HAVE_MQUEUE_H
+#ifdef HAVE_MQUEUE_H
 mqd_t    Mq_open(const char *, int, ...);
 void     Mq_close(mqd_t);
 void     Mq_unlink(const char *);
@@ -86,22 +86,22 @@ void     Mq_setattr(mqd_t, const struct mq_attr *, struct mq_attr *);
 #endif
 
 int      Open(const char *, int , ...);
-void	 Pipe(int *fds);
-ssize_t	 Read(int, void *, size_t);
-void	 Sigaddset(sigset_t *, int);
-void	 Sigdelset(sigset_t *, int);
-void	 Sigemptyset(sigset_t *);
-void	 Sigfillset(sigset_t *);
-int		 Sigismember(const sigset_t *, int);
-void	 Sigpending(sigset_t *);
-void	 Sigprocmask(int, const sigset_t *, sigset_t *);
-char	*Strdup(const char *);
-long	 Sysconf(int);
-void	 Sysctl(int *, u_int, void *, size_t *, void *, size_t);
-void	 Unlink(const char *);
-pid_t	 Wait(int *);
-pid_t	 Waitpid(pid_t, int *, int);
-void	 Write(int, void *, size_t);
+void     Pipe(int *fds);
+ssize_t  Read(int, void *, size_t);
+void     Sigaddset(sigset_t *, int);
+void     Sigdelset(sigset_t *, int);
+void     Sigemptyset(sigset_t *);
+void     Sigfillset(sigset_t *);
+int      Sigismember(const sigset_t *, int);
+void     Sigpending(sigset_t *);
+void     Sigprocmask(int, const sigset_t *, sigset_t *);
+char    *Strdup(const char *);
+long     Sysconf(int);
+void     Sysctl(int *, u_int, void *, size_t *, void *, size_t);
+void     Unlink(const char *);
+pid_t    Wait(int *);
+pid_t    Waitpid(pid_t, int *, int);
+void     Write(int, void *, size_t);
 
 /* Define to 1 if you have the `mkstemp' function. */
 #define HAVE_MKSTEMP 1
