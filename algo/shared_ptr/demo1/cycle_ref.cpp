@@ -92,6 +92,9 @@ int main()
 {
     cout << "sizeof node: " << sizeof (node) << '\n';
 #ifndef NDEBUG
+    cout << "sizeof long: " << sizeof (long) << '\n';
+    cout << "sizeof atomic<long>: " << sizeof (std::atomic<long>) << '\n';
+    cout << "sizeof sp_counted_base: " << sizeof (sp_counted_base) << '\n';
     cout << "sizeof sp_counted_impl_p<node>: " << sizeof (sp_counted_impl_p<node>) << '\n';
 #endif
 

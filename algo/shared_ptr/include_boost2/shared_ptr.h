@@ -7,6 +7,12 @@
 #include "sp_counted_impl.h"
 
 template <typename T>
+class shared_ptr;
+
+template <typename T>
+class weak_ptr;
+
+template <typename T>
 class shared_ptr {
 public:
     typedef T element_type;
@@ -15,6 +21,9 @@ private:
     sp_counted_base *pi_ = nullptr;
 
     typedef shared_ptr<T> this_type;
+
+	template<typename> friend class shared_ptr;
+	template<typename> friend class weak_ptr;
 
 public:
     // 默认构造函数, (不持有任何指针, 共享引用计数为0)
@@ -127,13 +136,13 @@ public:
     // 解引用当前对象管理的指针, 获取成员变量
     element_type *operator ->() const { return get(); }
 
-    // 返回引用计数
+    // 返回共享引用计数
     long int use_count() const
     {
         return pi_ != nullptr ? pi_->use_count() : 0;
     }
 
-    // 测试引用计数是否为1
+    // 测试共享引用计数是否为1
     bool unique() const
     {
         return use_count() == 1;
@@ -151,7 +160,6 @@ public:
         return (this->pi_ != nullptr ? this->pi_->get_deleter() : 0);
     }
 };
-
 
 // 比较两个shared_ptr
 template <typename T>
@@ -292,5 +300,7 @@ D *get_deleter(const shared_ptr<T> &sp)
 {
     return static_cast<D *>(sp.get_deleter());
 }
+
+#include "weak_ptr.h"
 
 #endif
