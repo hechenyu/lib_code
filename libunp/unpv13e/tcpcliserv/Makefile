@@ -8,7 +8,7 @@ PROGS =	tcpcli01 tcpcli04 tcpcli05 tcpcli06 \
 		tcpcli07 tcpcli08 tcpcli09 tcpcli10 \
 		tcpserv01 tcpserv02 tcpserv03 tcpserv04 \
 		tcpserv08 tcpserv09 tcpservselect01 tcpservpoll01 tsigpipe \
-		tcpservepoll01 
+		tcpservepoll01 tcpservepoll02 
 
 all:	${PROGS}
 
@@ -70,6 +70,9 @@ tsigpipe:	tsigpipe.o
 
 tcpservepoll01:	tcpservepoll01.o
 		${CC} ${CFLAGS} -o $@ tcpservepoll01.o ${LIBS}
+
+tcpservepoll02:	tcpservepoll02.o
+		${CC} ${CFLAGS} -o $@ tcpservepoll02.o ${LIBS}
 
 clean:
 		rm -f ${PROGS} ${CLEANFILES} *.o
