@@ -38,8 +38,10 @@ main(int argc, char **argv)
 	for ( ; ; ) {
 		nready = Epoll_wait(epfd, evlist, MAX_EVENTS, -1);
         for (i = 0; i < nready; i++) {
-            printf(" fd=%d; events: %s%s%s\n", evlist[i].data.fd,
+            printf(" fd=%d; events: %s%s%s%s%s\n", evlist[i].data.fd,
                     (evlist[i].events & EPOLLIN) ? "EPOLLIN " : "",
+                    (evlist[i].events & EPOLLOUT) ? "EPOLLOUT " : "",
+                    (evlist[i].events & EPOLLRDHUP) ? "EPOLLRDHUP " : "",
                     (evlist[i].events & EPOLLHUP) ? "EPOLLHUP " : "",
                     (evlist[i].events & EPOLLERR) ? "EPOLLERR " : "");
 
