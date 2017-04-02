@@ -37,9 +37,20 @@ public:
     // 否则直接返回false
     bool add_ref_lock() // true on sucess
     {
-        if (use_count_ == 0) return false;
-        ++use_count_;
-        return true;
+        /**
+         * 原子的操作
+         * long r = use_count_;
+         * if (r != 0) ++use_count_;
+         * return r;
+         */
+        long r = use_count_;
+        while (true) {
+            if (r == 0)
+                return false;
+            if (use_count_.comparea_exchange_weak(r, r+1)) {
+                return true;
+            }
+        }
     }
 
     // 释放共享引用, 将共享引用计数(use_count_)-1
