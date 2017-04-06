@@ -76,7 +76,7 @@ public:
 
     // 复制构造函数, 如果x非空, 增加共享引用,
     // 否则创建一个空对象, 类似于默认构造函数
-    shared_ptr(const weak_ptr &x)
+    shared_ptr(const weak_ptr<T> &x)
         : pi_(x.pi_)
     {
         if (pi_ != nullptr) pi_->add_ref_copy();

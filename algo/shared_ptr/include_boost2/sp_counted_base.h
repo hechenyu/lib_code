@@ -47,7 +47,7 @@ public:
         while (true) {
             if (r == 0)
                 return false;
-            if (use_count_.comparea_exchange_weak(r, r+1)) {
+            if (use_count_.compare_exchange_weak(r, r+1)) {
                 return true;
             }
         }
