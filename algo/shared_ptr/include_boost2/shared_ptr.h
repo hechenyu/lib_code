@@ -79,7 +79,9 @@ public:
     shared_ptr(const weak_ptr<T> &x)
         : pi_(x.pi_)
     {
-        if (pi_ != nullptr) pi_->add_ref_copy();
+        if (pi_ == nullptr || !pi_->add_ref_lock()) {
+            throw bad_weak_ptr();
+        }
     }
 
     // 赋值运算符, 释放*this共享引用, 增加对x的共享引用
