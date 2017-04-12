@@ -1,13 +1,14 @@
 RM = rm -f
 CC = gcc
 INCLUDE = -I../../lib/
-CFLAGS = -Wall -g -O2 ${INCLUDE}
+CFLAGS = -Wall -g -O2 ${INCLUDE} -DHAVE_EPOLL
 LIBS = ../../lib/libunp.a -lpthread -lrt
 
 PROGS =	tcpcli01 tcpcli02 tcpserv02 \
 		udpcli01 udpcli02 udpcli03 \
 		udpserv01 udpserv03 udpserv04 \
-		daytimetcpcli daytimeudpcli3 daytimeudpcli4
+		daytimetcpcli daytimeudpcli3 daytimeudpcli4 \
+		tcpcli05
 
 all:	${PROGS}
 
@@ -22,6 +23,12 @@ tcpcli03:	tcpcli03.o str_cli_poll03.o
 
 tcpcli04:	tcpcli04.o str_cli_kqueue04.o
 		${CC} ${CFLAGS} -o $@ tcpcli04.o str_cli_kqueue04.o ${LIBS}
+
+tcpcli05:	tcpcli05.o str_cli_poll05.o
+		${CC} ${CFLAGS} -o $@ tcpcli05.o str_cli_poll05.o ${LIBS}
+
+tcpcli06:	tcpcli06.o str_cli_epoll06.o
+		${CC} ${CFLAGS} -o $@ tcpcli06.o str_cli_epoll06.o ${LIBS}
 
 tcpserv02:	tcpserv02.o str_echo_stdio02.o sig_chld_waitpid.o
 		${CC} ${CFLAGS} -o $@ tcpserv02.o str_echo_stdio02.o \
