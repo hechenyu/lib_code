@@ -46,6 +46,8 @@
 #include "udp_client.h"
 #include "udp_connect.h"
 #include "udp_server.h"
+#include "unp_in_pktinfo.h"
+#include "unp_util.h"
 #include "wraplib.h"
 #include "wrapsock.h"
 #include "wrapstdio.h"
@@ -54,6 +56,5 @@
 #include "write_fd.h"
 #include "writen.h"
 #include "writable_timeo.h"
-#include "user_util.h"
 
 #endif
