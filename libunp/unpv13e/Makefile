@@ -1,5 +1,5 @@
 
-SUBDIRS = intro tcpcliserv select sockopt udpcliserv
+SUBDIRS = inetd intro names select sockopt tcpcliserv udpcliserv
 
 all:
 	@$(MAKE) $(MFLAGS) WHAT_TO_MAKE=$@ common
