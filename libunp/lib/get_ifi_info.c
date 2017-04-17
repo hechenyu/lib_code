@@ -12,7 +12,8 @@ get_ifi_info(int family, int doaliases)
 	struct sockaddr_in	*sinptr;
 	struct sockaddr_in6	*sin6ptr;
 
-	sockfd = Socket(AF_INET, SOCK_DGRAM, 0);
+	//sockfd = Socket(AF_INET, SOCK_DGRAM, 0);
+	sockfd = Socket(family, SOCK_DGRAM, 0);
 
 	lastlen = 0;
 	len = 100 * sizeof(struct ifreq);	/* initial buffer size guess */
