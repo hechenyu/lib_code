@@ -42,7 +42,7 @@ public:
 
     void *get_pointer() override { return p_; }
 
-    void *get_deleter() override { return &reinterpret_cast<char &>(del_); } // 防止D重载了&运算符
+    void *get_deleter() override { return &del_; }
 };
 
 #endif
