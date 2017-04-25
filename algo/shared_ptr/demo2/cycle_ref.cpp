@@ -48,6 +48,7 @@ struct node: public track
 
     int value;
     shared_ptr<node> next;
+    weak_ptr<node> weak_next;
     char pad[32];
 };
 
@@ -85,6 +86,7 @@ static void no_cycle()
     shared_ptr<node> head(new node(1));
     shared_ptr<node> N1(new node(2));
     head->next = N1;
+    N1->weak_next = head;
     print_details(head, "head");
     print_details(N1, "N1");
 }
