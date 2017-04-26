@@ -11,8 +11,8 @@ private:
 
     typedef weak_ptr<T> this_type;
 
-	template<typename> friend class shared_ptr;
-	template<typename> friend class weak_ptr;
+    template<typename> friend class shared_ptr;
+    template<typename> friend class weak_ptr;
 
 public:
     // 默认构造函数, (不持有任何指针)
@@ -39,8 +39,8 @@ public:
     }
 
     // 赋值运算符, 释放*this弱引用, 增加对x的弱引用
-	weak_ptr &operator =(const weak_ptr &x)
-	{
+    weak_ptr &operator =(const weak_ptr &x)
+    {
         /**
         if (pi_ != x.pi_) {
             if (x.pi_ != nullptr) x.pi_->weak_add_ref();
@@ -50,7 +50,7 @@ public:
         */
         this_type(x).swap(*this);
         return *this;
-	}
+    }
 
     // 赋值运算符, 释放*this弱引用, 增加对x的弱引用
     weak_ptr &operator =(const shared_ptr<T> &x)
@@ -67,11 +67,11 @@ public:
     }
 
     // 交换两个weak_ptr
-	void swap(weak_ptr &x)
-	{
+    void swap(weak_ptr &x)
+    {
         using std::swap;
         swap(this->pi_, x.pi_);
-	}
+    }
 
 
     // 重置当前智能指针对象, 使得当前对象为空, 即默认构造的对象
@@ -112,22 +112,22 @@ public:
             return shared_ptr<T>(*this);
     }
 
-	bool owner_before(const weak_ptr &x) const
-	{
-		return this->pi_ < x.pi_;
-	}
+    bool owner_before(const weak_ptr &x) const
+    {
+        return this->pi_ < x.pi_;
+    }
 
-	bool owner_before(const shared_ptr<T> &x) const
-	{
-		return this->pi_ < x.pi_;
-	}
+    bool owner_before(const shared_ptr<T> &x) const
+    {
+        return this->pi_ < x.pi_;
+    }
 };
 
 // 交换两个weak_ptr
 template <typename T>
 void swap(weak_ptr<T> &x, weak_ptr<T> &y)
 {
-	x.swap(y);
+    x.swap(y);
 }
 
 #endif

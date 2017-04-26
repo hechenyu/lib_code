@@ -23,8 +23,8 @@ private:
 
     typedef shared_ptr<T> this_type;
 
-	template<typename> friend class shared_ptr;
-	template<typename> friend class weak_ptr;
+    template<typename> friend class shared_ptr;
+    template<typename> friend class weak_ptr;
 
 public:
     // 默认构造函数, (不持有任何指针, 共享引用计数为0)
