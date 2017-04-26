@@ -17,8 +17,7 @@ template <typename T>
 class enable_shared_from_this;
 
 template <typename T>
-inline void sp_enable_shared_from_this(
-        const shared_ptr<T> *sp, const enable_shared_from_this<T> *pe)
+inline void sp_enable_shared_from_this(const shared_ptr<T> *sp, const enable_shared_from_this<T> *pe)
 {
     if (pe != nullptr) {
         pe->internal_accept_owner(sp);
@@ -66,7 +65,7 @@ public:
     // 通过指针p和deleter构造, 持有指针p和deleter, 共享引用计数为1,
     // 当共享引用计数降到0时, 通过deleter释放指针p
     template <typename D>
-    explicit shared_ptr(T *p, D del)
+    shared_ptr(T *p, D del)
     {
         try 
         {

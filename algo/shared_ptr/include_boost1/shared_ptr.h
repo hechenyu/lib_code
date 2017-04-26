@@ -37,7 +37,7 @@ public:
     // 通过指针p和deleter构造, 持有指针p和deleter, 共享引用计数为1,
     // 当共享引用计数降到0时, 通过deleter释放指针p
     template <typename D>
-    explicit shared_ptr(T *p, D del)
+    shared_ptr(T *p, D del)
     {
         try 
         {
