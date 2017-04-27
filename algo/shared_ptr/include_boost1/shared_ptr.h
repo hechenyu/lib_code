@@ -149,6 +149,11 @@ public:
     {
         return (this->pi_ != nullptr ? this->pi_->get_deleter() : 0);
     }
+
+    bool owner_before(const shared_ptr &x) const
+    {
+        return this->pi_ < x.pi_;
+    }
 };
 
 

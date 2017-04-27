@@ -1,3 +1,4 @@
 include_boost1: 最基本的shared_ptr实现
 include_boost2: 增加weak_ptr实现
 include_boost3: 增加enable_shared_from_this实现
+include_boost4: 支持template构造和复制运算符实现

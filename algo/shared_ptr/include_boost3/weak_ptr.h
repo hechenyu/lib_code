@@ -18,16 +18,16 @@ public:
     // 默认构造函数, (不持有任何指针)
     weak_ptr() {}
 
-    // 从一个shared_ptr构造, 如果x非空, 增加弱引用,
+    // 复制构造函数, 如果x非空, 增加弱引用,
     // 否则创建一个空对象, 类似于默认构造函数
-    weak_ptr(const shared_ptr<T> &x): pi_(x.pi_)
+    weak_ptr(const weak_ptr &x): pi_(x.pi_)
     {
         if (pi_ != nullptr) pi_->weak_add_ref();
     }
 
-    // 复制构造函数, 如果x非空, 增加弱引用,
+    // 从一个shared_ptr构造, 如果x非空, 增加弱引用,
     // 否则创建一个空对象, 类似于默认构造函数
-    weak_ptr(const weak_ptr &x): pi_(x.pi_)
+    weak_ptr(const shared_ptr<T> &x): pi_(x.pi_)
     {
         if (pi_ != nullptr) pi_->weak_add_ref();
     }

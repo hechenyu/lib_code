@@ -14,12 +14,30 @@ template <typename T>
 class weak_ptr;
 
 template <typename T>
+class enable_shared_from_this;
+
+template <typename T>
+inline void sp_enable_shared_from_this(const shared_ptr<T> *sp, const enable_shared_from_this<T> *pe)
+{
+    if (pe != nullptr) {
+        pe->internal_accept_owner(sp);
+    }
+}
+
+// SFINAE:substitution-failure-is-not-an-error
+// 默认匹配函数
+inline void sp_enable_shared_from_this(...)
+{
+}
+
+template <typename T>
 class shared_ptr {
 public:
     typedef T element_type;
 
 private:
     sp_counted_base *pi_ = nullptr;
+    element_type *px_ = nullptr;
 
     typedef shared_ptr<T> this_type;
 
@@ -31,33 +49,36 @@ public:
     shared_ptr() {}
 
     // 通过指针p构造, 持有指针p, 共享引用计数为1
-    explicit shared_ptr(T *p)
+    template <typename U>
+    explicit shared_ptr(U *p): px_(p)
     {
         try 
         {
-            pi_ = new sp_counted_impl_p<T>(p);
+            pi_ = new sp_counted_impl_p<U>(p);
         }
         catch (...) 
         {
             delete p;
             throw;
         }
+        sp_enable_shared_from_this(this, p);
     }
 
     // 通过指针p和deleter构造, 持有指针p和deleter, 共享引用计数为1,
     // 当共享引用计数降到0时, 通过deleter释放指针p
-    template <typename D>
-    shared_ptr(T *p, D del)
+    template <typename U, typename D>
+    shared_ptr(U *p, D del): px_(p)
     {
         try 
         {
-            pi_ = new sp_counted_impl_pd<T *, D>(p, del);
+            pi_ = new sp_counted_impl_pd<U *, D>(p, del);
         }
         catch (...)
         {
             del(p);    // delete p
             throw;
         }
+        sp_enable_shared_from_this(this, p);
     }
 
     // 析构函数, 释放共享引用
@@ -68,14 +89,21 @@ public:
 
     // 复制构造函数, 如果x非空, 增加共享引用,
     // 否则创建一个空对象, 类似于默认构造函数
-    shared_ptr(const shared_ptr &x): pi_(x.pi_)
+    shared_ptr(const shared_ptr &x): pi_(x.pi_), px_(x.px_)
+    {
+        if (pi_ != nullptr) pi_->add_ref_copy();
+    }
+
+    template <typename U>
+    shared_ptr(const shared_ptr<U> &x): pi_(x.pi_), px_(x.px_)
     {
         if (pi_ != nullptr) pi_->add_ref_copy();
     }
 
     // 复制构造函数, 如果x非空, 增加共享引用,
     // 否则创建一个空对象, 类似于默认构造函数
-    explicit shared_ptr(const weak_ptr<T> &x): pi_(x.pi_)
+    template <typename U>
+    explicit shared_ptr(const weak_ptr<U> &x): pi_(x.pi_), px_(x.px_)
     {
         if (pi_ == nullptr || !pi_->add_ref_lock()) {
             throw bad_weak_ptr();
@@ -96,11 +124,19 @@ public:
         return *this;
     }
 
+    template <typename U>
+    shared_ptr &operator =(const shared_ptr<U> &x)
+    {
+        this_type(x).swap(*this);
+        return *this;
+    }
+
     // 交给两个shared_ptr
     void swap(shared_ptr &x)
     {
         using std::swap;
         swap(this->pi_, x.pi_);
+        swap(this->px_, x.px_);
     }
 
     // 重置当前智能指针对象, 使得当前对象为空, 即默认构造的对象
@@ -117,14 +153,15 @@ public:
 
     // 使用指针p重置当前智能指针对象, 使得当前对象拥有指针p, 
     // 并且将共享引用计数置为1
-    void reset(T *p)
+    template <typename U>
+    void reset(U *p)
     {
         this_type(p).swap(*this);
     }
 
     // 同上, 但指定deleter
-    template <typename D>
-    void reset(T *p, D del)
+    template <typename U, typename D>
+    void reset(U *p, D del)
     {
         this_type(p, del).swap(*this);
     }
@@ -132,11 +169,7 @@ public:
     // 获取当前对象管理的指针
     element_type *get() const
     {
-        if (pi_ != nullptr) {
-            return static_cast<element_type *>(pi_->get_pointer());
-        } else {
-            return nullptr;
-        }
+        return px_;
     }
 
     // 解引用当前对象管理的指针
@@ -169,12 +202,14 @@ public:
         return (this->pi_ != nullptr ? this->pi_->get_deleter() : 0);
     }
 
-    bool owner_before(const shared_ptr &x) const
+    template <typename U>
+    bool owner_before(const shared_ptr<U> &x) const
     {
         return this->pi_ < x.pi_;
     }
 
-    bool owner_before(const weak_ptr<T> &x) const
+    template <typename U>
+    bool owner_before(const weak_ptr<U> &x) const
     {
         return this->pi_ < x.pi_;
     }
@@ -321,5 +356,6 @@ D *get_deleter(const shared_ptr<T> &sp)
 }
 
 #include "weak_ptr.h"
+#include "enable_shared_from_this.h"
 
 #endif

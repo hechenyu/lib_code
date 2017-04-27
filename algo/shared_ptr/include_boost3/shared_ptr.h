@@ -94,7 +94,7 @@ public:
 
     // 复制构造函数, 如果x非空, 增加共享引用,
     // 否则创建一个空对象, 类似于默认构造函数
-    shared_ptr(const weak_ptr<T> &x): pi_(x.pi_)
+    explicit shared_ptr(const weak_ptr<T> &x): pi_(x.pi_)
     {
         if (pi_ == nullptr || !pi_->add_ref_lock()) {
             throw bad_weak_ptr();
@@ -186,6 +186,16 @@ public:
     void *get_deleter() const
     {
         return (this->pi_ != nullptr ? this->pi_->get_deleter() : 0);
+    }
+
+    bool owner_before(const shared_ptr &x) const
+    {
+        return this->pi_ < x.pi_;
+    }
+
+    bool owner_before(const weak_ptr<T> &x) const
+    {
+        return this->pi_ < x.pi_;
     }
 };
 

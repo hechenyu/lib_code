@@ -8,6 +8,7 @@ public:
 
 private:
     sp_counted_base *pi_ = nullptr;
+    element_type *px_ = nullptr;
 
     typedef weak_ptr<T> this_type;
 
@@ -20,14 +21,21 @@ public:
 
     // 复制构造函数, 如果x非空, 增加弱引用,
     // 否则创建一个空对象, 类似于默认构造函数
-    weak_ptr(const weak_ptr &x): pi_(x.pi_)
+    weak_ptr(const weak_ptr &x): pi_(x.pi_), px_(x.px_)
+    {
+        if (pi_ != nullptr) pi_->weak_add_ref();
+    }
+
+    template <typename U>
+    weak_ptr(const weak_ptr<U> &x): pi_(x.pi_), px_(x.px_)
     {
         if (pi_ != nullptr) pi_->weak_add_ref();
     }
 
     // 从一个shared_ptr构造, 如果x非空, 增加弱引用,
     // 否则创建一个空对象, 类似于默认构造函数
-    weak_ptr(const shared_ptr<T> &x): pi_(x.pi_)
+    template <typename U>
+    weak_ptr(const shared_ptr<U> &x): pi_(x.pi_), px_(x.px_)
     {
         if (pi_ != nullptr) pi_->weak_add_ref();
     }
@@ -52,8 +60,16 @@ public:
         return *this;
     }
 
+    template <typename U>
+    weak_ptr &operator =(const weak_ptr<U> &x)
+    {
+        this_type(x).swap(*this);
+        return *this;
+    }
+
     // 赋值运算符, 释放*this弱引用, 增加对x的弱引用
-    weak_ptr &operator =(const shared_ptr<T> &x)
+    template <typename U>
+    weak_ptr &operator =(const shared_ptr<U> &x)
     {
         /**
         if (pi_ != x.pi_) {
@@ -71,6 +87,7 @@ public:
     {
         using std::swap;
         swap(this->pi_, x.pi_);
+        swap(this->px_, x.px_);
     }
 
 
@@ -112,12 +129,14 @@ public:
             return shared_ptr<T>(*this);
     }
 
-    bool owner_before(const weak_ptr &x) const
+    template <typename U>
+    bool owner_before(const weak_ptr<U> &x) const
     {
         return this->pi_ < x.pi_;
     }
 
-    bool owner_before(const shared_ptr<T> &x) const
+    template <typename U>
+    bool owner_before(const shared_ptr<U> &x) const
     {
         return this->pi_ < x.pi_;
     }
