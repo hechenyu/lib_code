@@ -110,6 +110,11 @@ public:
         }
     }
 
+    template <typename U>
+    shared_ptr(const shared_ptr<U> &x, element_type *p): pi_(x.pi_), px_(p)
+    {
+    }
+
     // 赋值运算符, 释放*this共享引用, 增加对x的共享引用
     shared_ptr &operator =(const shared_ptr &x)
     {
@@ -353,6 +358,39 @@ template <typename D, typename T>
 D *get_deleter(const shared_ptr<T> &sp)
 {
     return static_cast<D *>(sp.get_deleter());
+}
+
+template <typename T, typename U>
+shared_ptr<T> static_pointer_cast(const shared_ptr<U> &sp)
+{
+    (void) static_cast<T *>(static_cast<U *>(0));
+
+    typedef typename shared_ptr<T>::element_type E;
+
+    E *p = static_cast<E *>(sp.get());
+    return shared_ptr<T>(sp, p);
+}
+
+template <typename T, typename U>
+shared_ptr<T> dynamic_pointer_cast(const shared_ptr<U> &sp)
+{
+    (void) dynamic_cast<T *>(static_cast<U *>(0));
+
+    typedef typename shared_ptr<T>::element_type E;
+
+    E *p = dynamic_cast<E *>(sp.get());
+    return p ? shared_ptr<T>(sp, p) : shared_ptr<T>();
+}
+
+template <typename T, typename U>
+shared_ptr<T> const_pointer_cast(const shared_ptr<U> &sp)
+{
+    (void) const_cast<T *>(static_cast<U *>(0));
+
+    typedef typename shared_ptr<T>::element_type E;
+
+    E *p = const_cast<E *>(sp.get());
+    return shared_ptr<T>(sp, p);
 }
 
 #include "weak_ptr.h"
