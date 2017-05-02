@@ -3,6 +3,6 @@
 
 #include <sys/time.h>
 
-void tv_sub(struct timeval *out, struct timeval *in);
+void tv_sub(struct timeval *, struct timeval *);
 
 #endif

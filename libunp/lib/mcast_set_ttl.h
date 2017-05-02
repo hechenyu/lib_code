@@ -9,8 +9,8 @@
 /* Define to 1 if the system supports IPv6 */
 #define IPV6    1
 
-int mcast_set_ttl(int sockfd, int val);
-void Mcast_set_ttl(int sockfd, int val);
+int     mcast_set_ttl(int, int);
+void    Mcast_set_ttl(int, int);
 
 #endif
 

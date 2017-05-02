@@ -4,8 +4,8 @@
 #include <netdb.h>
 #include "error.h"
 
-char **my_addrs(int *addrtype);
-char **My_addrs(int *pfamily);
+char **my_addrs(int *);
+char **My_addrs(int *);
 
 #endif
 

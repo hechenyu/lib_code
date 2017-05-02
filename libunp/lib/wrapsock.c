@@ -304,3 +304,45 @@ Socketpair(int family, int type, int protocol, int *fd)
 	if ( (n = socketpair(family, type, protocol, fd)) < 0)
 		err_sys("socketpair error");
 }
+
+#ifdef HAVE_EPOLL
+int 
+Epoll_create(int size)
+{
+	int		n;
+
+	if ( (n = epoll_create(size)) < 0)
+		err_sys("epoll_create error");
+	return(n);
+}
+
+int 
+Epoll_create1(int flags)
+{
+	int		n;
+
+	if ( (n = epoll_create(flags)) < 0)
+		err_sys("epoll_create error");
+	return(n);
+}
+
+int 
+Epoll_ctl(int epfd, int op, int fd, struct epoll_event *ev)
+{
+	int		n;
+
+	if ( (n = epoll_ctl(epfd, op, fd, ev)) < 0)
+		err_sys("epoll_ctl error");
+	return(n);
+}
+
+int 
+Epoll_wait(int epfd, struct epoll_event *evlist, int maxevents, int timeout)
+{
+	int		n;
+
+	if ( (n = epoll_wait(epfd, evlist, maxevents, timeout)) < 0)
+		err_sys("epoll_wait error");
+	return(n);
+}
+#endif

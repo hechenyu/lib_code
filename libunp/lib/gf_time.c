@@ -21,3 +21,9 @@ gf_time(void)
 
 	return(str);
 }
+
+char *
+Gf_time(void)
+{
+    return(gf_time());
+}

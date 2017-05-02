@@ -12,7 +12,7 @@
    kernels still #define it as 5, while actually supporting many more */
 #define	LISTENQ		1024	/* 2nd argument to listen() */
 
-int tcp_listen(const char *host, const char *serv, socklen_t *addrlenp);
-int Tcp_listen(const char *host, const char *serv, socklen_t *addrlenp);
+int tcp_listen(const char *, const char *, socklen_t *);
+int Tcp_listen(const char *, const char *, socklen_t *);
 
 #endif

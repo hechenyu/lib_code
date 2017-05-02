@@ -4,6 +4,6 @@
 #include "wrapsock.h"
 #include "wrapstdio.h"
 
-void dg_echo(int sockfd, SA *pcliaddr, socklen_t clilen);
+void    dg_echo(int, SA *, socklen_t);
 
 #endif

@@ -2,7 +2,7 @@ RM = rm -f
 CC = gcc
 INCLUDE = -I../../lib/
 CFLAGS = -Wall -g -O2 ${INCLUDE}
-LIBS = ../../lib/libunp.a -lpthread
+LIBS = ../../lib/libunp.a -lpthread -lrt
 
 PROGS =	tcpcli01 tcpcli02 tcpcli03
 

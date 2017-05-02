@@ -7,8 +7,8 @@
 /* define if struct msghdr contains the msg_control member */
 #define HAVE_MSGHDR_MSG_CONTROL 1
 
-ssize_t read_fd(int fd, void *ptr, size_t nbytes, int *recvfd);
-ssize_t Read_fd(int fd, void *ptr, size_t nbytes, int *recvfd);
+ssize_t read_fd(int, void *, size_t, int *);
+ssize_t Read_fd(int, void *, size_t, int *);
 
 #endif
 

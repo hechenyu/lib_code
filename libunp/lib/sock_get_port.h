@@ -7,7 +7,7 @@
 /* Define to 1 if the system supports IPv6 */
 #define IPV6    1
 
-int sock_get_port(const struct sockaddr *sa, socklen_t salen);
+int sock_get_port(const struct sockaddr *, socklen_t);
 
 #endif
 

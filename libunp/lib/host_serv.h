@@ -6,7 +6,7 @@
 #include <netdb.h>
 #include "error.h"
 
-struct addrinfo *host_serv(const char *host, const char *serv, int family, int socktype);
-struct addrinfo *Host_serv(const char *host, const char *serv, int family, int socktype);
+struct addrinfo     *host_serv(const char *, const char *, int, int);
+struct addrinfo     *Host_serv(const char *, const char *, int, int);
 
 #endif

@@ -11,8 +11,8 @@
 /* Define to 1 if the system supports IPv6 */
 #define IPV6    1
 
-int sock_bind_wild(int sockfd, int family);
-int Sock_bind_wild(int sockfd, int family);
+int sock_bind_wild(int, int);
+int Sock_bind_wild(int, int);
 
 #endif
 

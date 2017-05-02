@@ -10,7 +10,7 @@
 /* Define to 1 if the system supports IPv6 */
 #define IPV6    1
 
-int mcast_set_if(int sockfd, const char *ifname, u_int ifindex);
-void Mcast_set_if(int sockfd, const char *ifname, u_int ifindex);
+int     mcast_set_if(int, const char *, u_int);
+void    Mcast_set_if(int, const char *, u_int);
 
 #endif

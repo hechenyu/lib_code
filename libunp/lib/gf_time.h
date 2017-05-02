@@ -6,5 +6,6 @@
 #include "error.h"
 
 char *gf_time(void);
+char *Gf_time(void);
 
 #endif
