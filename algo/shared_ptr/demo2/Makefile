@@ -2,7 +2,7 @@
 RM = rm -rf
 CXX = g++
 CXXFLAGS = -Wall -g -std=c++11 #-DNDEBUG
-INCLUDES = -I../include_boost1
+INCLUDES = -I../include_boost2
 LDFLAGS =
 LDPATH =
 

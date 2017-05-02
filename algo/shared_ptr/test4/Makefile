@@ -1,8 +1,8 @@
 
 RM = rm -rf
 CXX = g++
-CXXFLAGS = -Wall -g -std=c++11 #-DNDEBUG
-INCLUDES = -I../include_boost1
+CXXFLAGS = -Wall -g -std=c++11
+INCLUDES = -I../include_boost4
 LDFLAGS =
 LDPATH =
 

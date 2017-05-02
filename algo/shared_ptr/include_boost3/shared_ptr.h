@@ -5,6 +5,30 @@
 #include <utility>
 #include <cstddef>
 #include "sp_counted_impl.h"
+#include "bad_weak_ptr.h"
+
+template <typename T>
+class shared_ptr;
+
+template <typename T>
+class weak_ptr;
+
+template <typename T>
+class enable_shared_from_this;
+
+template <typename T>
+inline void sp_enable_shared_from_this(const shared_ptr<T> *sp, const enable_shared_from_this<T> *pe)
+{
+    if (pe != nullptr) {
+        pe->internal_accept_owner(sp);
+    }
+}
+
+// SFINAE:substitution-failure-is-not-an-error
+// 默认匹配函数
+inline void sp_enable_shared_from_this(...)
+{
+}
 
 template <typename T>
 class shared_ptr {
@@ -15,6 +39,9 @@ private:
     sp_counted_base *pi_ = nullptr;
 
     typedef shared_ptr<T> this_type;
+
+    template<typename> friend class shared_ptr;
+    template<typename> friend class weak_ptr;
 
 public:
     // 默认构造函数, (不持有任何指针, 共享引用计数为0)
@@ -32,6 +59,7 @@ public:
             delete p;
             throw;
         }
+        sp_enable_shared_from_this(this, p);
     }
 
     // 通过指针p和deleter构造, 持有指针p和deleter, 共享引用计数为1,
@@ -48,6 +76,7 @@ public:
             del(p);    // delete p
             throw;
         }
+        sp_enable_shared_from_this(this, p);
     }
 
     // 析构函数, 释放共享引用
@@ -61,6 +90,15 @@ public:
     shared_ptr(const shared_ptr &x): pi_(x.pi_)
     {
         if (pi_ != nullptr) pi_->add_ref_copy();
+    }
+
+    // 复制构造函数, 如果x非空, 增加共享引用,
+    // 否则创建一个空对象, 类似于默认构造函数
+    explicit shared_ptr(const weak_ptr<T> &x): pi_(x.pi_)
+    {
+        if (pi_ == nullptr || !pi_->add_ref_lock()) {
+            throw bad_weak_ptr();
+        }
     }
 
     // 赋值运算符, 释放*this共享引用, 增加对x的共享引用
@@ -126,13 +164,13 @@ public:
     // 解引用当前对象管理的指针, 获取成员变量
     element_type *operator ->() const { return get(); }
 
-    // 返回引用计数
+    // 返回共享引用计数
     long int use_count() const
     {
         return pi_ != nullptr ? pi_->use_count() : 0;
     }
 
-    // 测试引用计数是否为1
+    // 测试共享引用计数是否为1
     bool unique() const
     {
         return use_count() == 1;
@@ -154,8 +192,12 @@ public:
     {
         return this->pi_ < x.pi_;
     }
-};
 
+    bool owner_before(const weak_ptr<T> &x) const
+    {
+        return this->pi_ < x.pi_;
+    }
+};
 
 // 比较两个shared_ptr
 template <typename T>
@@ -296,5 +338,8 @@ D *get_deleter(const shared_ptr<T> &sp)
 {
     return static_cast<D *>(sp.get_deleter());
 }
+
+#include "weak_ptr.h"
+#include "enable_shared_from_this.h"
 
 #endif

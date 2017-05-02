@@ -5,6 +5,30 @@
 #include <utility>
 #include <cstddef>
 #include "sp_counted_impl.h"
+#include "bad_weak_ptr.h"
+
+template <typename T>
+class shared_ptr;
+
+template <typename T>
+class weak_ptr;
+
+template <typename T>
+class enable_shared_from_this;
+
+template <typename T>
+inline void sp_enable_shared_from_this(const shared_ptr<T> *sp, const enable_shared_from_this<T> *pe)
+{
+    if (pe != nullptr) {
+        pe->internal_accept_owner(sp);
+    }
+}
+
+// SFINAE:substitution-failure-is-not-an-error
+// 默认匹配函数
+inline void sp_enable_shared_from_this(...)
+{
+}
 
 template <typename T>
 class shared_ptr {
@@ -13,41 +37,48 @@ public:
 
 private:
     sp_counted_base *pi_ = nullptr;
+    element_type *px_ = nullptr;
 
     typedef shared_ptr<T> this_type;
+
+    template<typename> friend class shared_ptr;
+    template<typename> friend class weak_ptr;
 
 public:
     // 默认构造函数, (不持有任何指针, 共享引用计数为0)
     shared_ptr() {}
 
     // 通过指针p构造, 持有指针p, 共享引用计数为1
-    explicit shared_ptr(T *p)
+    template <typename U>
+    explicit shared_ptr(U *p): px_(p)
     {
         try 
         {
-            pi_ = new sp_counted_impl_p<T>(p);
+            pi_ = new sp_counted_impl_p<U>(p);
         }
         catch (...) 
         {
             delete p;
             throw;
         }
+        sp_enable_shared_from_this(this, p);
     }
 
     // 通过指针p和deleter构造, 持有指针p和deleter, 共享引用计数为1,
     // 当共享引用计数降到0时, 通过deleter释放指针p
-    template <typename D>
-    shared_ptr(T *p, D del)
+    template <typename U, typename D>
+    shared_ptr(U *p, D del): px_(p)
     {
         try 
         {
-            pi_ = new sp_counted_impl_pd<T *, D>(p, del);
+            pi_ = new sp_counted_impl_pd<U *, D>(p, del);
         }
         catch (...)
         {
             del(p);    // delete p
             throw;
         }
+        sp_enable_shared_from_this(this, p);
     }
 
     // 析构函数, 释放共享引用
@@ -58,9 +89,30 @@ public:
 
     // 复制构造函数, 如果x非空, 增加共享引用,
     // 否则创建一个空对象, 类似于默认构造函数
-    shared_ptr(const shared_ptr &x): pi_(x.pi_)
+    shared_ptr(const shared_ptr &x): pi_(x.pi_), px_(x.px_)
     {
         if (pi_ != nullptr) pi_->add_ref_copy();
+    }
+
+    template <typename U>
+    shared_ptr(const shared_ptr<U> &x): pi_(x.pi_), px_(x.px_)
+    {
+        if (pi_ != nullptr) pi_->add_ref_copy();
+    }
+
+    // 复制构造函数, 如果x非空, 增加共享引用,
+    // 否则创建一个空对象, 类似于默认构造函数
+    template <typename U>
+    explicit shared_ptr(const weak_ptr<U> &x): pi_(x.pi_), px_(x.px_)
+    {
+        if (pi_ == nullptr || !pi_->add_ref_lock()) {
+            throw bad_weak_ptr();
+        }
+    }
+
+    template <typename U>
+    shared_ptr(const shared_ptr<U> &x, element_type *p): pi_(x.pi_), px_(p)
+    {
     }
 
     // 赋值运算符, 释放*this共享引用, 增加对x的共享引用
@@ -77,11 +129,19 @@ public:
         return *this;
     }
 
+    template <typename U>
+    shared_ptr &operator =(const shared_ptr<U> &x)
+    {
+        this_type(x).swap(*this);
+        return *this;
+    }
+
     // 交给两个shared_ptr
     void swap(shared_ptr &x)
     {
         using std::swap;
         swap(this->pi_, x.pi_);
+        swap(this->px_, x.px_);
     }
 
     // 重置当前智能指针对象, 使得当前对象为空, 即默认构造的对象
@@ -98,14 +158,15 @@ public:
 
     // 使用指针p重置当前智能指针对象, 使得当前对象拥有指针p, 
     // 并且将共享引用计数置为1
-    void reset(T *p)
+    template <typename U>
+    void reset(U *p)
     {
         this_type(p).swap(*this);
     }
 
     // 同上, 但指定deleter
-    template <typename D>
-    void reset(T *p, D del)
+    template <typename U, typename D>
+    void reset(U *p, D del)
     {
         this_type(p, del).swap(*this);
     }
@@ -113,11 +174,7 @@ public:
     // 获取当前对象管理的指针
     element_type *get() const
     {
-        if (pi_ != nullptr) {
-            return static_cast<element_type *>(pi_->get_pointer());
-        } else {
-            return nullptr;
-        }
+        return px_;
     }
 
     // 解引用当前对象管理的指针
@@ -126,13 +183,13 @@ public:
     // 解引用当前对象管理的指针, 获取成员变量
     element_type *operator ->() const { return get(); }
 
-    // 返回引用计数
+    // 返回共享引用计数
     long int use_count() const
     {
         return pi_ != nullptr ? pi_->use_count() : 0;
     }
 
-    // 测试引用计数是否为1
+    // 测试共享引用计数是否为1
     bool unique() const
     {
         return use_count() == 1;
@@ -150,12 +207,18 @@ public:
         return (this->pi_ != nullptr ? this->pi_->get_deleter() : 0);
     }
 
-    bool owner_before(const shared_ptr &x) const
+    template <typename U>
+    bool owner_before(const shared_ptr<U> &x) const
+    {
+        return this->pi_ < x.pi_;
+    }
+
+    template <typename U>
+    bool owner_before(const weak_ptr<U> &x) const
     {
         return this->pi_ < x.pi_;
     }
 };
-
 
 // 比较两个shared_ptr
 template <typename T>
@@ -296,5 +359,41 @@ D *get_deleter(const shared_ptr<T> &sp)
 {
     return static_cast<D *>(sp.get_deleter());
 }
+
+template <typename T, typename U>
+shared_ptr<T> static_pointer_cast(const shared_ptr<U> &sp)
+{
+    (void) static_cast<T *>(static_cast<U *>(0));
+
+    typedef typename shared_ptr<T>::element_type E;
+
+    E *p = static_cast<E *>(sp.get());
+    return shared_ptr<T>(sp, p);
+}
+
+template <typename T, typename U>
+shared_ptr<T> dynamic_pointer_cast(const shared_ptr<U> &sp)
+{
+    (void) dynamic_cast<T *>(static_cast<U *>(0));
+
+    typedef typename shared_ptr<T>::element_type E;
+
+    E *p = dynamic_cast<E *>(sp.get());
+    return p ? shared_ptr<T>(sp, p) : shared_ptr<T>();
+}
+
+template <typename T, typename U>
+shared_ptr<T> const_pointer_cast(const shared_ptr<U> &sp)
+{
+    (void) const_cast<T *>(static_cast<U *>(0));
+
+    typedef typename shared_ptr<T>::element_type E;
+
+    E *p = const_cast<E *>(sp.get());
+    return shared_ptr<T>(sp, p);
+}
+
+#include "weak_ptr.h"
+#include "enable_shared_from_this.h"
 
 #endif

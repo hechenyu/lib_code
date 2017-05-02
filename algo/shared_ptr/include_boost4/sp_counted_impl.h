@@ -18,8 +18,6 @@ public:
     // 采用默认策略释放*this管理的资源对象: delete运算符
     void dispose() override { delete p_; }
 
-    void *get_pointer() override { return p_; }
-
     void *get_deleter() override { return nullptr; }
 };
 
@@ -39,8 +37,6 @@ public:
 
     // 采用Deleter子对象释放*this管理的资源对象
     void dispose() override { del_(p_); }
-
-    void *get_pointer() override { return p_; }
 
     void *get_deleter() override { return &del_; }
 };
