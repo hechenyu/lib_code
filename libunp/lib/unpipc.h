@@ -27,6 +27,6 @@
 #include "wrapunix.h"
 #include "writable_timeo.h"
 #include "writen.h"
-#include "user_util.h"
+#include "unpipc_util.h"
 
 #endif
