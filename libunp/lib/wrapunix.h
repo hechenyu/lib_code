@@ -13,12 +13,13 @@
 #include <sys/ioctl.h>
 #include <sys/ipc.h>
 #include <sys/stat.h>
+#ifdef HAVE_SYS_MMAN_H
 #include <sys/mman.h>
+#endif
 #include "error.h"
 
 #define HAVE_MKSTEMP 1
 #define HAVE_SYS_IPC_H 1
-#define HAVE_SYS_MMAN_H 1
 #define HAVE_MQUEUE_H 1
 
 /*

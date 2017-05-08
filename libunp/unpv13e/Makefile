@@ -1,5 +1,5 @@
 
-SUBDIRS = advio bcast inetd intro ioctl mcast mysdr names nonblock oob rtt select sigio sockopt ssntp tcpcliserv udpcliserv unixdomain
+SUBDIRS = advio bcast icmpd inetd intro ioctl ipopts mcast mysdr names nonblock oob rtt select server sigio sockopt ssntp tcpcliserv threads udpcliserv unixdomain
 
 all:
 	@$(MAKE) $(MFLAGS) WHAT_TO_MAKE=$@ common
