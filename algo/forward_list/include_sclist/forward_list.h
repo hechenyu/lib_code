@@ -32,6 +32,11 @@ public:
         }
     }
 
+    ~forward_list()
+    {
+        list_clear(*this);
+    }
+
     bool empty() const
     {
         return list_is_empty(*this);
