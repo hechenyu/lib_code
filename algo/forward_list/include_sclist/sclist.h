@@ -2,6 +2,7 @@
 #define __sclist_h
 
 #include <memory>
+#include <initializer_list>
 
 #include "sclist_base.h"
 #include "scnode.h"

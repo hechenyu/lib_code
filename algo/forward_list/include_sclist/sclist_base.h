@@ -32,7 +32,14 @@ bool list_is_empty(const SCList_base &list)
 	return (list.head.next == NULL);
 }
 
-// 返回列表头部第一个结点(非哑头结点)的指针
+// 返回链表哑元头结点的指针
+inline
+SCLink list_dummy_head(SCList_base &list)
+{
+    return &list.head;
+}
+
+// 返回链表头部第一个结点(非哑元头结点)的指针
 inline
 SCLink list_head(SCList_base &list)
 {
