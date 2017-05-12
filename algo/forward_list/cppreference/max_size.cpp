@@ -1,6 +1,6 @@
 #include <iostream>
 #include "forward_list.h"
- 
+
 int main()
 {
     forward_list<char> s;
