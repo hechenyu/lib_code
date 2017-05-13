@@ -1,7 +1,7 @@
 #ifndef __sclist_base_h
 #define __sclist_base_h
 
-#include "scnode_base.h"
+#include "sclist_node_base.h"
 
 /**
  * 单链表: 有哑元头结点, 尾结点的next为空
@@ -10,7 +10,7 @@
  *
  */
 struct SCList_base {
-    SCNode_base head;  // 哑元头结点
+    SCList_node_base head;  // 哑元头结点
 };
 
 /**
@@ -20,45 +20,45 @@ struct SCList_base {
  *
  */
 inline
-void list_init(SCList_base &list)
+void list_init(SCList_base *list)
 {
-    list.head.next = NULL;
+    list->head.next = NULL;
 }
 
 // 判断链表是否为空, 
 inline
-bool list_is_empty(const SCList_base &list)
+bool list_is_empty(const SCList_base *list)
 {
-	return (list.head.next == NULL);
+	return (list->head.next == NULL);
 }
 
 // 返回链表哑元头结点的指针
 inline
-SCLink list_dummy_head(SCList_base &list)
+SCList_link list_dummy_head(SCList_base *list)
 {
-    return &list.head;
+    return &(list->head);
 }
 
 // 返回链表头部第一个结点(非哑元头结点)的指针
 inline
-SCLink list_head(SCList_base &list)
+SCList_link list_head(SCList_base *list)
 {
-    return list.head.next;
+    return list->head.next;
 }
 
 // 在链表头部插入结点
 inline
-void list_insert_head(SCList_base &list, SCLink x)
+void list_insert_head(SCList_base *list, SCList_link x)
 {
-    insert_next(&list.head, x);
+    list_insert_next(list_dummy_head(list), x);
 }
 
 // 在链表头部删除结点
 inline
-SCLink list_delete_head(SCList_base &list)
+SCList_link list_delete_head(SCList_base *list)
 {
     assert(!list_is_empty(list));
-    return delete_next(&list.head);
+    return list_delete_next(list_dummy_head(list));
 }
 
 #endif

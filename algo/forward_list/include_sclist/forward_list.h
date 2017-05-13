@@ -2,6 +2,7 @@
 #define __forward_list_h
 
 #include <cstddef>
+#include <traits>
 #include <initializer_list>
 
 #include "sclist.h"
@@ -19,32 +20,51 @@ public:
 
     forward_list()
     {
-        list_init(*this);
+        list_init(this);
     }
 
     explicit forward_list(std::initializer_list<value_type> il)
     {
-        list_init(*this);
-        auto x = list_dumb_head(*this);
+        list_init(this);
+        auto x = list_dummy_head(this);
         for (auto &e : il) {
-            insert_next(x, new SCNode<T>(e));
-            x = x->next;
+            x = list_insert_next(x, new SCList_node<T>(e));
+        }
+    }
+
+	explicit forward_list(size_type n, const value_type &val = value_type())
+    {
+        list_init(this);
+        auto x = list_dummy_head(this);
+        for (size_type i = 0; i < n; i++) {
+            x = list_insert_next(x, new SCList_node<T>(val));
+        }
+    }
+
+	template <typename InputIterator, typename = typename
+		std::enable_if<!std::is_integral<InputIterator>::value>::type>
+	list(InputIterator first, InputIterator last)
+    {
+        list_init(this);
+        auto x = list_dummy_head(this);
+        while (first != last) {
+            x = list_insert_next(x, new SCList_node<T>(*first++));
         }
     }
 
     ~forward_list()
     {
-        list_clear(*this);
+        list_clear(this);
     }
 
     bool empty() const
     {
-        return list_is_empty(*this);
+        return list_is_empty(this);
     }
 
     void push_front(const value_type &val)
     {
-        list_insert_head(*this, new SCNode<T>(val));
+        list_insert_head(this, new SCList_node<T>(val));
     }
 
 };

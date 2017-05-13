@@ -5,67 +5,58 @@
 #include <initializer_list>
 
 #include "sclist_base.h"
-#include "scnode.h"
+#include "sclist_node.h"
 
 // single chain list
 template <typename T>
 struct SCList : public SCList_base {
 };
 
-// 遍历list所有结点, Function处理element
+// 遍历list所有结点, Function处理data
 template <typename T, typename Function>
-void list_for_each(SCList<T> &list, Function fn)
+void list_for_each(SCList<T> *list, Function fn)
 {
-    for (SCLink x = list_head(list); x != NULL; x = x->next)
-        fn(get_element<T>(x));
+    for (auto x = list_head(list); x != NULL; x = x->next) {
+        fn(*list_data<T>(x));
+    }
 }
 
-// 查找list中等于指定element值的结点
+// 查找list中data等于指定值的结点
 template <typename T>
-SCNode<T> *list_search(SCList<T> &list, const T &element)
+SCList_node<T> *list_search(SCList<T> *list, const T &val)
 {
-    SCLink x = list_head(list);
-    while (x != NULL && get_element<T>(x) != element)
-        x = x->next;
-    return static_pointer_cast<T>(x); 
+    return list_search(list_head(list), val);
 }
 
-// 删除list中值为element的结点
+template <typename T, typename Predicate>
+SCList_node<T> *list_search_if(SCList<T> *list, Predicate pred)
+{
+    return list_search_if(list_head(list), pred);
+}
+
+// 删除list中值为val的所有的结点
+#if 0
 template <typename T>
-SCNode<T> *list_delete(SCList<T> &list, const T &element)
+void list_remove(SCList<T> *list, const T &val)
 {
-    SCLink y = NULL;
-    SCLink x = list_head(list);
-    while (x != NULL && get_element<T>(x) != element) {
-        y = x;
-        x = x->next;
-    }
+    while
+}
+#endif
 
-    if (x == NULL) {    // nofound
-        return NULL;
+// 销毁list
+template <typename T, typename Deleter = std::default_delete<SCList_node<T>>>
+void list_destroy(SCList<T> *list, Deleter del = Deleter())
+{
+    while (!list_is_empty(list)) {
+        del(list_node<T>(list_delete_head(list)));
     }
-
-    if (y == NULL) {    // x is head node
-        list_delete_head(list);
-    } else {
-        delete_next(y);
-    }
-
-    return static_pointer_cast<T>(x); 
 }
 
-// 释放list所有结点, Function操作SCNode<T> *
-template <typename T, typename Deleter = std::default_delete<SCNode<T>>>
-void list_clear(SCList<T> &list, Deleter del = Deleter())
+// 清空list
+template <typename T, typename Deleter = std::default_delete<SCList_node<T>>>
+void list_clear(SCList<T> *list, Deleter del = Deleter())
 {
-    SCLink y = NULL;
-    SCLink x = list_head(list);
-    while (x != NULL) {
-        y = x;
-        x = x->next;
-        del(static_pointer_cast<T>(y));
-    }
-
+    list_destroy(list, del);
     list_init(list);
 }
 

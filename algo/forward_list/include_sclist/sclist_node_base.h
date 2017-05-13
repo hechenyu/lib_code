@@ -1,12 +1,12 @@
-#ifndef __scnode_base_h
-#define __scnode_base_h
+#ifndef __sclist_node_base_h
+#define __sclist_node_base_h
 
 #include <stddef.h>
 #include <assert.h>
 
-// Single Chain Node
-// 单链结点
-typedef struct SCNode_base *SCLink;
+// Single Chain List Node
+// 单向链表结点
+typedef struct SCList_node_base *SCList_link;
 
 /**
  * 单向链表节点基类
@@ -15,8 +15,8 @@ typedef struct SCNode_base *SCLink;
  *   |___| next  
  * 
  */
-struct SCNode_base {
-    SCLink next;
+struct SCList_node_base {
+    SCList_link next;
 };
 
 /**
@@ -49,12 +49,13 @@ struct SCNode_base {
  *                       ^-t       
  */
 inline 
-void insert_next(SCLink x, SCLink t)
+SCList_link list_insert_next(SCList_link x, SCList_link t)
 {
     assert(x != NULL && t != NULL);
 
 	t->next = x->next;
 	x->next = t;
+    return t;
 }
 
 /**
@@ -72,15 +73,48 @@ void insert_next(SCLink x, SCLink t)
  *             ^-x           ^-t
  */
 inline
-SCLink delete_next(SCLink x)
+SCList_link list_delete_next(SCList_link x)
 {
     assert(x != NULL);
 
-    if (x->next == NULL) return NULL;
+    if (x->next == NULL) return NULL;   // x is tail of list
 
-	SCLink t = x->next;
+	SCList_link t = x->next;
 	x->next = t->next;
     return t;
+}
+
+/**
+ * reverse singly linked list after x
+ * [head] -> [N1] -> [N2] -> [N3] -> [N4] -> [NIL]
+ *    ^-x      ^-t
+ *                ||  list_insert_next(x, t->next)
+ *                \/
+ *
+ * [head] -> [N2] -> [N1] -> [N3] -> [N4] -> [NIL]
+ *    ^-x             ^-t
+ *                ||  list_insert_next(x, t->next)
+ *                \/
+ *
+ * [head] -> [N3] -> [N2] -> [N1] -> [N4] -> [NIL]
+ *    ^-x                     ^-t
+ *                ||  list_insert_next(x, t->next)
+ *                \/
+ *
+ * [head] -> [N4] -> [N3] -> [N2] -> [N1] -> [NIL]
+ *    ^-x                              ^-t
+ */
+inline
+void list_reverse_next(SCList_link x)
+{
+    assert(x != NULL);
+
+    if (x->next == NULL) return;    // x is tail of list
+
+    SCList_link t = x->next;
+    while (t->next != NULL) {
+        list_insert_next(x, list_delete_next(t));
+    }
 }
 
 #endif
