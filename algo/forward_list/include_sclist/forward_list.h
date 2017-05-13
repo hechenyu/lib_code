@@ -2,11 +2,14 @@
 #define __forward_list_h
 
 #include <cstddef>
-#include <traits>
+#include <type_traits>
 #include <initializer_list>
 
 #include "sclist.h"
-#include "forward_list_iterator.h"
+#include "sclist_iterator.h"
+
+template <typename T> 
+using forward_list_iterator = SCList_iterator<T>;
 
 template <typename T>
 class forward_list: private SCList<T> {
@@ -43,7 +46,7 @@ public:
 
 	template <typename InputIterator, typename = typename
 		std::enable_if<!std::is_integral<InputIterator>::value>::type>
-	list(InputIterator first, InputIterator last)
+	forward_list(InputIterator first, InputIterator last)
     {
         list_init(this);
         auto x = list_dummy_head(this);
