@@ -12,26 +12,25 @@ template <typename T>
 struct SCList : public SCList_base {
 };
 
+
 // 遍历list所有结点, Function处理data
 template <typename T, typename Function>
 void list_for_each(SCList<T> *list, Function fn)
 {
-    for (auto x = list_head(list); x != NULL; x = x->next) {
-        fn(*list_data<T>(x));
-    }
+    list_for_each(list_node<T>(list_head(list)), fn);
 }
 
 // 查找list中data等于指定值的结点
 template <typename T>
 SCList_node<T> *list_search(SCList<T> *list, const T &val)
 {
-    return list_search(list_head(list), val);
+    return list_search(list_node<T>(list_head(list)), val);
 }
 
 template <typename T, typename Predicate>
 SCList_node<T> *list_search_if(SCList<T> *list, Predicate pred)
 {
-    return list_search_if(list_head(list), pred);
+    return list_search_if(list_node<T>(list_head(list)), pred);
 }
 
 // 删除list中值为val的所有的结点

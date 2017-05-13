@@ -1,17 +1,19 @@
 #include "sclist.h"
+#include "sclist_init.h"
+#include "sclist_iterator.h"
 #include <string>
 #include <iostream>
 
 template<typename T>
-std::ostream& operator<<(std::ostream& s, const sclist<T>& v) {
+std::ostream& operator<<(std::ostream& s, const SCList<T>& v) {
     s.put('[');
     char comma[3] = {'\0', ' ', '\0'};
-    auto print_data = [&](const T &) {
+    auto print_data = [&](const T &e) {
         s << comma << e;
         comma[0] = ',';
     };
 
-    list_for_each(&v, print_data);
+    list_for_each(const_cast<SCList<T> *>(&v), print_data);
     return s << ']';
 }
 
@@ -19,7 +21,7 @@ int main()
 {
     // c++11 initializer list syntax:
     SCList<std::string> words1;
-    list_init(&words1, {"the", "frogurt", "is", "also", "cursed"});
+    list_init<std::string>(&words1, {"the", "frogurt", "is", "also", "cursed"});
     std::cout << "words1: " << words1 << '\n';
 
     // words2 == words1
@@ -29,12 +31,12 @@ int main()
 
     // words3 == words1
     SCList<std::string> words3;
-    list_init(&word3, &words1);
+    list_init(&words3, list_begin(&words1), list_end(&words1));
     std::cout << "words3: " << words3 << '\n';
 
     // words4 is {"Mo", "Mo", "Mo", "Mo", "Mo"}
     SCList<std::string> words4;
-    list_init(&word4, 5, "Mo");
+    list_init<std::string>(&words4, 5, "Mo");
     std::cout << "words4: " << words4 << '\n';
 
     list_destroy(&words4);

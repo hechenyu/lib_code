@@ -5,7 +5,7 @@
 
 template <typename T>
 struct SCList_iterator {
-    SCList_link link;
+    SCList_node<T> *node;
 
     typedef T value_type;
     typedef T *pointer;
@@ -15,36 +15,36 @@ struct SCList_iterator {
 
     typedef SCList_iterator<T> this_type;
 
-    SCList_iterator(): link(NULL) {}
+    SCList_iterator(): node(NULL) {}
 
-    explicit SCList_iterator(SCList_link link): link(link) {}
+    explicit SCList_iterator(SCList_link link): node(list_node<T>(link)) {}
 
     reference operator *() const
     {
-        return *list_data<T>(link);
+        return *list_data(node);
     }
 
     pointer operator ->() const
     {
-        return list_data<T>(link);
+        return list_data(node);
     }
 
     this_type &operator ++()
     {
-		link = link->next;
+        node = list_next(node);
         return *this;
     }
 
     this_type operator ++(int)
     {
         this_type tmp(*this);
-        link = link->next;
+        node = list_next(node);
         return tmp;
     }
 
     bool operator ==(const this_type &other) const
     {
-        return (link == other.link);
+        return (node == other.node);
     }
 
     bool operator !=(const this_type &other) const
