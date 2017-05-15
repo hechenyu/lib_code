@@ -52,4 +52,7 @@
 #define	min(a,b)	((a) < (b) ? (a) : (b))
 #define	max(a,b)	((a) > (b) ? (a) : (b))
 
+typedef unsigned int uint_t;
+
+
 #endif	/* __unpipc_h */
