@@ -1,21 +1,8 @@
 #include "sclist.h"
-#include "sclist_init.h"
 #include "sclist_iterator.h"
+#include "sclist_util.h"
 #include <string>
 #include <iostream>
-
-template<typename T>
-std::ostream& operator<<(std::ostream& s, const SCList<T>& v) {
-    s.put('[');
-    char comma[3] = {'\0', ' ', '\0'};
-    auto print_data = [&](const T &e) {
-        s << comma << e;
-        comma[0] = ',';
-    };
-
-    list_for_each(const_cast<SCList<T> *>(&v), print_data);
-    return s << ']';
-}
 
 int main()
 {

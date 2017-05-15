@@ -34,13 +34,14 @@ SCList_node<T> *list_search_if(SCList<T> *list, Predicate pred)
 }
 
 // 删除list中值为val的所有的结点
-#if 0
-template <typename T>
-void list_remove(SCList<T> *list, const T &val)
+template <typename T, typename Deleter = std::default_delete<SCList_node<T>>>
+void list_remove(SCList<T> *list, const T &val, Deleter del = Deleter())
 {
-    while
+    SCList_node<T> *x = list_node<T>(list_dummy_head(list));
+    while (x != NULL) {
+        x = list_remove_next(x, val, del);
+    }
 }
-#endif
 
 // 销毁list
 template <typename T, typename Deleter = std::default_delete<SCList_node<T>>>
