@@ -26,7 +26,7 @@ public:
         list_init(this);
     }
 
-    explicit forward_list(std::initializer_list<value_type> il)
+    forward_list(std::initializer_list<value_type> il)
     {
         list_init(this);
         auto x = list_dummy_head(this);
@@ -55,6 +55,15 @@ public:
         }
     }
 
+	forward_list(const forward_list &fwd_list)
+    {
+        list_init(this);
+        auto x = list_dummy_head(this);
+        for (auto &e : fwd_list) {
+            x = list_insert_next(x, new SCList_node<T>(e));
+        }
+    }
+
     ~forward_list()
     {
         list_clear(this);
@@ -70,6 +79,31 @@ public:
         list_insert_head(this, new SCList_node<T>(val));
     }
 
+	iterator before_begin()
+	{
+		return iterator(list_dummy_head(this));
+	}
+
+	iterator begin()
+	{
+		return iterator(list_head(this)); 
+	}
+
+	iterator end()
+    {
+        return iterator(NULL);
+    }
+
+	void remove(const value_type &val)
+	{
+        list_remove(this, val);
+	}
+
+	template <typename Predicate>
+	void remove_if(Predicate pred)
+	{
+        list_remove_if(this, pred);
+	}
 };
 
 #endif
