@@ -43,6 +43,15 @@ void list_remove(SCList<T> *list, const T &val, Deleter del = Deleter())
     }
 }
 
+template <typename T, typename Predicate, typename Deleter = std::default_delete<SCList_node<T>>>
+void list_remove_if(SCList<T> *list, Predicate pred, Deleter del = Deleter())
+{
+    SCList_node<T> *x = list_node<T>(list_dummy_head(list));
+    while (x != NULL) {
+        x = list_remove_next_if(x, pred, del);
+    }
+}
+
 // 销毁list
 template <typename T, typename Deleter = std::default_delete<SCList_node<T>>>
 void list_destroy(SCList<T> *list, Deleter del = Deleter())
