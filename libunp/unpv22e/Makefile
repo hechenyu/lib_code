@@ -1,5 +1,5 @@
 
-SUBDIRS = pipe
+SUBDIRS = fifocliserv my_pxmsg_mmap pipe pxmsg
 
 all:
 	@$(MAKE) $(MFLAGS) WHAT_TO_MAKE=$@ common
