@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -I. -g -O2 -DHAVE_SIGWAIT -D_REENTRANT -Wall -DHAVE_EPOLL
+CFLAGS = -I. -g -O2 -Wall -DHAVE_SIGWAIT -DHAVE_MQUEUE_H -DHAVE_SEMAPHORE_H -DHAVE_SYS_MMAN_H -D_REENTRANT -DHAVE_EPOLL 
 RANLIB = ranlib
 
 # Following is the main library, built from all the object files

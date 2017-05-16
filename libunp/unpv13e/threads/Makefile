@@ -1,7 +1,7 @@
 RM = rm -f
 CC = gcc
 INCLUDE = -I../../lib/
-CFLAGS = -Wall -g ${INCLUDE} -DHAVE_EPOLL -DNOTDEF
+CFLAGS = -Wall -g ${INCLUDE} -DHAVE_EPOLL -DNOTDEF -D_GNU_SOURCE
 LIBS = ../../lib/libunp.a -lpthread -lrt
 
 PROGS =	web01 web02 web03 \

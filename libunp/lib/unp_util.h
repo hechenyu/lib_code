@@ -32,5 +32,31 @@
 #define min(a,b)    ((a) < (b) ? (a) : (b))
 #define max(a,b)    ((a) > (b) ? (a) : (b))
 
+/** define in recvfromflags.c */
+ssize_t recvfrom_flags(int fd, void *ptr, size_t nbytes, int *flagsp,
+			   SA *sa, socklen_t *salenptr, struct unp_in_pktinfo *pktp);
+ssize_t Recvfrom_flags(int fd, void *ptr, size_t nbytes, int *flagsp,
+			   SA *sa, socklen_t *salenptr, struct unp_in_pktinfo *pktp);
+
+/** define in sourceroute.c */
+u_char *inet_srcrt_init(int type);
+int inet_srcrt_add(char *hostptr);
+void inet_srcrt_print(u_char *ptr, int len);
+
+/** define in udp_server_reuseaddr.c */
+int udp_server_reuseaddr(const char *host, const char *serv, socklen_t *addrlenp);
+int Udp_server_reuseaddr(const char *host, const char *serv, socklen_t *addrlenp);
+
+/** define in heartbeatcli.c */
+void heartbeat_cli(int servfd_arg, int nsec_arg, int maxnprobes_arg);
+
+/** define in heartbeatserv.c */
+void heartbeat_serv(int servfd_arg, int nsec_arg, int maxnalarms_arg);
+
+/** define in lock_fcntl.c */
+void my_lock_init(char *pathname);
+void my_lock_wait();
+void my_lock_release();
+
 #endif
 

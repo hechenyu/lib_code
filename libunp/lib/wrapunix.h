@@ -5,22 +5,32 @@
 #include <fcntl.h>
 #include <signal.h>
 #include <stdarg.h>
-#include <mqueue.h>
 #include <sys/time.h>
 #include <sys/wait.h>
 #include <sys/types.h>
 #include <sys/sysctl.h>
 #include <sys/ioctl.h>
-#include <sys/ipc.h>
 #include <sys/stat.h>
+
+#ifdef  HAVE_SYS_IPC_H
+#include <sys/ipc.h>
+#endif
+
+#ifdef	HAVE_SEMAPHORE_H
+#include <semaphore.h>
+#endif
+
+#ifdef HAVE_MQUEUE_H
+#include <mqueue.h>
+#endif
+
 #ifdef HAVE_SYS_MMAN_H
 #include <sys/mman.h>
 #endif
+
 #include "error.h"
 
 #define HAVE_MKSTEMP 1
-#define HAVE_SYS_IPC_H 1
-#define HAVE_MQUEUE_H 1
 
 /*
  * In our wrappers for open(), mq_open(), and sem_open() we handle the
@@ -70,10 +80,10 @@ void     Mkfifo(const char *, mode_t);
 void     Mktemp(char *);
 int      Mkstemp(char *);
 
-#ifdef HAVE_SYS_MMAN_H
+//#ifdef HAVE_SYS_MMAN_H
 void    *Mmap(void *, size_t, int, int, int, off_t);
 void     Munmap(void *, size_t);
-#endif
+//#endif
 
 #ifdef HAVE_MQUEUE_H
 mqd_t    Mq_open(const char *, int, ...);
@@ -84,6 +94,18 @@ ssize_t  Mq_receive(mqd_t, char *, size_t, unsigned int *);
 void     Mq_notify(mqd_t, const struct sigevent *);
 void     Mq_getattr(mqd_t, struct mq_attr *);
 void     Mq_setattr(mqd_t, const struct mq_attr *, struct mq_attr *);
+#endif
+
+#ifdef	HAVE_SEMAPHORE_H
+sem_t   *Sem_open(const char *, int, ...);
+void     Sem_close(sem_t *);
+void     Sem_unlink(const char *);
+void     Sem_init(sem_t *, int, unsigned int);
+void     Sem_destroy(sem_t *);
+void     Sem_wait(sem_t *);
+int      Sem_trywait(sem_t *);
+void     Sem_post(sem_t *);
+void     Sem_getvalue(sem_t *, int *);
 #endif
 
 int      Open(const char *, int , ...);
