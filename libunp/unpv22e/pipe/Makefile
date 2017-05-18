@@ -2,7 +2,7 @@ RM = rm -f
 CC = gcc
 INCLUDE = -I../../lib/
 CFLAGS = -Wall -g -O2 ${INCLUDE}
-LIBS = ../../lib/libunp.a -lpthread -lrt
+LIBS = ../../lib/libunpipc.a -lpthread -lrt
 
 PROGS =	mainpipe mainpopen mainfifo \
 		client_fifo server_fifo pipeconf test1 test2 fduplex

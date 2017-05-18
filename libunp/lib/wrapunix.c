@@ -403,7 +403,6 @@ Read(int fd, void *ptr, size_t nbytes)
 	return(n);
 }
 
-#if 0
 /* include Select */
 int
 Select(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds,
@@ -422,7 +421,6 @@ again:
 	return(n);		/* can return 0 on timeout */
 }
 /* end Select */
-#endif
 
 #ifdef	HAVE_SEMAPHORE_H
 

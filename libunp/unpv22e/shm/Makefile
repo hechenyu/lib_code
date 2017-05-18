@@ -1,8 +1,8 @@
 RM = rm -f
 CC = gcc
 INCLUDE = -I../../lib/
-CFLAGS = -Wall -g -O2 ${INCLUDE}
-LIBS = ../../lib/libunp.a -lpthread -lrt
+CFLAGS = -Wall -g -O2 ${INCLUDE} -DHAVE_SEMAPHORE_H -DHAVE_SYS_MSG_H -DHAVE_SYS_IPC_H -D_GNU_SOURCE # _GNU_SOURCE for struct msgbuf in ctl.c
+LIBS = ../../lib/libunpipc.a -lpthread -lrt
 
 # incr_map_anon and incr_dev_zero are not in PORGS since they're
 # not on all platforms.

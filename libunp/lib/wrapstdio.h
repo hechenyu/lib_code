@@ -11,4 +11,7 @@ char	*Fgets(char *, int, FILE *);
 FILE	*Fopen(const char *, const char *);
 void	 Fputs(const char *, FILE *);
 
+FILE    *Popen(const char *, const char *);
+int      Pclose(FILE *);
+
 #endif

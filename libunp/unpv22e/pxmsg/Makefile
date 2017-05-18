@@ -2,7 +2,7 @@ RM = rm -f
 CC = gcc
 INCLUDE = -I../../lib/
 CFLAGS = -Wall -g -O2 ${INCLUDE} -DHAVE_MQUEUE_H
-LIBS = ../../lib/libunp.a -lpthread -lrt
+LIBS = ../../lib/libunpipc.a -lpthread -lrt
 
 PROGS =	mqcreate1 mqcreate mqgetattr \
 		mqnotifysig1 mqnotifysig2 mqnotifysig3 mqnotifysig4 mqnotifysig5 \

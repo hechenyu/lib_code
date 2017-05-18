@@ -166,6 +166,9 @@ void     Unlink(const char *);
 pid_t    Wait(int *);
 pid_t    Waitpid(pid_t, int *, int);
 void     Write(int, void *, size_t);
+long     Pathconf(const char *pathname, int name);
+int		 Select(int, fd_set *, fd_set *, fd_set *, struct timeval *);
+void     Sigwait(const sigset_t *set, int *signo);
 
 /* Define to 1 if you have the `mkstemp' function. */
 #define HAVE_MKSTEMP 1

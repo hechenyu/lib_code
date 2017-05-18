@@ -1,8 +1,8 @@
 RM = rm -f
 CC = gcc
 INCLUDE = -I../../lib/
-CFLAGS = -Wall -g -O2 ${INCLUDE} -DHAVE_SYS_MSG_H -D_GNU_SOURCE -DHAVE_SYS_IPC_H # _GNU_SOURCE for struct msgbuf in ctl.c
-LIBS = ../../lib/libunp.a -lpthread -lrt
+CFLAGS = -Wall -g -O2 ${INCLUDE} -DHAVE_SYS_MSG_H -DHAVE_SYS_IPC_H
+LIBS = ../../lib/libunpipc.a -lpthread -lrt
 
 PROGS =	client_main server_main
 
