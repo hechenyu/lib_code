@@ -3,6 +3,7 @@
 
 #include "wrapsock.h"
 #include "wrapstdio.h"
+#include "sock_ntop.h"
 
 void    dg_echo(int, SA *, socklen_t);
 
