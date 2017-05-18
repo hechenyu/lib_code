@@ -4,6 +4,9 @@
 #ifndef	__unpipc_util_h
 #define	__unpipc_util_h
 
+#include <sys/msg.h>
+#include <sys/ipc.h>
+
 /* Define bzero() as a macro if it's not in standard C library. */
 #ifndef	HAVE_BZERO
 #define	bzero(ptr,n)		memset(ptr, 0, n)
@@ -39,7 +42,16 @@
 					/* default permissions for new directories */
 /* $$.ix [DIR_MODE]~constant,~definition~of$$ */
 
+#ifndef MSG_R 
+#define MSG_R S_IRUSR 
+#endif
+
+#ifndef MSG_W 
+#define MSG_W S_IWUSR 
+#endif
+
 #define	SVMSG_MODE	(MSG_R | MSG_W | MSG_R>>3 | MSG_R>>6)
+//#define	SVMSG_MODE	(S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH)
 					/* default permissions for new SV message queues */
 /* $$.ix [SVMSG_MODE]~constant,~definition~of$$ */
 #define	SVSEM_MODE	(SEM_R | SEM_A | SEM_R>>3 | SEM_R>>6)
@@ -53,6 +65,6 @@
 #define	max(a,b)	((a) > (b) ? (a) : (b))
 
 typedef unsigned int uint_t;
-
+typedef unsigned long ulong_t;
 
 #endif	/* __unpipc_h */

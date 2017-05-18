@@ -12,20 +12,54 @@
 #include <sys/ioctl.h>
 #include <sys/stat.h>
 
-#ifdef  HAVE_SYS_IPC_H
-#include <sys/ipc.h>
+#ifdef	HAVE_MQUEUE_H
+# include	<mqueue.h>		/* Posix message queues */
 #endif
 
 #ifdef	HAVE_SEMAPHORE_H
-#include <semaphore.h>
+# include	<semaphore.h>	/* Posix semaphores */
+
+#ifndef	SEM_FAILED
+#define	SEM_FAILED	((sem_t *)(-1))
 #endif
 
-#ifdef HAVE_MQUEUE_H
-#include <mqueue.h>
 #endif
 
-#ifdef HAVE_SYS_MMAN_H
-#include <sys/mman.h>
+#ifdef	HAVE_SYS_MMAN_H
+# include	<sys/mman.h>	/* Posix shared memory */
+#endif
+
+#ifndef	MAP_FAILED
+#define	MAP_FAILED	((void *)(-1))
+#endif
+
+#ifdef	HAVE_SYS_IPC_H
+# include	<sys/ipc.h>		/* System V IPC */
+#endif
+
+#ifdef	HAVE_SYS_MSG_H
+# include	<sys/msg.h>		/* System V message queues */
+#endif
+
+#ifdef	HAVE_SYS_SEM_H
+#ifdef	__bsdi__
+#undef	HAVE_SYS_SEM_H		/* hack: BSDI's semctl() prototype is wrong */
+#else
+# include	<sys/sem.h>		/* System V semaphores */
+#endif
+
+#ifndef	HAVE_SEMUN_UNION
+/* $$.It semun$$ */
+union semun {				/* define union for semctl() */
+  int              val;
+  struct semid_ds *buf;
+  unsigned short  *array;
+};
+#endif
+#endif	/* HAVE_SYS_SEM_H */
+
+#ifdef	HAVE_SYS_SHM_H
+# include	<sys/shm.h>		/* System V shared memory */
 #endif
 
 #include "error.h"
@@ -106,6 +140,13 @@ void     Sem_wait(sem_t *);
 int      Sem_trywait(sem_t *);
 void     Sem_post(sem_t *);
 void     Sem_getvalue(sem_t *, int *);
+#endif
+
+#ifdef	HAVE_SYS_MSG_H
+int		 Msgget(key_t key, int flag);
+void	 Msgctl(int, int, struct msqid_ds *);
+void	 Msgsnd(int, const void *, size_t, int);
+ssize_t	 Msgrcv(int, void *, size_t, int, int);
 #endif
 
 int      Open(const char *, int , ...);
