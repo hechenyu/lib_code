@@ -1,7 +1,6 @@
 // reversing forward_list
 #include <iostream>
 #include "sclist.h"
-#include "sclist_iterator.h"
 #include "sclist_util.h"
 
 int main ()

@@ -1,7 +1,6 @@
 // forward_list::sort
 #include <iostream>
 #include "sclist.h"
-#include "sclist_iterator.h"
 #include "sclist_util.h"
 #include <functional>
 
