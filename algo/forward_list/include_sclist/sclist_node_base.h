@@ -85,7 +85,8 @@ SCList_link list_delete_next(SCList_link x)
 }
 
 /**
- * reverse singly linked list after x
+ * 将链表上x结点后面的所有结点反序排列
+ *
  * [head] -> [N1] -> [N2] -> [N3] -> [N4] -> [NIL]
  *    ^-x      ^-t
  *                ||  list_insert_next(x, t->next)
@@ -115,6 +116,24 @@ void list_reverse_next(SCList_link x)
     while (t->next != NULL) {
         list_insert_next(x, list_delete_next(t));
     }
+}
+
+// 从链表的x结点开始, 找到链表的尾结点
+inline
+SCList_link list_tail(SCList_link x)
+{
+    assert(x != NULL);
+
+    while (x->next != NULL) {
+        x = x->next;
+    }
+
+    return x;
+}
+
+inline
+void list_transfer_next(SCList_link x, SCList_link a, SCList_link b)
+{
 }
 
 #endif

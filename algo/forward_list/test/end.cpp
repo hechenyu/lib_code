@@ -15,5 +15,6 @@ int main ()
 
   std::cout << '\n';
 
+  list_destroy(&mylist);
   return 0;
 }

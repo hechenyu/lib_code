@@ -76,4 +76,17 @@ void list_selection(SCList<T> *list, Compare comp = Compare())
     list_selection_next(list_node<T>(list_dummy_head(list)), comp);
 }
 
+template <typename T, typename Compare = std::less<T>>
+void list_sort(SCList<T> *list, Compare comp = Compare())
+{
+    list_selection(list, comp);
+}
+
+// 合并list1和list2, 并且将结果放到list1中
+template <typename T, typename Compare = std::less<T>>
+void list_merge(SCList<T> *list1, SCList<T> *list2, Compare comp = Compare())
+{
+    list_merge_next(list_node<T>(list_dummy_head(list1)), list_node<T>(list_dummy_head(list2)), comp);
+}
+
 #endif

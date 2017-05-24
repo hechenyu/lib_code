@@ -9,5 +9,6 @@ int main()
 
   std::cout << "nums contains " << list_size(&nums) << " elements.\n";
 
+  list_destroy(&nums);
   return 0;
 }

@@ -108,7 +108,6 @@ SCList_node<T> *list_remove_if_next(SCList_node<T> *x, Predicate pred, Deleter d
 
 // 查找x结点之后值最大的结点, 
 // 并把该结点从链表中摘除, 并返回该结点的指针,
-// 如果没有满足条件的结点, 返回空指针
 template <typename T, typename Compare = std::less<T>>
 SCList_node<T> *list_delete_max_next(SCList_node<T> *x, Compare comp = Compare())
 {
@@ -147,13 +146,57 @@ SCList_node<T> *list_delete_max_next(SCList_node<T> *x, Compare comp = Compare()
 template <typename T, typename Compare = std::less<T>>
 SCList_node<T> *list_selection_next(SCList_node<T> *x, Compare comp = Compare())
 {
-    SCList_node<T> *out = NULL;
-    while (list_next(x) != NULL) {
+    SCList_link out = NULL;
+    while (x->next != NULL) {
         auto t = list_delete_max_next(x, comp); // t为x后最大元素结点
         t->next = out;                          // 将t插入out的前头
         out = t;                                // out挪到链表头
     }
     x->next = out;
+
+    return x;
+}
+
+// 查找x结点和y结点之后值小的结点, 
+// 并把该结点从链表中摘除, 并返回该结点的指针,
+template <typename T, typename Compare = std::less<T>>
+SCList_node<T> *list_delete_min_next(SCList_node<T> *x, SCList_node<T> *y, Compare comp = Compare())
+{
+    assert(x != NULL && list_next(x) != NULL);
+    assert(y != NULL && list_next(y) != NULL);
+
+    if (comp(*list_data(list_next(y)), *list_data(list_next(x)))) {     // y->next->data < x->next->data
+        return list_node<T>(list_delete_next(y));
+    } 
+
+    return list_node<T>(list_delete_next(x));
+}
+
+// 合并x结点和y结点之后的链表,
+template <typename T, typename Compare = std::less<T>>
+SCList_node<T> *list_merge_next(SCList_node<T> *x, SCList_node<T> *y, Compare comp = Compare())
+{
+    SCList_node_base head = {NULL};   // dummy head node
+    SCList_link out = &head;
+
+    while (x->next != NULL && y->next != NULL) {
+        auto t = list_delete_min_next(x, y, comp);  // t为x和y后最小元素结点
+        out = list_insert_next(out, t);             // 将t插入out的后头, out挪到链表尾
+    }
+
+    if (x->next != NULL) {  // y->next == NULL
+        assert(out->next == NULL);
+        out->next = x->next;
+        out = list_tail(out);
+    }
+
+    if (y->next != NULL) {  // x->next == NULL
+        assert(out->next == NULL);
+        out->next = y->next;
+    }
+
+    y->next = NULL;
+    x->next = head.next;
 
     return x;
 }
