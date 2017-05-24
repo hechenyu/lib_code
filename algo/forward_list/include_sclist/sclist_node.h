@@ -1,6 +1,7 @@
 #ifndef __sclist_node_h
 #define __sclist_node_h
 
+#include <functional>
 #include "sclist_node_base.h"
 
 // single chain list node
@@ -85,7 +86,7 @@ SCList_node<T> *list_remove_next(SCList_node<T> *x, const T &val, Deleter del = 
 }
 
 template <typename T, typename Predicate, typename Deleter = std::default_delete<SCList_node<T>>>
-SCList_node<T> *list_remove_next_if(SCList_node<T> *x, Predicate pred, Deleter del = Deleter())
+SCList_node<T> *list_remove_if_next(SCList_node<T> *x, Predicate pred, Deleter del = Deleter())
 {
     assert(x != NULL);
 
@@ -103,6 +104,58 @@ SCList_node<T> *list_remove_next_if(SCList_node<T> *x, Predicate pred, Deleter d
     del(list_node<T>(list_delete_next(y)));
 
     return y;
+}
+
+// 查找x结点之后值最大的结点, 
+// 并把该结点从链表中摘除, 并返回该结点的指针,
+// 如果没有满足条件的结点, 返回空指针
+template <typename T, typename Compare = std::less<T>>
+SCList_node<T> *list_delete_max_next(SCList_node<T> *x, Compare comp = Compare())
+{
+    assert(x != NULL && list_next(x) != NULL);
+
+    SCList_node<T> *max = x;
+    x = list_next(x);
+
+    while (list_next(x) != NULL) {
+        // max->next->data < x->next->data
+        if (comp(*list_data(list_next(max)), *list_data(list_next(x)))) {
+            max = x;
+        }
+        x = list_next(x);
+    }
+
+    return list_node<T>(list_delete_next(max));
+}
+
+// 对x结点后的链表进行选择排序
+//
+// [] -> [113] -> [515] -> [101] ->
+//  ^-x    ^-max    ^-t
+//
+// [627] -> [758] -> [838] ->
+//   ^-out
+//          ||
+//          \/
+//
+// [] -> [113] -> [101] ->
+//  ^-x
+//
+// [515] -> [627] -> [758] -> [838] ->
+//   ^-out
+//
+template <typename T, typename Compare = std::less<T>>
+SCList_node<T> *list_selection_next(SCList_node<T> *x, Compare comp = Compare())
+{
+    SCList_node<T> *out = NULL;
+    while (list_next(x) != NULL) {
+        auto t = list_delete_max_next(x, comp); // t为x后最大元素结点
+        t->next = out;                          // 将t插入out的前头
+        out = t;                                // out挪到链表头
+    }
+    x->next = out;
+
+    return x;
 }
 
 #endif

@@ -61,4 +61,24 @@ SCList_link list_delete_head(SCList_base *list)
     return list_delete_next(list_dummy_head(list));
 }
 
+// 返回链表中元素个数
+inline
+int list_size(SCList_base *list)
+{
+    int n = 0;
+    auto x = list_head(list);
+    while (x != NULL) {
+        x = x->next;
+        n++;
+    }
+    return n;
+}
+
+// 将链表结点逆序排列
+inline
+void list_reverse(SCList_base *list)
+{
+    list_reverse_next(list_dummy_head(list));
+}
+
 #endif

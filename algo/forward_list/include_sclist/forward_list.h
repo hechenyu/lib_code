@@ -104,6 +104,22 @@ public:
 	{
         list_remove_if(this, pred);
 	}
+
+    void reverse()
+    {
+        list_reverse(this);
+    }
+
+    void sort()
+    {
+        list_selection(this);
+    }
+
+    template <typename Compare>
+    void sort(Compare comp)
+    {
+        list_selection(this, comp);
+    }
 };
 
 #endif

@@ -48,7 +48,7 @@ void list_remove_if(SCList<T> *list, Predicate pred, Deleter del = Deleter())
 {
     SCList_node<T> *x = list_node<T>(list_dummy_head(list));
     while (x != NULL) {
-        x = list_remove_next_if(x, pred, del);
+        x = list_remove_if_next(x, pred, del);
     }
 }
 
@@ -67,6 +67,13 @@ void list_clear(SCList<T> *list, Deleter del = Deleter())
 {
     list_destroy(list, del);
     list_init(list);
+}
+
+// 选择排序list
+template <typename T, typename Compare = std::less<T>>
+void list_selection(SCList<T> *list, Compare comp = Compare())
+{
+    list_selection_next(list_node<T>(list_dummy_head(list)), comp);
 }
 
 #endif
