@@ -55,11 +55,11 @@ public:
         }
     }
 
-	forward_list(const forward_list &fwd_list)
+	forward_list(const forward_list &fwdlst)
     {
         list_init(this);
         auto x = list_dummy_head(this);
-        for (auto &e : fwd_list) {
+        for (auto &e : fwdlst) {
             x = list_insert_next(x, new SCList_node<T>(e));
         }
     }
@@ -119,6 +119,21 @@ public:
     void sort(Compare comp)
     {
         list_selection(this, comp);
+    }
+
+    void splice_after(iterator pos, forward_list &fwdlst)
+    {
+        list_transfer_next(pos.get_node(), &fwdlst);
+    }
+
+    void splice_after(iterator pos, forward_list &fwdlst, iterator i)
+    {
+        list_transfer_next(pos.get_node(), i.get_node());
+    }
+
+    void splice_after(iterator pos, forward_list &fwdlst, iterator first, iterator last)
+    {
+        list_transfer_next(pos.get_node(), first.get_node(), last.get_node());
     }
 };
 

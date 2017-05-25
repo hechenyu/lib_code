@@ -51,6 +51,11 @@ struct SCList_iterator {
     {
         return !(*this == other);
     }
+
+    SCList_link get_node()
+    {
+        return node;
+    }
 };
 
 template <typename T>

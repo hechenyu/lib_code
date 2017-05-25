@@ -81,4 +81,11 @@ void list_reverse(SCList_base *list)
     list_reverse_next(list_dummy_head(list));
 }
 
+// 将整个链表的结点插入到x结点后面
+inline
+void list_transfer_next(SCList_link x, SCList_base *list)
+{
+    list_transfer_next(x, list_dummy_head(list), NULL);
+}
+
 #endif

@@ -75,9 +75,7 @@ SCList_link list_insert_next(SCList_link x, SCList_link t)
 inline
 SCList_link list_delete_next(SCList_link x)
 {
-    assert(x != NULL);
-
-    if (x->next == NULL) return NULL;   // x is tail of list
+    assert(x != NULL && x->next != NULL);
 
 	SCList_link t = x->next;
 	x->next = t->next;
@@ -85,36 +83,80 @@ SCList_link list_delete_next(SCList_link x)
 }
 
 /**
+ * 将y结点后的结点移动到x结点后(x, y可以在同一个链表或不同链表上)
+ * [head] -> [N1] -> [N2] -> [N3] -> ... -> [Nk-1] -> [Nk] -> [Nk+1] -> ... -> [NIL]
+ *                    ^-x                      ^-y      ^-t
+ *                               ||
+ *                               \/
+ *
+ * [head] -> [N1] -> [N2] -> [Nk] -> [N3] -> ... -> [Nk-1] -> [Nk+1] -> ... -> [NIL]
+ *                    ^-x      ^-t                     ^-y
+ */
+inline
+void list_transfer_next(SCList_link x, SCList_link y)
+{
+    assert(x != NULL && y != NULL);
+
+    auto t = list_delete_next(y);   // 从y结点后移除一个结点t
+    list_insert_next(x, t);         // 将t结点插入到x结点后
+}
+
+
+/**
+ * 将y结点之后和z结点之前的结点插入到x结点后, 调用者必须保证(y, z)为有效区间
+ * [head] -> [N1] -> [N2] -> [N3] -> ... -> [NIL]
+ *                    ^-x
+ *
+ * [head] -> [M1] -> [M2] -> [M3] -> ... -> [Mk-1] -> [Mk] -> [Mk+1] -> ... -> [NIL]
+ *                    ^-y     ^^              ^^        ^-z
+ *                                     ||
+ *                                     \/
+ *
+ * [head] -> [N1] -> [N2] -> [M3] -> ... -> [Mk-1] -> [N3] -> ... -> [NIL]
+ *                    ^-x     ^^              ^^
+ *
+ * [head] -> [M1] -> [M2] -> [Mk] -> [Mk+1] -> ... -> [NIL]
+ *                    ^-y     ^-z
+ */
+inline
+void list_transfer_next(SCList_link x, SCList_link y, SCList_link z)
+{
+    assert(x != NULL && y != NULL);
+
+    while (y->next != z) {
+        list_transfer_next(x, y);
+    }
+}
+
+/**
  * 将链表上x结点后面的所有结点反序排列
  *
  * [head] -> [N1] -> [N2] -> [N3] -> [N4] -> [NIL]
- *    ^-x      ^-t
- *                ||  list_insert_next(x, t->next)
+ *    ^-x      ^-y
+ *                ||  list_transfer_next(x, y)
  *                \/
  *
  * [head] -> [N2] -> [N1] -> [N3] -> [N4] -> [NIL]
- *    ^-x             ^-t
- *                ||  list_insert_next(x, t->next)
+ *    ^-x             ^-y
+ *                ||  list_transfer_next(x, y)
  *                \/
  *
  * [head] -> [N3] -> [N2] -> [N1] -> [N4] -> [NIL]
- *    ^-x                     ^-t
- *                ||  list_insert_next(x, t->next)
+ *    ^-x                     ^-y
+ *                ||  list_transfer_next(x, y)
  *                \/
  *
  * [head] -> [N4] -> [N3] -> [N2] -> [N1] -> [NIL]
- *    ^-x                              ^-t
+ *    ^-x                              ^-y
  */
 inline
 void list_reverse_next(SCList_link x)
 {
-    assert(x != NULL);
+    assert(x != NULL && x->next != NULL);
 
-    if (x->next == NULL) return;    // x is tail of list
-
-    SCList_link t = x->next;
-    while (t->next != NULL) {
-        list_insert_next(x, list_delete_next(t));
+    SCList_link y = x->next;
+    while (y->next != NULL) {
+        list_transfer_next(x, y);
     }
 }
 
@@ -129,11 +171,6 @@ SCList_link list_tail(SCList_link x)
     }
 
     return x;
-}
-
-inline
-void list_transfer_next(SCList_link x, SCList_link a, SCList_link b)
-{
 }
 
 #endif
