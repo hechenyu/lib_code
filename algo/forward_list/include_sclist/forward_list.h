@@ -35,7 +35,7 @@ public:
         }
     }
 
-	explicit forward_list(size_type n, const value_type &val = value_type())
+    explicit forward_list(size_type n, const value_type &val = value_type())
     {
         list_init(this);
         auto x = list_dummy_head(this);
@@ -44,9 +44,9 @@ public:
         }
     }
 
-	template <typename InputIterator, typename = typename
-		std::enable_if<!std::is_integral<InputIterator>::value>::type>
-	forward_list(InputIterator first, InputIterator last)
+    template <typename InputIterator, typename = typename
+        std::enable_if<!std::is_integral<InputIterator>::value>::type>
+    forward_list(InputIterator first, InputIterator last)
     {
         list_init(this);
         auto x = list_dummy_head(this);
@@ -55,11 +55,11 @@ public:
         }
     }
 
-	forward_list(const forward_list &fwdlst)
+    forward_list(const forward_list &fwdlst)
     {
         list_init(this);
         auto x = list_dummy_head(this);
-        for (auto &e : fwdlst) {
+        for (auto &e : const_cast<forward_list &>(fwdlst)) {
             x = list_insert_next(x, new SCList_node<T>(e));
         }
     }
@@ -67,6 +67,26 @@ public:
     ~forward_list()
     {
         list_clear(this);
+    }
+
+    template <typename InputIterator, typename = typename
+        std::enable_if<!std::is_integral<InputIterator>::value>::type>
+    void assign(InputIterator first, InputIterator last)
+    {
+        forward_list tmp(first, last);
+        this->swap(tmp);
+    }
+
+    void assign(size_type n, const value_type &val)
+    {
+        forward_list tmp(n, val);
+        this->swap(tmp);
+    }
+
+    void assign(std::initializer_list<value_type> il)
+    {
+        forward_list tmp(il);
+        this->swap(tmp);
     }
 
     bool empty() const
@@ -79,31 +99,82 @@ public:
         list_insert_head(this, new SCList_node<T>(val));
     }
 
-	iterator before_begin()
-	{
-		return iterator(list_dummy_head(this));
-	}
+    iterator before_begin()
+    {
+        return iterator(list_dummy_head(this));
+    }
 
-	iterator begin()
-	{
-		return iterator(list_head(this)); 
-	}
+    iterator begin()
+    {
+        return iterator(list_head(this)); 
+    }
 
-	iterator end()
+    iterator end()
     {
         return iterator(NULL);
     }
 
-	void remove(const value_type &val)
-	{
-        list_remove(this, val);
-	}
+    iterator insert_after(iterator pos, const value_type &val)
+    {
+        auto x = list_insert_next(pos.get_node(), new SCList_node<T>(val));
+        return iterator(x);
+    }
 
-	template <typename Predicate>
-	void remove_if(Predicate pred)
-	{
+    iterator insert_after(iterator pos, size_type n, const value_type &val)
+    {
+        auto x = pos.get_node();
+        for (size_type i = 0; i < n; i++) {
+            x = list_insert_next(x, new SCList_node<T>(val));
+        }
+        return iterator(x);
+    }
+
+    template <typename InputIterator, typename = typename
+        std::enable_if<!std::is_integral<InputIterator>::value>::type>
+    iterator insert_after(iterator pos, InputIterator first, InputIterator last)
+    {
+        auto x = pos.get_node();
+        while (first != last) {
+            x = list_insert_next(x, new SCList_node<T>(*first++));
+        }
+        return iterator(x);
+    }
+
+    iterator insert_after(iterator pos, std::initializer_list<value_type> il)
+    {
+        auto x = pos.get_node();
+        for (auto &e : il) {
+            x = list_insert_next(x, new SCList_node<T>(e));
+        }
+        return iterator(x);
+    }
+
+    iterator erase_after(iterator pos)
+    {
+        delete list_node<T>(list_delete_next(pos.get_node()));
+        return ++pos;
+    }
+
+    iterator erase_after(iterator pos, iterator last)
+    {
+        auto x = pos.get_node();
+        auto y = last.get_node();
+        while (x->next != y) {
+            delete list_node<T>(list_delete_next(x));
+        }
+        return last;
+    }
+
+    void remove(const value_type &val)
+    {
+        list_remove(this, val);
+    }
+
+    template <typename Predicate>
+    void remove_if(Predicate pred)
+    {
         list_remove_if(this, pred);
-	}
+    }
 
     void reverse()
     {
@@ -134,6 +205,21 @@ public:
     void splice_after(iterator pos, forward_list &fwdlst, iterator first, iterator last)
     {
         list_transfer_next(pos.get_node(), first.get_node(), last.get_node());
+    }
+
+    void swap(forward_list &fwdlst)
+    {
+        list_swap(this, &fwdlst);
+    }
+
+    void clear()
+    {
+        list_clear(this);
+    }
+
+    reference front()
+    {
+        return *list_data(list_node<T>(list_head(this)));
     }
 };
 
