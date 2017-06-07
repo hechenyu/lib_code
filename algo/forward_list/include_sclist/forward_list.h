@@ -4,6 +4,7 @@
 #include <cstddef>
 #include <type_traits>
 #include <initializer_list>
+#include <limits>
 
 #include "sclist.h"
 #include "sclist_iterator.h"
@@ -97,6 +98,11 @@ public:
     void push_front(const value_type &val)
     {
         list_insert_head(this, new SCList_node<T>(val));
+    }
+
+    void pop_front()
+    {
+        delete list_node<T>(list_delete_head(this));
     }
 
     iterator before_begin()
@@ -220,6 +226,42 @@ public:
     reference front()
     {
         return *list_data(list_node<T>(list_head(this)));
+    }
+
+    size_type max_size() const
+    {
+		return std::numeric_limits<size_type>::max();
+    }
+
+    void resize(size_type n, const value_type &val = value_type())
+    {
+        auto x = list_dummy_head(this);
+        size_type i = 0;
+        while (x->next != NULL && i < n) {
+            x = x->next;
+            ++i;
+        }
+
+        if (x->next == NULL) {
+            for ( ; i < n; i++) {
+                x = list_insert_next(x, new SCList_node<T>(val));
+            }
+        } else {
+            while (x->next != NULL) {
+                delete list_node<T>(list_delete_next(x));
+            }
+        }
+    }
+
+    void merge(forward_list &fwdlst)
+    {
+        list_merge(this, &fwdlst);
+    }
+
+    template <typename Compare>
+    void merge(forward_list &fwdlst, Compare comp)
+    {
+        list_merge(this, &fwdlst, comp);
     }
 };
 
