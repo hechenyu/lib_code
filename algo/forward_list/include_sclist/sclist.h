@@ -89,4 +89,11 @@ void list_merge(SCList<T> *list1, SCList<T> *list2, Compare comp = Compare())
     list_merge_next(list_node<T>(list_dummy_head(list1)), list_node<T>(list_dummy_head(list2)), comp);
 }
 
+// 去除链表中的重复元素
+template <typename T, typename Compare = std::equal_to<T>, typename Deleter = std::default_delete<SCList_node<T>>>
+void list_unique(SCList<T> *list, Compare comp = Compare(), Deleter del = Deleter())
+{
+    list_unique(list_node<T>(list_head(list)), comp, del);
+}
+
 #endif

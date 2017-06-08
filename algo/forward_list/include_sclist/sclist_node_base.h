@@ -93,12 +93,12 @@ SCList_link list_delete_next(SCList_link x)
  *                    ^-x      ^-t                     ^-y
  */
 inline
-void list_transfer_next(SCList_link x, SCList_link y)
+SCList_link list_transfer_next(SCList_link x, SCList_link y)
 {
     assert(x != NULL && y != NULL);
 
     auto t = list_delete_next(y);   // 从y结点后移除一个结点t
-    list_insert_next(x, t);         // 将t结点插入到x结点后
+    return list_insert_next(x, t);         // 将t结点插入到x结点后
 }
 
 
@@ -119,13 +119,14 @@ void list_transfer_next(SCList_link x, SCList_link y)
  *                    ^-y     ^-z
  */
 inline
-void list_transfer_next(SCList_link x, SCList_link y, SCList_link z)
+SCList_link list_transfer_next(SCList_link x, SCList_link y, SCList_link z)
 {
     assert(x != NULL && y != NULL);
 
     while (y->next != z) {
-        list_transfer_next(x, y);
+        x = list_transfer_next(x, y);
     }
+    return x;
 }
 
 /**

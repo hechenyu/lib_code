@@ -172,7 +172,7 @@ SCList_node<T> *list_delete_min_next(SCList_node<T> *x, SCList_node<T> *y, Compa
     return list_node<T>(list_delete_next(x));
 }
 
-// 合并x结点和y结点之后的链表,
+// 合并x结点和y结点之后的链表, 根据Compare指定的偏序关系
 template <typename T, typename Compare = std::less<T>>
 SCList_node<T> *list_merge_next(SCList_node<T> *x, SCList_node<T> *y, Compare comp = Compare())
 {
@@ -199,6 +199,22 @@ SCList_node<T> *list_merge_next(SCList_node<T> *x, SCList_node<T> *y, Compare co
     x->next = head.next;
 
     return x;
+}
+
+// 去除链表中从x结点开始的重复元素, 根据Compare指定的等价关系
+template <typename T, typename Compare = std::equal_to<T>, typename Deleter = std::default_delete<SCList_node<T>>>
+void list_unique(SCList_node<T> *x, Compare comp = Compare(), Deleter del = Deleter())
+{
+    if (x == NULL)
+        return;
+
+    while (x->next != NULL) {
+        if (comp(*list_data(x), *list_data(list_next(x)))) {    // x->data == x->next->data
+            del(list_node<T>(list_delete_next(x)));
+        } else {
+            x = list_next(x);
+        }
+    }
 }
 
 #endif

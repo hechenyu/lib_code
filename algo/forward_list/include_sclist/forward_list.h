@@ -60,7 +60,7 @@ public:
     {
         list_init(this);
         auto x = list_dummy_head(this);
-        for (auto &e : const_cast<forward_list &>(fwdlst)) {
+        for (auto &e : fwdlst) {
             x = list_insert_next(x, new SCList_node<T>(e));
         }
     }
@@ -105,17 +105,17 @@ public:
         delete list_node<T>(list_delete_head(this));
     }
 
-    iterator before_begin()
+    iterator before_begin() const
     {
-        return iterator(list_dummy_head(this));
+        return iterator(list_dummy_head(const_cast<forward_list *>(this)));
     }
 
-    iterator begin()
+    iterator begin() const
     {
-        return iterator(list_head(this)); 
+        return iterator(list_head(const_cast<forward_list *>(this))); 
     }
 
-    iterator end()
+    iterator end() const
     {
         return iterator(NULL);
     }
@@ -262,6 +262,17 @@ public:
     void merge(forward_list &fwdlst, Compare comp)
     {
         list_merge(this, &fwdlst, comp);
+    }
+
+    void unique()
+    {
+        list_unique(this);
+    }
+
+    template <typename BinaryPredicate>
+    void unique(BinaryPredicate p)
+    {
+        list_unique(this, p);
     }
 };
 
