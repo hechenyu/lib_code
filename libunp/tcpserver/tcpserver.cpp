@@ -1,12 +1,15 @@
 #include "tcpserver.h"
-#include "unp.h"
 
-namespace health_check {
+#include <set>
+#include <map>
+#include <unordered_map>
+#include <tuple>
+#include <thread>
 
 class TcpServer::Impl {
 private:
     typedef std::tuple<std::string, int> addr_type;
-    typedef std::map<addr_type, std::shared_ptr<TcpConnectionHandler> handler> addr2handler_map_type;
+    typedef std::map<addr_type, std::shared_ptr<TcpConnectionHandler>> addr2handler_map_type;
     addr2handler_map_type addr2handler_map_;        // map: listen_addr -> handler
     std::shared_ptr<std::thread> epoll_thread_;     // thread of run select loop
     int thread_ctl_pipe_[2];                        // notify cancel to thread
@@ -101,7 +104,7 @@ private:
             return false;
     }
 
-    typedef std::unordered_map<int, std::shared_ptr<TcpConnectionHandler> handler> fd2handler_map_type;
+    typedef std::unordered_map<int, std::shared_ptr<TcpConnectionHandler>> fd2handler_map_type;
 
     void init_listenfds(std::set<int> &listenfds, fd2handler_map_type &fd2handler_map)
     {
@@ -230,5 +233,48 @@ private:
     }
 };
 
-}   // namespace health_check 
+TcpServer::TcpServer()
+{
+    impl_ = new TcpServer::Impl();
+}
 
+TcpServer::~TcpServer()
+{
+    delete impl_;
+}
+
+bool TcpServer::insert_handler(const std::string &listen_host, int listen_port, std::shared_ptr<TcpConnectionHandler> handler)
+{
+    return impl_->insert_handler(listen_host, listen_port, handler);
+}
+
+std::shared_ptr<TcpConnectionHandler> TcpServer::find_handler(const std::string &listen_host, int listen_port)
+{
+    return impl_->find_handler(listen_host, listen_port);
+}
+
+void TcpServer::remove_handler(const std::string &listen_host, int listen_port)
+{
+    return impl_->remove_handler(listen_host, listen_port);
+}
+
+void TcpServer::clear_all_handlers()
+{
+    return impl_->clear_all_handlers();
+}
+
+bool TcpServer::is_running()
+{
+    return impl_->is_running();
+}
+
+void TcpServer::start()
+{
+    return impl_->start();
+}
+
+void TcpServer::stop()
+{
+    return impl_->stop();
+}
+ 

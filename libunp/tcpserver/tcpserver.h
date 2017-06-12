@@ -1,7 +1,8 @@
 #ifndef __unp_tcpserver_h
 #define __unp_tcpserver_h
 
-namespace health_check {
+#include <string>
+#include <memory>
 
 class TcpConnectionHandler {
 public:
@@ -37,9 +38,7 @@ public:
  
 private:
     class Impl;
-    Impl *impl;
+    Impl *impl_;
 };
-
-}   // namespace health_check 
 
 #endif
