@@ -27,7 +27,7 @@ public:
     ~TcpServer();
 
     // 以下四种操作必须在TcpServer的stoped(即!is_running())状态下才行
-    bool insert_handler(const std::string &listen_host, int listen_port, std::shared_ptr<TcpConnectionHandler> handler);
+    void add_handler(const std::string &listen_host, int listen_port, std::shared_ptr<TcpConnectionHandler> handler);
     std::shared_ptr<TcpConnectionHandler> find_handler(const std::string &listen_host, int listen_port);
     void remove_handler(const std::string &listen_host, int listen_port);
     void clear_all_handlers();

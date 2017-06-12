@@ -5,6 +5,11 @@
 #include <unordered_map>
 #include <tuple>
 #include <thread>
+#include <cassert>
+
+#include "wrapsock.h"
+#include "tcp_listen.h"
+#include "sock_ntop.h"
 
 class TcpServer::Impl {
 private:
@@ -41,7 +46,7 @@ public:
         assert(!is_running());
 
         auto listen_addr = addr_type(listen_host, listen_port);
-        addr2handler_map_.remove(listen_addr);
+        addr2handler_map_.erase(listen_addr);
     }
 
     std::shared_ptr<TcpConnectionHandler> find_handler(const std::string &listen_host, int listen_port)
@@ -74,7 +79,7 @@ public:
             return;
         }
 
-        epoll_thread_.reset(new std::thread(this, &TcpServer::Impl::epoll_routine));
+        epoll_thread_.reset(new std::thread(&TcpServer::Impl::epoll_routine, this));
     }
 
     void stop()
@@ -91,14 +96,14 @@ public:
 private:
     void notify_cancel_thread()
     {
-        Write(thread_ctl_pipe_[1], THREAD_CTL_CANCEL, strlen(THREAD_CTL_CANCEL));
+        Write(thread_ctl_pipe_[1], (void *) THREAD_CTL_CANCEL, strlen(THREAD_CTL_CANCEL));
     }
 
     bool is_recv_cancel()
     {
         char buf[128];
-        auto n = read(pipe_for_cancel_[0], buf, sizeof(buf)); 
-        if (n == strlen(THREAD_CTL_CANCEL) && memcmp(buf, THREAD_CTL_CANCEL, n) == 0)
+        auto n = read(thread_ctl_pipe_[0], buf, sizeof(buf)); 
+        if (n == (int) strlen(THREAD_CTL_CANCEL) && memcmp(buf, THREAD_CTL_CANCEL, n) == 0)
             return true;
         else
             return false;
@@ -112,7 +117,7 @@ private:
         fd2handler_map.clear();
 
         for (auto &item : addr2handler_map_) {
-            addr_type &addr = item.first;
+            addr_type addr = item.first;
             auto handler = item.second;
 
             std::string listen_host;
@@ -139,7 +144,7 @@ private:
         Epoll_ctl(epfd, EPOLL_CTL_DEL, fd, NULL);
     } 
 
-    std::set<int> init_epoll(int epfd, const std::set<int> &listenfds)
+    void init_epoll(int epfd, const std::set<int> &listenfds)
     {
         add_fd_events_to_epoll(epfd, thread_ctl_pipe_[0], EPOLLIN);
 
@@ -190,7 +195,7 @@ private:
                 print_epoll_event(evlist[i]);
 
                 auto fd = evlist[i].data.fd;
-                auto events = evlist[i].data.events;
+                auto events = evlist[i].events;
 
                 if (fd == thread_ctl_pipe_[0] && events & EPOLLIN) {    // 线程控制管道
                     if (is_recv_cancel()) {
@@ -204,7 +209,7 @@ private:
                 if (listenfds.count(fd) && events & EPOLLIN) {  // 新连接接入
                     struct sockaddr_storage cliaddr;
                     socklen_t clilen = sizeof(cliaddr);
-                    auto sockfd = Accept(listenfd, (SA *) &cliaddr, &clilen);
+                    auto sockfd = Accept(fd, (SA *) &cliaddr, &clilen);
                     printf("new client: %s\n", Sock_ntop((struct sockaddr *) &cliaddr, clilen));
 
                     auto handler = fd2handler_map[fd];
@@ -212,7 +217,7 @@ private:
                         fd2handler_map[sockfd] = handler;
                         add_fd_events_to_epoll(epfd, sockfd, EPOLLIN | EPOLLRDHUP);
                     } else {
-                        close(connfd);
+                        close(sockfd);
                     }
 
                     continue;
@@ -220,10 +225,10 @@ private:
 
                 if (events & (EPOLLIN | EPOLLRDHUP)) {  // 已连接有数据
                     auto handler = fd2handler_map[fd];
-                    if (!handler->handler(fd)) {
+                    if (!handler->handle(fd)) {
                         handler->finish(fd);
                         remove_fd_from_epoll(epfd, fd);
-                        fd2handler_map.remove(fd);
+                        fd2handler_map.erase(fd);
                     }
 
                     continue;
@@ -243,9 +248,9 @@ TcpServer::~TcpServer()
     delete impl_;
 }
 
-bool TcpServer::insert_handler(const std::string &listen_host, int listen_port, std::shared_ptr<TcpConnectionHandler> handler)
+void TcpServer::add_handler(const std::string &listen_host, int listen_port, std::shared_ptr<TcpConnectionHandler> handler)
 {
-    return impl_->insert_handler(listen_host, listen_port, handler);
+    return impl_->add_handler(listen_host, listen_port, handler);
 }
 
 std::shared_ptr<TcpConnectionHandler> TcpServer::find_handler(const std::string &listen_host, int listen_port)
