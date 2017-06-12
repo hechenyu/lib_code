@@ -7,6 +7,7 @@
 #include <thread>
 #include <cassert>
 
+#include "wrapunix.h"
 #include "wrapsock.h"
 #include "tcp_listen.h"
 #include "sock_ntop.h"
