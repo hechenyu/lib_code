@@ -6,79 +6,63 @@ namespace health_check {
 class TcpServer::Impl {
 private:
     typedef std::tuple<std::string, int> addr_type;
-    std::map<addr_type, int> addr2fd_map_;                                                      // map: listen_addr -> listenfd
-    std::unordered_map<int, std::shared_ptr<TcpConnectionHandler> handler> fd2handler_map_;     // map: listenfd -> handler
-    std::shared_ptr<std::thread> select_thread_;                                                // thread of run select loop
-    int pipe_for_add_[2];                                                                       // notify add fd to thread
-    int pipe_for_remove_[2];                                                                    // notify remove fd to thread
-    int pipe_for_cancel_[2];                                                                    // notify cancel to thread
+    typedef std::map<addr_type, std::shared_ptr<TcpConnectionHandler> handler> addr2handler_map_type;
+    addr2handler_map_type addr2handler_map_;        // map: listen_addr -> handler
+    std::shared_ptr<std::thread> epoll_thread_;     // thread of run select loop
+    int thread_ctl_pipe_[2];                        // notify cancel to thread
+
+    const char *THREAD_CTL_CANCEL = "CANCEL";
 
 public:
     Impl()
     {
-        Socketpair(AF_LOCAL, SOCK_DGRAM, 0, pipe_for_add_);
-        Socketpair(AF_LOCAL, SOCK_DGRAM, 0, pipe_for_remove_);
-        Pipe(pipe_for_cancel_);
+        Socketpair(AF_LOCAL, SOCK_DGRAM, 0, thread_ctl_pipe_);
     }
 
     ~Impl()
     {
         stop();
-        clear_all_handler();
-        close(pipe_for_add_[0]);
-        close(pipe_for_add_[1]);
-        close(pipe_for_remove_[0]);
-        close(pipe_for_remove_[1]);
-        close(pipe_for_cancel_[0]);
-        close(pipe_for_cancel_[1]);
+        close(thread_ctl_pipe_[0]);
+        close(thread_ctl_pipe_[1]);
     }
 
-    bool add_handler(const std::string &listen_host, int listen_port, std::shared_ptr<TcpConnectionHandler> handler)
+    void add_handler(const std::string &listen_host, int listen_port, std::shared_ptr<TcpConnectionHandler> handler)
     {
-        auto listenfd = create_socket_and_insert_to_map(listen_host, listen_port, handler);
-        if (listenfd < 0) {
-            return false;
-        }
-
-        if (is_running()) {
-            notify_add_to_fdset(listenfd);
-        }
-        return true;
+        assert(!is_running());
+        auto listen_addr = addr_type(listen_host, listen_port);
+        addr2handler_map_[listen_addr] = handler;
     }
 
-    std::shared_ptr<TcpConnectionHandler> remove_handler(const std::string &listen_host, int listen_port)
+    void remove_handler(const std::string &listen_host, int listen_port)
     {
-        int listenfd;
-        std::shared_ptr<TcpConnectionHandler> handler;
-        std::tie(listenfd, handler) = find_and_remove_from_map(listen_host, listen_port);
-        if (listenfd < 0) {
+        assert(!is_running());
+
+        auto listen_addr = addr_type(listen_host, listen_port);
+        addr2handler_map_.remove(listen_addr);
+    }
+
+    std::shared_ptr<TcpConnectionHandler> find_handler(const std::string &listen_host, int listen_port)
+    {
+        assert(!is_running());
+
+        auto listen_addr = addr_type(listen_host, listen_port);
+        if (addr2handler_map_.count(listen_addr)) {
+            // no handler found
             return std::shared_ptr<TcpConnectionHandler>();
         }
-
-        if (is_running()) {
-            notify_remove_from_fdset(listenfd);
-        }
-        return handler;
+        return addr2handler_map_[listen_addr];
     }
 
-    bool clear_all_handler()
+    void clear_all_handlers()
     {
-        if (is_running()) {
-            return false;
-        }
+        assert(!is_running());
 
-        for (auto &item : fd2handler_map_) {
-            close(item.first);
-        }
-
-        addr2fd_map_.clear();
-        fd2handler_map_.clear();
-        return true;
+        addr2handler_map_.clear();
     }
  
     bool is_running()
     {
-        return select_thread_ != nullptr;
+        return epoll_thread_ != nullptr;
     }
 
     void start()
@@ -87,12 +71,7 @@ public:
             return;
         }
 
-        std::set<int> listenfds;
-        for (auto &item : fd2handler_map_) {
-            listenfds.insert(item.first);
-        }
-
-        select_thread_.reset(new std::thread(this, &TcpServer::Impl::select_routine, listenfds));
+        epoll_thread_.reset(new std::thread(this, &TcpServer::Impl::epoll_routine));
     }
 
     void stop()
@@ -102,153 +81,152 @@ public:
         }
 
         notify_cancel_thread();
-        select_thread_->join();
+        epoll_thread_->join();
+        epoll_thread_.reset();
     }
 
 private:
-    int create_socket_and_insert_to_map(const std::string &listen_host, int listen_port, std::shared_ptr<TcpConnectionHandler> handler)
-    {
-        auto listen_addr = addr_type(listen_host, listen_port);
-        if (addr2fd_map_.count(listen_addr)) {
-            // already have handler for this listen addr
-            return -1;
-        }
-
-		auto listenfd = tcp_listen(listen_host, listen_port, NULL);
-        if (listenfd < 0) {
-            // listen fail
-            return -1;
-        }
-
-        addr2fd_map_[listen_addr] = listenfd;
-        fd2handler_map_[listenfd] = handler;
-
-        return listenfd;
-    }
-
-    std::tuple<int, std::shared_ptr<TcpConnectionHandler>> find_and_remove_from_map(const std::string &listen_host, int listen_port)
-    {
-        auto listen_addr = addr_type(listen_host, listen_port);
-        if (addr2fd_map_.count(listen_addr)) {
-            return std::make_tuple(-1, std::shared_ptr<TcpConnectionHandler>());
-        }
-        
-        auto listenfd = addr2fd_map_[listen_addr];
-        auto handler = fd2handler_map_[listenfd];
-
-        addr2fd_map_.remove(listen_addr);
-        fd2handler_map_.remove(listenfd);
-
-        return std::make_tuple(listenfd, handler);
-    }
-
-    int recv_add_to_fdset()
-    {
-        char buf[128] = { 0 };
-        auto n = read(pipe_for_add_[0], buf, sizeof buf);
-        if (n <= 0) {
-            return -1;
-        }
-
-        return atoi(buf);
-    }
-
-    int recv_remove_to_fdset()
-    {
-        char buf[128] = { 0 };
-        auto n = read(pipe_for_remove_[0], buf, sizeof buf);
-        if (n <= 0) {
-            return -1;
-        }
-
-        return atoi(buf);
-    }
-
-    void notify_add_to_fdset(int listenfd)
-    {
-        auto str = std::to_string(listenfd);
-        Write(pipe_for_add_[1], str.data(), str.size());
-    }
-
-    void notify_remove_from_fdset(int listenfd)
-    {
-        auto str = std::to_string(listenfd);
-        Write(pipe_for_remove_[1], str.data(), str.size());
-    }
-
     void notify_cancel_thread()
     {
-        Write(pipe_for_cancel_[1], "C", 1);
+        Write(thread_ctl_pipe_[1], THREAD_CTL_CANCEL, strlen(THREAD_CTL_CANCEL));
     }
 
     bool is_recv_cancel()
     {
-        char c;
-        auto n = read(pipe_for_cancel_[0], c, 1); 
-        if (n <= 0)
+        char buf[128];
+        auto n = read(pipe_for_cancel_[0], buf, sizeof(buf)); 
+        if (n == strlen(THREAD_CTL_CANCEL) && memcmp(buf, THREAD_CTL_CANCEL, n) == 0)
+            return true;
+        else
             return false;
-
-        return true;
     }
 
-    int init_fdset(fd_set *fdset, std::set<int> listenfds)
+    typedef std::unordered_map<int, std::shared_ptr<TcpConnectionHandler> handler> fd2handler_map_type;
+
+    void init_listenfds(std::set<int> &listenfds, fd2handler_map_type &fd2handler_map)
     {
-        FD_ZERO(fdset);
-        int maxfd = -1;
+        listenfds.clear();
+        fd2handler_map.clear();
 
-        FD_SET(pipe_for_add_[0], fdset);
-        maxfd = std::max(pipe_for_add_[0], maxfd);
+        for (auto &item : addr2handler_map_) {
+            addr_type &addr = item.first;
+            auto handler = item.second;
 
-        FD_SET(pipe_for_remove_[0], fdset);
-        maxfd = std::max(pipe_for_remove_[0], maxfd);
+            std::string listen_host;
+            int listen_port;
+            std::tie(listen_host, listen_port) = addr;
 
-        FD_SET(pipe_for_cancel_[0], fdset);
-        maxfd = std::max(pipe_for_cancel_[0], maxfd);
+            auto listenfd = Tcp_listen(listen_host.c_str(), std::to_string(listen_port).c_str(), NULL);
+
+            listenfds.insert(listenfd);
+            fd2handler_map[listenfd] = handler;
+        }
+    }
+
+    void add_fd_events_to_epoll(int epfd, int fd, uint32_t events)
+    {
+        struct epoll_event ev;
+        ev.data.fd = fd;
+        ev.events = events;
+        Epoll_ctl(epfd, EPOLL_CTL_ADD, fd, &ev);
+    }
+
+    void remove_fd_from_epoll(int epfd, int fd)
+    {
+        Epoll_ctl(epfd, EPOLL_CTL_DEL, fd, NULL);
+    } 
+
+    std::set<int> init_epoll(int epfd, const std::set<int> &listenfds)
+    {
+        add_fd_events_to_epoll(epfd, thread_ctl_pipe_[0], EPOLLIN);
 
         for (auto fd : listenfds) {
-            FD_SET(fd, fdset);
-            maxfd = std::max(fd, maxfd);
+            add_fd_events_to_epoll(epfd, fd, EPOLLIN);
         }
-
-        return maxfd;
     }
 
-    void select_routine(std::set<int> listenfds)
+    void print_epoll_event(struct epoll_event &ev)
     {
-        socklen_t                clilen;
-        struct sockaddr_storage  cliaddr;
+        printf(" fd=%d; events: %s%s%s%s%s\n", ev.data.fd,
+                (ev.events & EPOLLIN) ? "EPOLLIN " : "",
+                (ev.events & EPOLLOUT) ? "EPOLLOUT " : "",
+                (ev.events & EPOLLRDHUP) ? "EPOLLRDHUP " : "",
+                (ev.events & EPOLLHUP) ? "EPOLLHUP " : "",
+                (ev.events & EPOLLERR) ? "EPOLLERR " : "");
+    }
 
-        FD_SET allset;
-        auto maxfd = init_allset(&allset, listenfds);
+    void close_all_fds(int epfd, const std::set<int> &listenfds, const fd2handler_map_type &fd2handler_map)
+    {
+        for (auto item : fd2handler_map) {
+            auto fd = item.first;
+            auto handler = item.second;
+            if (!listenfds.count(fd)) {
+                handler->finish(fd);
+            }
+            close(fd);
+        }
+        close(epfd);
+    }
 
-        std::unordered_map<int, std::shared_ptr<TcpConnectionHandler> handler> connfd_map;
+    void epoll_routine()
+    {
+        std::set<int> listenfds;
+        fd2handler_map_type fd2handler_map;
+        init_listenfds(listenfds, fd2handler_map);
+
+        const int MAX_EVENTS = 5;
+        struct epoll_event evlist[MAX_EVENTS];
+
+        int epfd = Epoll_create(MAX_EVENTS);
+        init_epoll(epfd, listenfds);
 
         for ( ; ; ) {
-            FD_SET rset = allset;
+            auto nready = Epoll_wait(epfd, evlist, MAX_EVENTS, -1);
 
-            auto nready = Select(maxfd+1, &rset, NULL, NULL, NULL);
+            for (int i = 0; i < nready; ++i) {
+                print_epoll_event(evlist[i]);
 
-            for (auto listenfd : listenfds) {
-                if (FD_ISSET(listenfd, &rset)) {
-                    clilen = sizeof(cliaddr);
-                    auto connfd = Accept(listenfd, (SA *) &cliaddr, &clilen);
+                auto fd = evlist[i].data.fd;
+                auto events = evlist[i].data.events;
+
+                if (fd == thread_ctl_pipe_[0] && events & EPOLLIN) {    // 线程控制管道
+                    if (is_recv_cancel()) {
+                        close_all_fds(epfd, listenfds, fd2handler_map);
+                        return;
+                    }
+
+                    continue;
+                }
+
+                if (listenfds.count(fd) && events & EPOLLIN) {  // 新连接接入
+                    struct sockaddr_storage cliaddr;
+                    socklen_t clilen = sizeof(cliaddr);
+                    auto sockfd = Accept(listenfd, (SA *) &cliaddr, &clilen);
                     printf("new client: %s\n", Sock_ntop((struct sockaddr *) &cliaddr, clilen));
 
-                    FD_SET(connfd, &allset);
-                    maxfd = std::max(connfd, maxfd);
+                    auto handler = fd2handler_map[fd];
+                    if (handler->setup(sockfd)) {
+                        fd2handler_map[sockfd] = handler;
+                        add_fd_events_to_epoll(epfd, sockfd, EPOLLIN | EPOLLRDHUP);
+                    } else {
+                        close(connfd);
+                    }
 
-                    connfd_map.emplace(connfd, fd2handler_map_[listenfd]);
-                    connfd_map[connfd]->setup(connfd);
+                    continue;
+                }
 
-                    if (--nready <= 0)
-                        break;
+                if (events & (EPOLLIN | EPOLLRDHUP)) {  // 已连接有数据
+                    auto handler = fd2handler_map[fd];
+                    if (!handler->handler(fd)) {
+                        handler->finish(fd);
+                        remove_fd_from_epoll(epfd, fd);
+                        fd2handler_map.remove(fd);
+                    }
+
+                    continue;
                 }
             }
-
-            if (nready <= 0)
-                continue;
         }
-
     }
 };
 
