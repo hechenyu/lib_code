@@ -3,26 +3,24 @@
 #include <string>
 #include "error.h"
 #include "wrapunix.h"
-#include "writen.h"
 #include "tcpserver.h"
 
 using namespace std;
 
-class TcpEchoHandler: public TcpConnectionHandler {
+class TcpCheckHandler: public TcpConnectionHandler {
 public:
     bool setup(int sockfd) override
     {
         cout << __func__ << ", fd=" << sockfd << endl;
-        return true;
+        const char *data = "C";
+        Write(sockfd, (void *) data, 1);
+        return false;
     }
 
     bool handle(int sockfd) override
     {
         cout << __func__ << ", fd=" << sockfd << endl;
-        char buffer[1024];
-        int n = Read(sockfd, buffer, sizeof(buffer));
-        Writen(sockfd, buffer, n);
-        return true;
+        return false;
     }
 
     // 当sockfd已经被setup成功后, sockfd被close时调用
@@ -49,7 +47,7 @@ main(int argc, char **argv)
 
     TcpServer tcpserver;
 
-    tcpserver.add_handler(listen_host, listen_port, std::make_shared<TcpEchoHandler>());
+    tcpserver.add_handler(listen_host, listen_port, std::make_shared<TcpCheckHandler>());
     tcpserver.start();
 
     char c;

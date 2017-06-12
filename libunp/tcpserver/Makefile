@@ -7,7 +7,7 @@ INCLUDE = -I../lib
 LDFLAGS = ../lib/libunp.a -lpthread -lrt
 LDPATH = 
 
-PROGS =	tcpechoserver
+PROGS =	tcpechoserver tcpcheckserver
 
 .PHONY: all
 all: $(PROGS)
@@ -21,6 +21,9 @@ clean:
 	$(CXX) -o $@ -c $< $(CXXFLAGS) $(INCLUDE)
 
 tcpechoserver: tcpechoserver.o tcpserver.o
+	$(CXX) -o $@ $^ $(LDFLAGS) $(LDPATH)
+
+tcpcheckserver: tcpcheckserver.o tcpserver.o
 	$(CXX) -o $@ $^ $(LDFLAGS) $(LDPATH)
 
 

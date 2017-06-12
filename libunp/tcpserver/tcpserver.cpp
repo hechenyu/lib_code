@@ -125,7 +125,7 @@ private:
             int listen_port;
             std::tie(listen_host, listen_port) = addr;
 
-            auto listenfd = Tcp_listen(listen_host.c_str(), std::to_string(listen_port).c_str(), NULL);
+            auto listenfd = Tcp_listen(listen_host.empty() ? NULL : listen_host.c_str(), std::to_string(listen_port).c_str(), NULL);
 
             listenfds.insert(listenfd);
             fd2handler_map[listenfd] = handler;
@@ -226,7 +226,8 @@ private:
 
                 if (events & (EPOLLIN | EPOLLRDHUP)) {  // 已连接有数据
                     auto handler = fd2handler_map[fd];
-                    if (!handler->handle(fd)) {
+
+                    if (events & EPOLLRDHUP || !handler->handle(fd)) {
                         handler->finish(fd);
                         remove_fd_from_epoll(epfd, fd);
                         fd2handler_map.erase(fd);
