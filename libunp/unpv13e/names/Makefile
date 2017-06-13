@@ -77,5 +77,8 @@ test2:	test2.o
 tcpservepoll01:	tcpservepoll01.o
 		${CC} ${CFLAGS} -o $@ tcpservepoll01.o ${LIBS}
 
+tcpcli01:	tcpcli01.o
+		${CC} ${CFLAGS} -o $@ tcpcli01.o ${LIBS}
+
 clean:
 		rm -f ${PROGS} ${CLEANFILES} *.o
