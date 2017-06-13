@@ -12,8 +12,6 @@ public:
     bool setup(int sockfd) override
     {
         cout << __func__ << ", fd=" << sockfd << endl;
-        const char *data = "C";
-        Write(sockfd, (void *) data, 1);
         return false;
     }
 

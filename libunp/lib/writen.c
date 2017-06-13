@@ -8,7 +8,7 @@ writen(int fd, const void *vptr, size_t n)
 	ssize_t		nwritten;
 	const char	*ptr;
 
-	ptr = vptr;
+	ptr = (const char *) vptr;
 	nleft = n;
 	while (nleft > 0) {
 		if ( (nwritten = write(fd, ptr, nleft)) <= 0) {
