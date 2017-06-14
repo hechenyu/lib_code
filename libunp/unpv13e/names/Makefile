@@ -83,8 +83,14 @@ tcpcli01:	tcpcli01.o
 udpserv01:	udpserv01.o
 		${CC} ${CFLAGS} -o $@ udpserv01.o ${LIBS}
 
-udpcli01:	udpcli01.o dgcli.o
-		${CC} ${CFLAGS} -o $@ udpcli01.o dgcli.o ${LIBS}
+udpcli01:	udpcli01.o dgcliconnected.o
+		${CC} ${CFLAGS} -o $@ udpcli01.o dgcliconnected.o ${LIBS}
+
+udpcli02:	udpcli02.o dgcliepoll.o
+		${CC} ${CFLAGS} -o $@ udpcli02.o dgcliepoll.o ${LIBS}
+
+udpcli03:	udpcli03.o dgclistress.o
+		${CC} ${CFLAGS} -o $@ udpcli03.o dgclistress.o ${LIBS}
 
 clean:
 		rm -f ${PROGS} ${CLEANFILES} *.o
