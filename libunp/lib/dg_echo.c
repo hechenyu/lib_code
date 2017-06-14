@@ -16,7 +16,7 @@ dg_echo(int sockfd, SA *pcliaddr, socklen_t clilen)
 		n = Recvfrom(sockfd, mesg, MAXLINE, 0, pcliaddr, &len);
 
 #ifdef	NOTDEF
-			printf("recvfrom: %s\n", Sock_ntop(pcliaddr, clilen));
+        printf("recvfrom: %s, len: %d\n", Sock_ntop(pcliaddr, clilen), n);
 #endif
 
 		Sendto(sockfd, mesg, n, 0, pcliaddr, len);

@@ -80,5 +80,11 @@ tcpservepoll01:	tcpservepoll01.o
 tcpcli01:	tcpcli01.o
 		${CC} ${CFLAGS} -o $@ tcpcli01.o ${LIBS}
 
+udpserv01:	udpserv01.o
+		${CC} ${CFLAGS} -o $@ udpserv01.o ${LIBS}
+
+udpcli01:	udpcli01.o dgcli.o
+		${CC} ${CFLAGS} -o $@ udpcli01.o dgcli.o ${LIBS}
+
 clean:
 		rm -f ${PROGS} ${CLEANFILES} *.o
