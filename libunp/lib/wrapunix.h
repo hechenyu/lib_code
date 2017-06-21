@@ -5,21 +5,66 @@
 #include <fcntl.h>
 #include <signal.h>
 #include <stdarg.h>
-#include <mqueue.h>
 #include <sys/time.h>
 #include <sys/wait.h>
 #include <sys/types.h>
 #include <sys/sysctl.h>
 #include <sys/ioctl.h>
-#include <sys/ipc.h>
 #include <sys/stat.h>
-#include <sys/mman.h>
+
+#ifdef	HAVE_MQUEUE_H
+# include	<mqueue.h>		/* Posix message queues */
+#endif
+
+#ifdef	HAVE_SEMAPHORE_H
+# include	<semaphore.h>	/* Posix semaphores */
+
+#ifndef	SEM_FAILED
+#define	SEM_FAILED	((sem_t *)(-1))
+#endif
+
+#endif
+
+#ifdef	HAVE_SYS_MMAN_H
+# include	<sys/mman.h>	/* Posix shared memory */
+#endif
+
+#ifndef	MAP_FAILED
+#define	MAP_FAILED	((void *)(-1))
+#endif
+
+#ifdef	HAVE_SYS_IPC_H
+# include	<sys/ipc.h>		/* System V IPC */
+#endif
+
+#ifdef	HAVE_SYS_MSG_H
+# include	<sys/msg.h>		/* System V message queues */
+#endif
+
+#ifdef	HAVE_SYS_SEM_H
+#ifdef	__bsdi__
+#undef	HAVE_SYS_SEM_H		/* hack: BSDI's semctl() prototype is wrong */
+#else
+# include	<sys/sem.h>		/* System V semaphores */
+#endif
+
+#ifndef	HAVE_SEMUN_UNION
+/* $$.It semun$$ */
+union semun {				/* define union for semctl() */
+  int              val;
+  struct semid_ds *buf;
+  unsigned short  *array;
+};
+#endif
+#endif	/* HAVE_SYS_SEM_H */
+
+#ifdef	HAVE_SYS_SHM_H
+# include	<sys/shm.h>		/* System V shared memory */
+#endif
+
 #include "error.h"
 
 #define HAVE_MKSTEMP 1
-#define HAVE_SYS_IPC_H 1
-#define HAVE_SYS_MMAN_H 1
-#define HAVE_MQUEUE_H 1
 
 /*
  * In our wrappers for open(), mq_open(), and sem_open() we handle the
@@ -38,6 +83,10 @@
 #define va_mode_t   mode_t
 #endif
 /* $$.ix [va_mode_t]~datatype,~definition~of$$ */
+
+#ifdef  __cplusplus
+extern "C" {
+#endif
 
 /* prototypes for our Unix wrapper functions: see {Sec errors} */
 void    *Calloc(size_t, size_t);
@@ -69,10 +118,10 @@ void     Mkfifo(const char *, mode_t);
 void     Mktemp(char *);
 int      Mkstemp(char *);
 
-#ifdef HAVE_SYS_MMAN_H
+//#ifdef HAVE_SYS_MMAN_H
 void    *Mmap(void *, size_t, int, int, int, off_t);
 void     Munmap(void *, size_t);
-#endif
+//#endif
 
 #ifdef HAVE_MQUEUE_H
 mqd_t    Mq_open(const char *, int, ...);
@@ -83,6 +132,25 @@ ssize_t  Mq_receive(mqd_t, char *, size_t, unsigned int *);
 void     Mq_notify(mqd_t, const struct sigevent *);
 void     Mq_getattr(mqd_t, struct mq_attr *);
 void     Mq_setattr(mqd_t, const struct mq_attr *, struct mq_attr *);
+#endif
+
+#ifdef	HAVE_SEMAPHORE_H
+sem_t   *Sem_open(const char *, int, ...);
+void     Sem_close(sem_t *);
+void     Sem_unlink(const char *);
+void     Sem_init(sem_t *, int, unsigned int);
+void     Sem_destroy(sem_t *);
+void     Sem_wait(sem_t *);
+int      Sem_trywait(sem_t *);
+void     Sem_post(sem_t *);
+void     Sem_getvalue(sem_t *, int *);
+#endif
+
+#ifdef	HAVE_SYS_MSG_H
+int		 Msgget(key_t key, int flag);
+void	 Msgctl(int, int, struct msqid_ds *);
+void	 Msgsnd(int, const void *, size_t, int);
+ssize_t	 Msgrcv(int, void *, size_t, int, int);
 #endif
 
 int      Open(const char *, int , ...);
@@ -102,6 +170,13 @@ void     Unlink(const char *);
 pid_t    Wait(int *);
 pid_t    Waitpid(pid_t, int *, int);
 void     Write(int, void *, size_t);
+long     Pathconf(const char *pathname, int name);
+int		 Select(int, fd_set *, fd_set *, fd_set *, struct timeval *);
+void     Sigwait(const sigset_t *set, int *signo);
+
+#ifdef  __cplusplus
+}   // extern "C"
+#endif
 
 /* Define to 1 if you have the `mkstemp' function. */
 #define HAVE_MKSTEMP 1

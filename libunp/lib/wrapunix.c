@@ -403,6 +403,213 @@ Read(int fd, void *ptr, size_t nbytes)
 	return(n);
 }
 
+/* include Select */
+int
+Select(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds,
+       struct timeval *timeout)
+{
+	int		n;
+
+again:
+	if ( (n = select(nfds, readfds, writefds, exceptfds, timeout)) < 0) {
+		if (errno == EINTR)
+			goto again;
+		else
+			err_sys("select error");
+	} else if (n == 0 && timeout == NULL)
+		err_quit("select returned 0 with no timeout");
+	return(n);		/* can return 0 on timeout */
+}
+/* end Select */
+
+#ifdef	HAVE_SEMAPHORE_H
+
+sem_t *
+Sem_open(const char *pathname, int oflag, ...)
+{
+	sem_t	*sem;
+	va_list	ap;
+	mode_t	mode;
+	unsigned int	value;
+
+	if (oflag & O_CREAT) {
+		va_start(ap, oflag);		/* init ap to final named argument */
+		mode = va_arg(ap, va_mode_t);
+		value = va_arg(ap, unsigned int);
+		if ( (sem = sem_open(pathname, oflag, mode, value)) == SEM_FAILED)
+			err_sys("sem_open error for %s", pathname);
+		va_end(ap);
+	} else {
+		if ( (sem = sem_open(pathname, oflag)) == SEM_FAILED)
+			err_sys("sem_open error for %s", pathname);
+	}
+	return(sem);
+}
+
+void
+Sem_close(sem_t *sem)
+{
+	if (sem_close(sem) == -1)
+		err_sys("sem_close error");
+}
+
+void
+Sem_unlink(const char *pathname)
+{
+	if (sem_unlink(pathname) == -1)
+		err_sys("sem_unlink error");
+}
+
+void
+Sem_init(sem_t *sem, int pshared, unsigned int value)
+{
+	if (sem_init(sem, pshared, value) == -1)
+		err_sys("sem_init error");
+}
+
+void
+Sem_destroy(sem_t *sem)
+{
+	if (sem_destroy(sem) == -1)
+		err_sys("sem_destroy error");
+}
+
+void
+Sem_wait(sem_t *sem)
+{
+	if (sem_wait(sem) == -1)
+		err_sys("sem_wait error");
+}
+
+int
+Sem_trywait(sem_t *sem)
+{
+	int		rc;
+
+	if ( (rc = sem_trywait(sem)) == -1 && errno != EAGAIN)
+		err_sys("sem_trywait error");
+	return(rc);
+}
+
+/* include Sem_post */
+void
+Sem_post(sem_t *sem)
+{
+	if (sem_post(sem) == -1)
+		err_sys("sem_post error");
+}
+/* end Sem_post */
+
+void
+Sem_getvalue(sem_t *sem, int *valp)
+{
+	if (sem_getvalue(sem, valp) == -1)
+		err_sys("sem_getvalue error");
+}
+
+#endif	/* HAVE_SEMAPHORE_H */
+
+#ifdef	HAVE_SYS_SEM_H
+int
+Semget(key_t key, int nsems, int flag)
+{
+	int		rc;
+
+	if ( (rc = semget(key, nsems, flag)) == -1)
+		err_sys("semget error");
+	return(rc);
+}
+
+void
+Semop(int id, struct sembuf *opsptr, size_t nops)
+{
+	if (semop(id, opsptr, nops) == -1)
+		err_sys("semctl error");
+}
+
+int
+Semctl(int id, int semnum, int cmd, ...)
+{
+	int		rc;
+	va_list	ap;
+	union semun	arg;
+
+	if (cmd == GETALL || cmd == SETALL || cmd == SETVAL ||
+		cmd == IPC_STAT || cmd == IPC_SET) {
+		va_start(ap, cmd);		/* init ap to final named argument */
+		arg = va_arg(ap, union semun);
+		if ( (rc = semctl(id, semnum, cmd, arg)) == -1)
+			err_sys("semctl error");
+		va_end(ap);
+	} else {
+		if ( (rc = semctl(id, semnum, cmd)) == -1)
+			err_sys("semctl error");
+	}
+	return(rc);
+}
+
+#endif	/* HAVE_SYS_SEM_H */
+
+#ifdef	HAVE_SHM_OPEN_PROTO
+
+int
+Shm_open(const char *pathname, int oflag, mode_t mode)
+{
+	int		fd;
+
+	if ( (fd = shm_open(pathname, oflag, mode)) == -1)
+		err_sys("shm_open error for %s", pathname);
+	return(fd);
+}
+
+
+void
+Shm_unlink(const char *pathname)
+{
+	if (shm_unlink(pathname) == -1)
+		err_sys("shm_unlink error");
+}
+
+#endif	/* HAVE_SHM_OPEN_PROTO */
+
+#ifdef	HAVE_SYS_SHM_H
+
+int
+Shmget(key_t key, size_t size, int flags)
+{
+	int		rc;
+
+	if ( (rc = shmget(key, size, flags)) == -1)
+		err_sys("shmget error");
+	return(rc);
+}
+
+void *
+Shmat(int id, const void *shmaddr, int flags)
+{
+	void	*ptr;
+
+	if ( (ptr = shmat(id, shmaddr, flags)) == (void *) -1)
+		err_sys("shmat error");
+	return(ptr);
+}
+
+void
+Shmdt(const void *shmaddr)
+{
+	if (shmdt(shmaddr) == -1)
+		err_sys("shmdt error");
+}
+
+void
+Shmctl(int id, int cmd, struct shmid_ds *buff)
+{
+	if (shmctl(id, cmd, buff) == -1)
+		err_sys("shmctl error");
+}
+
+#endif	/* HAVE_SYS_SHM_H */
+
 void
 Sigaddset(sigset_t *set, int signo)
 {
@@ -455,6 +662,35 @@ Sigprocmask(int how, const sigset_t *set, sigset_t *oset)
 		err_sys("sigprocmask error");
 }
 
+#ifdef	HAVE_SIGINFO_T_STRUCT
+void
+Sigqueue(pid_t pid, int signo, const union sigval val)
+{
+	if (sigqueue(pid, signo, val) == -1)
+		err_sys("sigqueue error");
+}
+#endif
+
+#ifdef	HAVE_SIGWAIT
+void
+Sigwait(const sigset_t *set, int *signo)
+{
+	int		n;
+
+	if ( (n = sigwait(set, signo)) == 0)
+		return;
+	errno = n;
+	err_sys("sigwait error");
+}
+#endif
+
+void
+Stat(const char *pathname, struct stat *ptr)
+{
+	if (stat(pathname, ptr) == -1)
+		err_sys("stat error");
+}
+
 char *
 Strdup(const char *str)
 {
@@ -471,12 +707,20 @@ Sysconf(int name)
 	long	val;
 
 	errno = 0;		/* in case sysconf() does not change this */
-	if ( (val = sysconf(name)) == -1)
-		err_sys("sysconf error");
+	if ( (val = sysconf(name)) == -1) {
+		if (errno != 0)
+			err_sys("sysconf error");
+		else
+			err_sys("sysconf: %d not defined", name);
+	}
 	return(val);
 }
 
 #ifdef	HAVE_SYS_SYSCTL_H
+
+#include	<sys/param.h>
+#include	<sys/sysctl.h>
+
 void
 Sysctl(int *name, u_int namelen, void *oldp, size_t *oldlenp,
 	   void *newp, size_t newlen)
@@ -491,6 +735,21 @@ Unlink(const char *pathname)
 {
 	if (unlink(pathname) == -1)
 		err_sys("unlink error for %s", pathname);
+}
+
+void *
+Valloc(size_t size)
+{
+	void	*ptr;
+
+#ifdef	HAVE_VALLOC
+	if ( (ptr = valloc(size)) == NULL)
+		err_sys("valloc error");
+#else
+	if ( (ptr = malloc(size)) == NULL)
+		err_sys("malloc error (Valloc)");
+#endif
+	return(ptr);
 }
 
 pid_t

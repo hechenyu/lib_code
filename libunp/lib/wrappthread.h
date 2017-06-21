@@ -45,4 +45,12 @@ void	Pthread_setspecific(pthread_key_t, const void *);
 
 long    pr_thread_id(pthread_t *);
 
+void	Pthread_rwlock_destroy(pthread_rwlock_t *);
+void	Pthread_rwlock_init(pthread_rwlock_t *, pthread_rwlockattr_t *);
+void	Pthread_rwlock_rdlock(pthread_rwlock_t *);
+int		Pthread_rwlock_tryrdlock(pthread_rwlock_t *);
+int		Pthread_rwlock_trywrlock(pthread_rwlock_t *);
+void	Pthread_rwlock_unlock(pthread_rwlock_t *);
+void	Pthread_rwlock_wrlock(pthread_rwlock_t *);
+
 #endif

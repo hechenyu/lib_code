@@ -317,3 +317,82 @@ pr_thread_id(pthread_t *ptr)
 #endif
 }
 /* end pr_thread_id */
+
+void
+Pthread_rwlock_destroy(pthread_rwlock_t *rw)
+{
+	int		n;
+
+	if ( (n = pthread_rwlock_destroy(rw)) == 0)
+		return;
+	errno = n;
+	err_sys("pthread_rwlock_destroy error");
+}
+
+void
+Pthread_rwlock_init(pthread_rwlock_t *rw, pthread_rwlockattr_t *attr)
+{
+	int		n;
+
+	if ( (n = pthread_rwlock_init(rw, attr)) == 0)
+		return;
+	errno = n;
+	err_sys("pthread_rwlock_init error");
+}
+
+void
+Pthread_rwlock_rdlock(pthread_rwlock_t *rw)
+{
+	int		n;
+
+	if ( (n = pthread_rwlock_rdlock(rw)) == 0)
+		return;
+	errno = n;
+	err_sys("pthread_rwlock_rdlock error");
+}
+
+int
+Pthread_rwlock_tryrdlock(pthread_rwlock_t *rw)
+{
+	int		n;
+
+	if ( (n = pthread_rwlock_tryrdlock(rw)) != 0) {
+		errno = n;
+		err_sys("pthread_rwlock_tryrdlock error");
+	}
+	return(n);
+}
+
+int
+Pthread_rwlock_trywrlock(pthread_rwlock_t *rw)
+{
+	int		n;
+
+	if ( (n = pthread_rwlock_trywrlock(rw)) != 0) {
+		errno = n;
+		err_sys("pthread_rwlock_trywrlock error");
+	}
+	return(n);
+}
+
+void
+Pthread_rwlock_unlock(pthread_rwlock_t *rw)
+{
+	int		n;
+
+	if ( (n = pthread_rwlock_unlock(rw)) == 0)
+		return;
+	errno = n;
+	err_sys("pthread_rwlock_unlock error");
+}
+
+void
+Pthread_rwlock_wrlock(pthread_rwlock_t *rw)
+{
+	int		n;
+
+	if ( (n = pthread_rwlock_wrlock(rw)) == 0)
+		return;
+	errno = n;
+	err_sys("pthread_rwlock_wrlock error");
+}

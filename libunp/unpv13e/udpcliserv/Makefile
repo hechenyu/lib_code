@@ -2,11 +2,11 @@ RM = rm -f
 CC = gcc
 INCLUDE = -I../../lib/
 CFLAGS = -Wall -g -O2 ${INCLUDE}
-LIBS = ../../lib/libunp.a -lpthread -lrt -lrt -lrt
+LIBS = ../../lib/libunp.a -lpthread -lrt
 
 PROGS =	udpcli01 udpserv01 udpcli02 udpcli03 udpcli04 \
 		udpcli06 udpserv06 udpserv07 udpcli08 udpcli09 udpcli10 \
-		udpservselect01
+		udpservselect01 udpserv08 udpcli11 
 
 all:	${PROGS}
 
@@ -48,6 +48,12 @@ udpcli10:	udpcli10.o dgclibig.o
 
 udpservselect01:	udpservselect01.o sigchldwaitpid.o
 		${CC} ${CFLAGS} -o $@ udpservselect01.o sigchldwaitpid.o ${LIBS}
+
+udpserv08:	udpserv08.o
+		${CC} ${CFLAGS} -o $@ udpserv08.o ${LIBS}
+
+udpcli11:	udpcli11.o
+		${CC} ${CFLAGS} -o $@ udpcli11.o ${LIBS}
 
 clean:
 		rm -f ${PROGS} ${CLEANFILES} *.o

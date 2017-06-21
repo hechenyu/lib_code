@@ -1,5 +1,5 @@
 
-SUBDIRS = intro tcpcliserv select sockopt udpcliserv
+SUBDIRS = advio bcast icmpd inetd intro ioctl ipopts mcast mysdr names nonblock oob rtt select server sigio sockopt ssntp tcpcliserv threads udpcliserv unixdomain
 
 all:
 	@$(MAKE) $(MFLAGS) WHAT_TO_MAKE=$@ common
