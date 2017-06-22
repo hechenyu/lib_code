@@ -2,7 +2,7 @@
 
 RM = rm -f
 CXX = g++
-CXXFLAGS = -Wall -g -std=c++11
+CXXFLAGS = -Wall -g -std=c++11 -DHAVE_EPOLL
 INCLUDE = -I ../../lib
 LDFLAGS = -lboost_program_options ../../lib/libunp.a -lpthread -lrt
 LDPATH =
