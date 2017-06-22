@@ -1,11 +1,13 @@
 #include <vector>
 #include <thread>
 #include <chrono>
+#include <iostream>
 #include "prog_opts_util.h"
 #include "udp_connect.h"
 #include "wrapsock.h"
 
 using namespace std;
+using namespace std::chrono;
 
 struct Send_conf {
     int bytes_per_packet;
@@ -19,8 +21,16 @@ struct Recv_conf {
     std::atomic<int> total_recv_packets;
 };
 
+struct Statistics {
+    int total_send_packets;
+    int total_recv_packets;
+    steady_clock::time_point time_point;
+};
+
 static void send_rountine(vector<int> fd_set, Send_conf *send_conf);
 static void recv_rountine(vector<int> fd_set, Recv_conf *recv_conf);
+
+static void print_statistics(Statistics begin, Statistics end, int bytes_per_packet);
 
 int main(int argc, char *argv[])
 {
@@ -52,6 +62,20 @@ int main(int argc, char *argv[])
     std::thread recv_thread(recv_rountine, fd_set, &recv_conf);
     recv_thread.detach();
 
+    int statistics_interval = vm["statistics_interval"].as<int>();
+    int bytes_per_packet = vm["bytes_per_packet"].as<int>();
+    Statistics st1, st2;
+    while (true) {
+        st1.total_send_packets = send_conf.total_send_packets;
+        st1.total_recv_packets = recv_conf.total_recv_packets;
+        st1.time_point = steady_clock::now();
+        this_thread::sleep_for(seconds(statistics_interval));
+        st2.total_send_packets = send_conf.total_send_packets;
+        st2.total_recv_packets = recv_conf.total_recv_packets;
+        st2.time_point = steady_clock::now();
+        print_statistics(st1, st2, bytes_per_packet);
+    }
+
     return 0;
 }
 
@@ -74,7 +98,7 @@ void send_rountine(vector<int> fd_set, Send_conf *send_conf)
             }
         }
 
-        this_thread::sleep_for(chrono::microseconds(sleep_per_loop));
+        this_thread::sleep_for(microseconds(sleep_per_loop));
     }
 }
 
@@ -110,4 +134,31 @@ void recv_rountine(vector<int> fd_set, Recv_conf *recv_conf)
             }
         }
     }
+}
+
+static void print_statistics(Statistics begin, Statistics end, int bytes_per_packet)
+{
+    system_clock::time_point now = system_clock::now();
+    std::time_t tt = system_clock::to_time_t(now);
+    cout << "time: " << ctime(&tt);
+
+    duration<double> time_span = duration_cast<duration<double>>(end.time_point - begin.time_point);
+    cout << "time_span: " << time_span.count() << " seconds\n";
+
+    int total_send_packets = end.total_send_packets - begin.total_send_packets;
+    cout << "total_send_packets: " << total_send_packets << '\n';  
+
+    int total_recv_packets = end.total_recv_packets - begin.total_recv_packets;
+    cout << "total_recv_packets: " << total_recv_packets << '\n';  
+
+    double send_pps = total_send_packets / time_span.count();
+    double send_bps = send_pps * bytes_per_packet;
+    cout << "send pps: " << send_pps << " packet/second\n";
+    cout << "send bps: " << send_bps << " byte/second\n";
+
+    double recv_pps = total_recv_packets / time_span.count();
+    double recv_bps = recv_pps * bytes_per_packet;
+    cout << "recv pps: " << recv_pps << " packet/second\n";
+    cout << "recv bps: " << recv_bps << " byte/second\n";
+    cout << "\n\n" << endl;
 }

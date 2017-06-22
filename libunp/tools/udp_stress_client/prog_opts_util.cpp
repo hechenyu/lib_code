@@ -17,9 +17,10 @@ variables_map Parse_command_line(int argc, char *argv[])
         ("client_number", value<int>()->default_value(1), "number of client")
         ("server_host", value<string>()->default_value("127.0.0.1"), "server host that client to connect")
         ("server_port", value<string>()->default_value("9999"), "server port that client to connect")
-        ("bytes_per_packet", value<int>()->default_value(500), "send packet size, bytes")
+        ("bytes_per_packet", value<int>()->default_value(1000), "send packet size by bytes")
         ("packets_per_loop", value<int>()->default_value(1), "send packet number per time")
         ("sleep_per_loop", value<int>()->default_value(0), "sleep us per send loop")
+        ("statistics_interval", value<int>()->default_value(1), "statistics interval by seconds")
         ;
 
     variables_map vm;
@@ -43,5 +44,6 @@ void Print_variables_map(const boost::program_options::variables_map &vm)
     cout << "bytes_per_packet: " << vm["bytes_per_packet"].as<int>() << "\n";
     cout << "packets_per_loop: " << vm["packets_per_loop"].as<int>() << "\n";
     cout << "sleep_per_loop: " << vm["sleep_per_loop"].as<int>() << "\n";
+    cout << "statistics_interval: " << vm["statistics_interval"].as<int>() << "\n";
 }
 
