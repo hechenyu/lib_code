@@ -35,7 +35,9 @@ static void print_statistics(Statistics begin, Statistics end, int bytes_per_pac
 int main(int argc, char *argv[])
 {
     auto vm = Parse_command_line(argc, argv);
+    cout << "program_options: \n";
     Print_variables_map(vm);
+    cout << "\n\n" << endl;
 
     vector<int> fd_set;
     int client_number = vm["client_number"].as<int>();
@@ -70,9 +72,9 @@ int main(int argc, char *argv[])
         st1.total_recv_packets = recv_conf.total_recv_packets;
         st1.time_point = steady_clock::now();
         this_thread::sleep_for(seconds(statistics_interval));
+        st2.time_point = steady_clock::now();
         st2.total_send_packets = send_conf.total_send_packets;
         st2.total_recv_packets = recv_conf.total_recv_packets;
-        st2.time_point = steady_clock::now();
         print_statistics(st1, st2, bytes_per_packet);
     }
 
@@ -152,13 +154,13 @@ static void print_statistics(Statistics begin, Statistics end, int bytes_per_pac
     cout << "total_recv_packets: " << total_recv_packets << '\n';  
 
     double send_pps = total_send_packets / time_span.count();
-    double send_bps = send_pps * bytes_per_packet;
+    double send_bps = send_pps * bytes_per_packet / 1000000 * 8;
     cout << "send pps: " << send_pps << " packet/second\n";
-    cout << "send bps: " << send_bps << " byte/second\n";
+    cout << "send bps: " << send_bps << " MBit/s\n";
 
     double recv_pps = total_recv_packets / time_span.count();
-    double recv_bps = recv_pps * bytes_per_packet;
+    double recv_bps = recv_pps * bytes_per_packet / 1000000 * 8;
     cout << "recv pps: " << recv_pps << " packet/second\n";
-    cout << "recv bps: " << recv_bps << " byte/second\n";
+    cout << "recv bps: " << recv_bps << " MBit/s\n";
     cout << "\n\n" << endl;
 }
