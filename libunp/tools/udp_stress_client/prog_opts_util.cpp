@@ -1,6 +1,7 @@
 #include "prog_opts_util.h"
 #include <string>
 #include <fstream>
+#include <iostream>
 
 using namespace std;
 using namespace boost::program_options;
@@ -30,5 +31,15 @@ variables_map Parse_command_line(int argc, char *argv[])
     }
 
     return vm;
+}
+
+void Print_variables_map(const boost::program_options::variables_map &vm)
+{
+    cout << "config_file: " << vm["config_file"].as<string>() << "\n";
+    cout << "client_number: " << vm["client_number"].as<int>() << "\n";
+    cout << "server_address: " << vm["server_address"].as<string>() << "\n";
+    cout << "bytes_per_packet: " << vm["bytes_per_packet"].as<int>() << "\n";
+    cout << "packets_per_loop: " << vm["packets_per_loop"].as<int>() << "\n";
+    cout << "sleep_per_loop: " << vm["sleep_per_loop"].as<int>() << "\n";
 }
 
