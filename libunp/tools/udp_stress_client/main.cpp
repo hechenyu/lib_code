@@ -93,7 +93,7 @@ void send_rountine(vector<int> fd_set, Send_conf *send_conf)
     int nclient = fd_set.size();
     for ( ; ; ) {
         for (int i = 0; i < nclient; i++) {
-            for (int j = 0; i < packets_per_loop; j++) {
+            for (int j = 0; j < packets_per_loop; j++) {
                 if (bytes_per_packet == send(fd_set[i], buff, bytes_per_packet, MSG_DONTWAIT)) {
                     send_conf->total_send_packets++;
                 }
