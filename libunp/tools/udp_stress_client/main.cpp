@@ -2,6 +2,7 @@
 #include <thread>
 #include <chrono>
 #include <iostream>
+#include <atomic>
 #include "prog_opts_util.h"
 #include "udp_connect.h"
 #include "wrapsock.h"
@@ -13,17 +14,21 @@ struct Send_conf {
     int bytes_per_packet;
     int packets_per_loop;
     int sleep_per_loop;
-    std::atomic<int> total_send_packets;
+    std::atomic<uint32_t> total_send_packets;
+    std::atomic<uint64_t> total_send_bytes;
 };
 
 struct Recv_conf {
     int bytes_per_packet;
-    std::atomic<int> total_recv_packets;
+    std::atomic<uint32_t> total_recv_packets;
+    std::atomic<uint64_t> total_recv_bytes;
 };
 
 struct Statistics {
-    int total_send_packets;
-    int total_recv_packets;
+    uint32_t total_send_packets;
+    uint64_t total_send_bytes;
+    uint32_t total_recv_packets;
+    uint64_t total_recv_bytes;
     steady_clock::time_point time_point;
 };
 
@@ -69,12 +74,16 @@ int main(int argc, char *argv[])
     Statistics st1, st2;
     while (true) {
         st1.total_send_packets = send_conf.total_send_packets;
+        st1.total_send_bytes = send_conf.total_send_bytes;
         st1.total_recv_packets = recv_conf.total_recv_packets;
+        st1.total_recv_bytes = recv_conf.total_recv_bytes;
         st1.time_point = steady_clock::now();
         this_thread::sleep_for(seconds(statistics_interval));
-        st2.time_point = steady_clock::now();
         st2.total_send_packets = send_conf.total_send_packets;
+        st2.total_send_bytes = send_conf.total_send_bytes;
         st2.total_recv_packets = recv_conf.total_recv_packets;
+        st2.total_recv_bytes = recv_conf.total_recv_bytes;
+        st2.time_point = steady_clock::now();
         print_statistics(st1, st2, bytes_per_packet);
     }
 
@@ -96,6 +105,7 @@ void send_rountine(vector<int> fd_set, Send_conf *send_conf)
             for (int j = 0; j < packets_per_loop; j++) {
                 if (bytes_per_packet == send(fd_set[i], buff, bytes_per_packet, MSG_DONTWAIT)) {
                     send_conf->total_send_packets++;
+                    send_conf->total_send_bytes += bytes_per_packet; 
                 }
             }
         }
@@ -110,7 +120,7 @@ void recv_rountine(vector<int> fd_set, Recv_conf *recv_conf)
     int     bytes_per_packet = recv_conf->bytes_per_packet; 
     char    *buff = new char[bytes_per_packet+1]; 
 
-    int    i, epfd, nready, sockfd;
+    int    i, epfd, nready, sockfd, n;
     struct epoll_event  ev;
     struct epoll_event  evlist[MAX_EVENTS];
 
@@ -129,8 +139,9 @@ void recv_rountine(vector<int> fd_set, Recv_conf *recv_conf)
         for (i = 0; i < nready; i++) {
             if (evlist[i].events & EPOLLIN) {  /* net data in */
                 sockfd = evlist[i].data.fd;
-                if (bytes_per_packet == recv(sockfd, buff, bytes_per_packet, MSG_DONTWAIT)) {
+                if ((n = recv(sockfd, buff, bytes_per_packet, MSG_DONTWAIT)) > 0) {
                     recv_conf->total_recv_packets++;
+                    recv_conf->total_recv_bytes += n;
                 }
                 continue;
             }
@@ -150,16 +161,22 @@ static void print_statistics(Statistics begin, Statistics end, int bytes_per_pac
     int total_send_packets = end.total_send_packets - begin.total_send_packets;
     cout << "total_send_packets: " << total_send_packets << '\n';  
 
+    int total_send_bytes = end.total_send_bytes - begin.total_send_bytes;
+    cout << "total_send_bytes: " << total_send_bytes << '\n';  
+
     int total_recv_packets = end.total_recv_packets - begin.total_recv_packets;
     cout << "total_recv_packets: " << total_recv_packets << '\n';  
 
+    int total_recv_bytes = end.total_recv_bytes - begin.total_recv_bytes;
+    cout << "total_recv_bytes: " << total_recv_bytes << '\n';  
+
     double send_pps = total_send_packets / time_span.count();
-    double send_bps = send_pps * bytes_per_packet / 1000000 * 8;
+    double send_bps = total_send_bytes / time_span.count() / 1000000 * 8;
     cout << "send pps: " << send_pps << " packet/second\n";
     cout << "send bps: " << send_bps << " MBit/s\n";
 
     double recv_pps = total_recv_packets / time_span.count();
-    double recv_bps = recv_pps * bytes_per_packet / 1000000 * 8;
+    double recv_bps = total_recv_bytes / time_span.count() / 1000000 * 8;
     cout << "recv pps: " << recv_pps << " packet/second\n";
     cout << "recv bps: " << recv_bps << " MBit/s\n";
     cout << "\n\n" << endl;

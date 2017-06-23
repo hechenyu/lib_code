@@ -19,8 +19,8 @@ variables_map Parse_command_line(int argc, char *argv[])
         ("server_port", value<string>()->default_value("9999"), "server port that client to connect")
         ("bytes_per_packet", value<int>()->default_value(1000), "send packet size by bytes")
         ("packets_per_loop", value<int>()->default_value(1), "send packet number per time")
-        ("sleep_per_loop", value<int>()->default_value(0), "sleep us per send loop")
-        ("statistics_interval", value<int>()->default_value(1), "statistics interval by seconds")
+        ("sleep_per_loop", value<int>()->default_value(100), "sleep us per send loop")
+        ("statistics_interval", value<int>()->default_value(3), "statistics interval by seconds")
         ;
 
     variables_map vm;
