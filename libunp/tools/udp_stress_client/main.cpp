@@ -50,10 +50,12 @@ int main(int argc, char *argv[])
     send_conf.packets_per_loop = vm["packets_per_loop"].as<int>();
     send_conf.sleep_per_loop = vm["sleep_per_loop"].as<int>();
     send_conf.total_send_packets = 0;
+    send_conf.total_send_bytes = 0;
 
     Recv_conf recv_conf;
     recv_conf.bytes_per_packet = vm["bytes_per_packet"].as<int>();
     recv_conf.total_recv_packets = 0;
+    recv_conf.total_recv_bytes = 0;
 
     std::thread send_thread(send_rountine, fd_set, &send_conf);
     send_thread.detach();
