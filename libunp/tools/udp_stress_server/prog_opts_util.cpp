@@ -14,12 +14,13 @@ variables_map Parse_command_line(int argc, char *argv[])
     desc.add_options()
         ("help,h", "produce help message")
         ("config_file,f", value<string>(&filename)->default_value(""), "config file")
+        ("thread_number", value<int>()->default_value(1), "server thread number")
         ("server_host", value<string>()->default_value("127.0.0.1"), "server host that client to connect")
         ("server_port", value<string>()->default_value("9999"), "server port that client to connect")
         ("bytes_per_packet", value<int>()->default_value(1000), "send packet size by bytes")
         ("rate_request_to_response", value<int>()->default_value(1), "when receive number of request to send a response")
         ("packets_per_response", value<int>()->default_value(1), "send packet number per response")
-        ("statistics_interval", value<int>()->default_value(1), "statistics interval by seconds")
+        ("statistics_interval", value<int>()->default_value(3), "statistics interval by seconds")
         ;
 
     variables_map vm;

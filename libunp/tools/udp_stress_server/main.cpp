@@ -103,12 +103,16 @@ void serv_routine(vector<int> fd_set, Serv_conf *serv_conf)
     }
 
     int recv_packets = 0;
+	struct sockaddr_storage	cliaddr;
+	socklen_t	clilen;
 	for ( ; ; ) {
 		nready = Epoll_wait(epfd, evlist, MAX_EVENTS, -1);
         for (i = 0; i < nready; i++) {
             if (evlist[i].events & EPOLLIN) {  /* net data in */
                 sockfd = evlist[i].data.fd;
-                if ((n = recv(sockfd, recv_buff, BUF_SIZE, MSG_DONTWAIT)) < 0) {
+
+                clilen = sizeof(cliaddr);
+                if ((n = recvfrom(sockfd, recv_buff, BUF_SIZE, MSG_DONTWAIT, (struct sockaddr *) &cliaddr, &clilen)) < 0) {
                     continue;
                 }
 
@@ -121,7 +125,7 @@ void serv_routine(vector<int> fd_set, Serv_conf *serv_conf)
                 } 
 
                 for (int j = 0; j < packets_per_response; j++) {
-                    if (bytes_per_packet == send(sockfd, send_buff, bytes_per_packet, MSG_DONTWAIT)) {
+                    if (bytes_per_packet == sendto(sockfd, send_buff, bytes_per_packet, MSG_DONTWAIT, (struct sockaddr *) &cliaddr, clilen)) {
                         serv_conf->total_send_packets++;
                         serv_conf->total_send_bytes += bytes_per_packet;
                     }
