@@ -3,6 +3,8 @@
 #include <chrono>
 #include <iostream>
 #include <atomic>
+#include <stdint.h>
+#include "statistics.h"
 #include "prog_opts_util.h"
 #include "udp_connect.h"
 #include "wrapsock.h"
@@ -24,18 +26,8 @@ struct Recv_conf {
     std::atomic<uint64_t> total_recv_bytes;
 };
 
-struct Statistics {
-    uint32_t total_send_packets;
-    uint64_t total_send_bytes;
-    uint32_t total_recv_packets;
-    uint64_t total_recv_bytes;
-    steady_clock::time_point time_point;
-};
-
 static void send_rountine(vector<int> fd_set, Send_conf *send_conf);
 static void recv_rountine(vector<int> fd_set, Recv_conf *recv_conf);
-
-static void print_statistics(Statistics begin, Statistics end, int bytes_per_packet);
 
 int main(int argc, char *argv[])
 {
@@ -70,7 +62,6 @@ int main(int argc, char *argv[])
     recv_thread.detach();
 
     int statistics_interval = vm["statistics_interval"].as<int>();
-    int bytes_per_packet = vm["bytes_per_packet"].as<int>();
     Statistics st1, st2;
     while (true) {
         st1.total_send_packets = send_conf.total_send_packets;
@@ -84,7 +75,7 @@ int main(int argc, char *argv[])
         st2.total_recv_packets = recv_conf.total_recv_packets;
         st2.total_recv_bytes = recv_conf.total_recv_bytes;
         st2.time_point = steady_clock::now();
-        print_statistics(st1, st2, bytes_per_packet);
+        print_statistics(st1, st2);
     }
 
     return 0;
@@ -147,37 +138,4 @@ void recv_rountine(vector<int> fd_set, Recv_conf *recv_conf)
             }
         }
     }
-}
-
-static void print_statistics(Statistics begin, Statistics end, int bytes_per_packet)
-{
-    system_clock::time_point now = system_clock::now();
-    std::time_t tt = system_clock::to_time_t(now);
-    cout << "time: " << ctime(&tt);
-
-    duration<double> time_span = duration_cast<duration<double>>(end.time_point - begin.time_point);
-    cout << "time_span: " << time_span.count() << " seconds\n";
-
-    int total_send_packets = end.total_send_packets - begin.total_send_packets;
-    cout << "total_send_packets: " << total_send_packets << '\n';  
-
-    int total_send_bytes = end.total_send_bytes - begin.total_send_bytes;
-    cout << "total_send_bytes: " << total_send_bytes << '\n';  
-
-    int total_recv_packets = end.total_recv_packets - begin.total_recv_packets;
-    cout << "total_recv_packets: " << total_recv_packets << '\n';  
-
-    int total_recv_bytes = end.total_recv_bytes - begin.total_recv_bytes;
-    cout << "total_recv_bytes: " << total_recv_bytes << '\n';  
-
-    double send_pps = total_send_packets / time_span.count();
-    double send_bps = total_send_bytes / time_span.count() / 1000000 * 8;
-    cout << "send pps: " << send_pps << " packet/second\n";
-    cout << "send bps: " << send_bps << " MBit/s\n";
-
-    double recv_pps = total_recv_packets / time_span.count();
-    double recv_bps = total_recv_bytes / time_span.count() / 1000000 * 8;
-    cout << "recv pps: " << recv_pps << " packet/second\n";
-    cout << "recv bps: " << recv_bps << " MBit/s\n";
-    cout << "\n\n" << endl;
 }
