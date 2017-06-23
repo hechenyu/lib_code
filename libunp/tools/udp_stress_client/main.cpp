@@ -14,20 +14,19 @@ using namespace std::chrono;
 
 struct Send_conf {
     int bytes_per_packet;
-    int packets_per_loop;
+    int packets_per_request;
     int sleep_per_loop;
     std::atomic<uint32_t> total_send_packets;
     std::atomic<uint64_t> total_send_bytes;
 };
 
 struct Recv_conf {
-    int bytes_per_packet;
     std::atomic<uint32_t> total_recv_packets;
     std::atomic<uint64_t> total_recv_bytes;
 };
 
-static void send_rountine(vector<int> fd_set, Send_conf *send_conf);
-static void recv_rountine(vector<int> fd_set, Recv_conf *recv_conf);
+static void send_routine(vector<int> fd_set, Send_conf *send_conf);
+static void recv_routine(vector<int> fd_set, Recv_conf *recv_conf);
 
 int main(int argc, char *argv[])
 {
@@ -47,20 +46,19 @@ int main(int argc, char *argv[])
 
     Send_conf send_conf;
     send_conf.bytes_per_packet = vm["bytes_per_packet"].as<int>();
-    send_conf.packets_per_loop = vm["packets_per_loop"].as<int>();
+    send_conf.packets_per_request = vm["packets_per_request"].as<int>();
     send_conf.sleep_per_loop = vm["sleep_per_loop"].as<int>();
     send_conf.total_send_packets = 0;
     send_conf.total_send_bytes = 0;
 
     Recv_conf recv_conf;
-    recv_conf.bytes_per_packet = vm["bytes_per_packet"].as<int>();
     recv_conf.total_recv_packets = 0;
     recv_conf.total_recv_bytes = 0;
 
-    std::thread send_thread(send_rountine, fd_set, &send_conf);
+    std::thread send_thread(send_routine, fd_set, &send_conf);
     send_thread.detach();
 
-    std::thread recv_thread(recv_rountine, fd_set, &recv_conf);
+    std::thread recv_thread(recv_routine, fd_set, &recv_conf);
     recv_thread.detach();
 
     int statistics_interval = vm["statistics_interval"].as<int>();
@@ -83,10 +81,10 @@ int main(int argc, char *argv[])
     return 0;
 }
 
-void send_rountine(vector<int> fd_set, Send_conf *send_conf)
+void send_routine(vector<int> fd_set, Send_conf *send_conf)
 {
     auto bytes_per_packet = send_conf->bytes_per_packet;
-    auto packets_per_loop = send_conf->packets_per_loop;
+    auto packets_per_request = send_conf->packets_per_request;
     auto sleep_per_loop = send_conf->sleep_per_loop;
 
     string buffer(bytes_per_packet, 'X');
@@ -95,7 +93,7 @@ void send_rountine(vector<int> fd_set, Send_conf *send_conf)
     int nclient = fd_set.size();
     for ( ; ; ) {
         for (int i = 0; i < nclient; i++) {
-            for (int j = 0; j < packets_per_loop; j++) {
+            for (int j = 0; j < packets_per_request; j++) {
                 if (bytes_per_packet == send(fd_set[i], buff, bytes_per_packet, MSG_DONTWAIT)) {
                     send_conf->total_send_packets++;
                     send_conf->total_send_bytes += bytes_per_packet; 
@@ -107,11 +105,11 @@ void send_rountine(vector<int> fd_set, Send_conf *send_conf)
     }
 }
 
-void recv_rountine(vector<int> fd_set, Recv_conf *recv_conf)
+void recv_routine(vector<int> fd_set, Recv_conf *recv_conf)
 {
     const int MAX_EVENTS = 5;
-    int     bytes_per_packet = recv_conf->bytes_per_packet; 
-    char    *buff = new char[bytes_per_packet+1]; 
+    const int BUF_SIZE = 8192;
+    char      buff[BUF_SIZE];
 
     int    i, epfd, nready, sockfd, n;
     struct epoll_event  ev;
@@ -132,7 +130,7 @@ void recv_rountine(vector<int> fd_set, Recv_conf *recv_conf)
         for (i = 0; i < nready; i++) {
             if (evlist[i].events & EPOLLIN) {  /* net data in */
                 sockfd = evlist[i].data.fd;
-                if ((n = recv(sockfd, buff, bytes_per_packet, MSG_DONTWAIT)) > 0) {
+                if ((n = recv(sockfd, buff, BUF_SIZE, MSG_DONTWAIT)) > 0) {
                     recv_conf->total_recv_packets++;
                     recv_conf->total_recv_bytes += n;
                 }
