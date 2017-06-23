@@ -14,7 +14,7 @@ variables_map Parse_command_line(int argc, char *argv[])
     desc.add_options()
         ("help,h", "produce help message")
         ("config_file,f", value<string>(&filename)->default_value(""), "config file")
-        ("thread_number", value<int>()->default_value(1), "server thread number")
+        ("send_thread_number", value<int>()->default_value(1), "number of send thread")
         ("server_host", value<string>()->default_value("127.0.0.1"), "server host that client to connect")
         ("server_port", value<string>()->default_value("9999"), "server port that client to connect")
         ("bytes_per_packet", value<int>()->default_value(1000), "send packet size by bytes")
@@ -38,6 +38,7 @@ variables_map Parse_command_line(int argc, char *argv[])
 void Print_variables_map(const boost::program_options::variables_map &vm)
 {
     cout << "config_file: " << vm["config_file"].as<string>() << "\n";
+    cout << "send_thread_number: " << vm["send_thread_number"].as<int>() << "\n";
     cout << "server_host: " << vm["server_host"].as<string>() << "\n";
     cout << "server_port: " << vm["server_port"].as<string>() << "\n";
     cout << "bytes_per_packet: " << vm["bytes_per_packet"].as<int>() << "\n";

@@ -20,6 +20,6 @@ clean:
 %.o:%.cpp
 	$(CXX) -o $@ -c $< $(CXXFLAGS) $(INCLUDE)
 
-udp_stree_server: statistics.o prog_opts_util.o main.o
+udp_stree_server: thread.o statistics.o prog_opts_util.o main.o
 	$(CXX) -o $@ $^ $(LDFLAGS) $(LDPATH)
 

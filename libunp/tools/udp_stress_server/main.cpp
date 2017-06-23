@@ -7,11 +7,13 @@
 #include "prog_opts_util.h"
 #include "udp_server.h"
 #include "wrapsock.h"
+#include "thread.h"
 
 using namespace std;
 using namespace std::chrono;
 
 struct Serv_conf {
+    int send_thread_number;
     int bytes_per_packet;
     int packets_per_response;
     int rate_request_to_response;
@@ -40,6 +42,7 @@ int main(int argc, char *argv[])
     } 
 
     Serv_conf serv_conf;
+    serv_conf.send_thread_number = vm["send_thread_number"].as<int>(); 
     serv_conf.bytes_per_packet = vm["bytes_per_packet"].as<int>();
     serv_conf.packets_per_response = vm["packets_per_response"].as<int>();
     serv_conf.rate_request_to_response = vm["rate_request_to_response"].as<int>();
@@ -48,13 +51,8 @@ int main(int argc, char *argv[])
     serv_conf.total_recv_packets = 0;
     serv_conf.total_recv_bytes = 0;
 
-    int thread_number = vm["thread_number"].as<int>();
-    vector<thread> serv_threads;
-    for (int i = 0; i < thread_number; i++) {
-        std::thread serv_thread(serv_routine, fd_set, &serv_conf);
-        serv_thread.detach();
-        serv_threads.push_back(std::move(serv_thread));
-    }  
+    std::thread serv_thread(serv_routine, fd_set, &serv_conf);
+    serv_thread.detach();
 
     int statistics_interval = vm["statistics_interval"].as<int>();
     Statistics st1, st2;
@@ -76,11 +74,13 @@ int main(int argc, char *argv[])
     return 0;
 }
 
+static void send_func(int sockfd, struct sockaddr *cliaddr, socklen_t clilen, const void *send_buff, Serv_conf *serv_conf);
+
 void serv_routine(vector<int> fd_set, Serv_conf *serv_conf)
 {
     const int MAX_EVENTS = 5;
+    auto send_thread_number = serv_conf->send_thread_number;
     auto bytes_per_packet = serv_conf->bytes_per_packet;
-    auto packets_per_response = serv_conf->packets_per_response;
     auto rate_request_to_response = serv_conf->rate_request_to_response; 
     const int BUF_SIZE = 8192;
     char      recv_buff[BUF_SIZE];
@@ -88,7 +88,16 @@ void serv_routine(vector<int> fd_set, Serv_conf *serv_conf)
     string buffer(bytes_per_packet, 'Y');
     const void *send_buff = buffer.data();
 
-    int    i, epfd, nready, sockfd, n;
+    vector<Thread *> send_threads;
+    vector<std::shared_ptr<Task_queue>> send_queues;
+    for (int i = 0; i < send_thread_number; i++) {
+        Thread *send_thread = new Thread("send_thread");
+        send_thread->start();
+        send_threads.push_back(send_thread);
+        send_queues.push_back(send_thread->get_task_queue());
+    } 
+
+    int    epfd, nready, sockfd, n;
     struct epoll_event  ev;
     struct epoll_event  evlist[MAX_EVENTS];
 
@@ -105,9 +114,10 @@ void serv_routine(vector<int> fd_set, Serv_conf *serv_conf)
     int recv_packets = 0;
 	struct sockaddr_storage	cliaddr;
 	socklen_t	clilen;
+    int queue_index = 0;
 	for ( ; ; ) {
 		nready = Epoll_wait(epfd, evlist, MAX_EVENTS, -1);
-        for (i = 0; i < nready; i++) {
+        for (int i = 0; i < nready; i++) {
             if (evlist[i].events & EPOLLIN) {  /* net data in */
                 sockfd = evlist[i].data.fd;
 
@@ -124,16 +134,28 @@ void serv_routine(vector<int> fd_set, Serv_conf *serv_conf)
                     continue;
                 } 
 
-                for (int j = 0; j < packets_per_response; j++) {
-                    if (bytes_per_packet == sendto(sockfd, send_buff, bytes_per_packet, MSG_DONTWAIT, (struct sockaddr *) &cliaddr, clilen)) {
-                        serv_conf->total_send_packets++;
-                        serv_conf->total_send_bytes += bytes_per_packet;
-                    }
-                }
+                struct sockaddr *clone_addr = (struct sockaddr *) malloc(clilen);
+                memcpy(clone_addr, &cliaddr, clilen);
+                send_queues[queue_index%send_thread_number]->push_task(make_task(&send_func, sockfd, clone_addr, clilen, send_buff, serv_conf));
+                queue_index++;
 
                 continue;
             }
         }
     }
+}
+
+void send_func(int sockfd, struct sockaddr *cliaddr, socklen_t clilen, const void *send_buff, Serv_conf *serv_conf)
+{
+    auto bytes_per_packet = serv_conf->bytes_per_packet;
+    auto packets_per_response = serv_conf->packets_per_response;
+    for (int j = 0; j < packets_per_response; j++) {
+        if (bytes_per_packet == sendto(sockfd, send_buff, bytes_per_packet, MSG_DONTWAIT, (struct sockaddr *) cliaddr, clilen)) {
+            serv_conf->total_send_packets++;
+            serv_conf->total_send_bytes += bytes_per_packet;
+        }
+    }
+
+    free(cliaddr);
 }
 
