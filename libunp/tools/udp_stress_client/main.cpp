@@ -94,7 +94,7 @@ void send_routine(vector<int> fd_set, Send_conf *send_conf)
     for ( ; ; ) {
         for (int i = 0; i < nclient; i++) {
             for (int j = 0; j < packets_per_request; j++) {
-                if (bytes_per_packet == send(fd_set[i], buff, bytes_per_packet, MSG_DONTWAIT)) {
+                if (bytes_per_packet == send(fd_set[i], buff, bytes_per_packet, 0 /* MSG_DONTWAIT */)) {
                     send_conf->total_send_packets++;
                     send_conf->total_send_bytes += bytes_per_packet; 
                 }
@@ -130,7 +130,7 @@ void recv_routine(vector<int> fd_set, Recv_conf *recv_conf)
         for (i = 0; i < nready; i++) {
             if (evlist[i].events & EPOLLIN) {  /* net data in */
                 sockfd = evlist[i].data.fd;
-                if ((n = recv(sockfd, buff, BUF_SIZE, MSG_DONTWAIT)) > 0) {
+                if ((n = recv(sockfd, buff, BUF_SIZE, 0 /* MSG_DONTWAIT */)) > 0) {
                     recv_conf->total_recv_packets++;
                     recv_conf->total_recv_bytes += n;
                 }

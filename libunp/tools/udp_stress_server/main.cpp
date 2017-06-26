@@ -122,7 +122,7 @@ void serv_routine(vector<int> fd_set, Serv_conf *serv_conf)
                 sockfd = evlist[i].data.fd;
 
                 clilen = sizeof(cliaddr);
-                if ((n = recvfrom(sockfd, recv_buff, BUF_SIZE, MSG_DONTWAIT, (struct sockaddr *) &cliaddr, &clilen)) < 0) {
+                if ((n = recvfrom(sockfd, recv_buff, BUF_SIZE, 0 /* MSG_DONTWAIT */, (struct sockaddr *) &cliaddr, &clilen)) < 0) {
                     continue;
                 }
 
@@ -150,7 +150,7 @@ void send_func(int sockfd, struct sockaddr *cliaddr, socklen_t clilen, const voi
     auto bytes_per_packet = serv_conf->bytes_per_packet;
     auto packets_per_response = serv_conf->packets_per_response;
     for (int j = 0; j < packets_per_response; j++) {
-        if (bytes_per_packet == sendto(sockfd, send_buff, bytes_per_packet, MSG_DONTWAIT, (struct sockaddr *) cliaddr, clilen)) {
+        if (bytes_per_packet == sendto(sockfd, send_buff, bytes_per_packet, 0 /* MSG_DONTWAIT */, (struct sockaddr *) cliaddr, clilen)) {
             serv_conf->total_send_packets++;
             serv_conf->total_send_bytes += bytes_per_packet;
         }
