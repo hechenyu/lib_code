@@ -87,14 +87,24 @@ void send_routine(vector<int> fd_set, Send_conf *send_conf)
     auto packets_per_request = send_conf->packets_per_request;
     auto sleep_per_loop = send_conf->sleep_per_loop;
 
-    string buffer(bytes_per_packet, 'X');
-    const void *buff = buffer.data();
-
     int nclient = fd_set.size();
+
+    string buffer(bytes_per_packet, 'X');
+
+    std::vector<std::string> data_set;
+    data_set.resize(nclient);
+    std::vector<const void *> buff_set;
+    buff_set.resize(nclient);
+    for (uint32_t i = 0; (int) i < nclient; i++) {
+        memcpy(&buffer[1], &i, sizeof (i));
+        data_set[i] = buffer;
+        buff_set[i] = data_set[i].data();
+    };
+
     for ( ; ; ) {
         for (int i = 0; i < nclient; i++) {
             for (int j = 0; j < packets_per_request; j++) {
-                if (bytes_per_packet == send(fd_set[i], buff, bytes_per_packet, 0 /* MSG_DONTWAIT */)) {
+                if (bytes_per_packet == send(fd_set[i], buff_set[i], bytes_per_packet, 0 /* MSG_DONTWAIT */)) {
                     send_conf->total_send_packets++;
                     send_conf->total_send_bytes += bytes_per_packet; 
                 }
