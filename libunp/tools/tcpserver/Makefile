@@ -3,8 +3,8 @@
 RM = rm -f
 CXX = g++
 CXXFLAGS = -Wall -g -std=c++11 -DHAVE_EPOLL
-INCLUDE = -I../lib
-LDFLAGS = ../lib/libunp.a -lpthread -lrt
+INCLUDE = -I../../lib
+LDFLAGS = ../../lib/libunp.a -lpthread -lrt
 LDPATH = 
 
 PROGS =	tcpechoserver tcpcheckserver
