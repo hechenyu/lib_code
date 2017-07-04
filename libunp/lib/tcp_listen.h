@@ -12,15 +12,7 @@
    kernels still #define it as 5, while actually supporting many more */
 #define	LISTENQ		1024	/* 2nd argument to listen() */
 
-#ifdef  __cplusplus
-extern "C" {
-#endif
-
 int tcp_listen(const char *, const char *, socklen_t *);
 int Tcp_listen(const char *, const char *, socklen_t *);
-
-#ifdef  __cplusplus
-}   // extern "C"
-#endif
 
 #endif

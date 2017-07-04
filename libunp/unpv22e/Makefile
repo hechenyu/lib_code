@@ -1,5 +1,5 @@
 
-SUBDIRS = fifocliserv my_pxmsg_mmap pipe pxmsg shm svmsg svmsgcliserv svmsgmpx1q svmsgmpxnq
+SUBDIRS = fifocliserv mutex my_pxmsg_mmap my_rwlock pipe pxmsg rwlock shm svmsg svmsgcliserv svmsgmpx1q svmsgmpxnq
 
 all:
 	@$(MAKE) $(MFLAGS) WHAT_TO_MAKE=$@ common

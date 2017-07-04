@@ -7,15 +7,7 @@
 #include "error.h"
 #include "wrapunix.h"
 
-#ifdef  __cplusplus
-extern "C" {
-#endif
-
 int udp_server(const char *, const char *, socklen_t *);
 int Udp_server(const char *, const char *, socklen_t *);
-
-#ifdef  __cplusplus
-}   // extern "C"
-#endif
 
 #endif

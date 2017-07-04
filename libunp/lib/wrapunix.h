@@ -84,10 +84,6 @@ union semun {				/* define union for semctl() */
 #endif
 /* $$.ix [va_mode_t]~datatype,~definition~of$$ */
 
-#ifdef  __cplusplus
-extern "C" {
-#endif
-
 /* prototypes for our Unix wrapper functions: see {Sec errors} */
 void    *Calloc(size_t, size_t);
 void     Close(int);
@@ -147,11 +143,27 @@ void     Sem_getvalue(sem_t *, int *);
 #endif
 
 #ifdef	HAVE_SYS_MSG_H
+			/* 4System V message queues */
 int		 Msgget(key_t key, int flag);
 void	 Msgctl(int, int, struct msqid_ds *);
 void	 Msgsnd(int, const void *, size_t, int);
 ssize_t	 Msgrcv(int, void *, size_t, int, int);
-#endif
+#endif	/* HAVE_SYS_MSG_H */
+
+#ifdef	HAVE_SYS_SEM_H
+			/* 4System V semaphores */
+int		 Semget(key_t, int, int);
+int		 Semctl(int, int, int, ...);
+void	 Semop(int, struct sembuf *, size_t);
+#endif	/* HAVE_SYS_SEM_H */
+
+#ifdef	HAVE_SYS_SHM_H
+			/* 4System V shared memory */
+int		 Shmget(key_t, size_t, int);
+void	*Shmat(int, const void *, int);
+void	 Shmdt(const void *);
+void	 Shmctl(int, int, struct shmid_ds *);
+#endif	/* HAVE_SYS_SHM_H */
 
 int      Open(const char *, int , ...);
 void     Pipe(int *fds);
@@ -173,10 +185,6 @@ void     Write(int, void *, size_t);
 long     Pathconf(const char *pathname, int name);
 int		 Select(int, fd_set *, fd_set *, fd_set *, struct timeval *);
 void     Sigwait(const sigset_t *set, int *signo);
-
-#ifdef  __cplusplus
-}   // extern "C"
-#endif
 
 /* Define to 1 if you have the `mkstemp' function. */
 #define HAVE_MKSTEMP 1

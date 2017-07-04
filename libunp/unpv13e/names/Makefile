@@ -84,9 +84,6 @@ tcpcli01:	tcpcli01.o
 udpserv01:	udpserv01.o
 		${CC} ${CFLAGS} -o $@ udpserv01.o ${LIBS}
 
-udpserv01:	udpserv01.o
-		${CC} ${CFLAGS} -o $@ udpserv01.o ${LIBS}
-
 udpcli01:	udpcli01.o dgcliconnected.o
 		${CC} ${CFLAGS} -o $@ udpcli01.o dgcliconnected.o ${LIBS}
 

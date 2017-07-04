@@ -24,10 +24,6 @@
 #include <sys/epoll.h>
 #endif
 
-#ifdef  __cplusplus
-extern "C" {
-#endif
-
 			/* prototypes for our socket wrapper functions: see {Sec errors} */
 int		 Accept(int, SA *, socklen_t *);
 void	 Bind(int, const SA *, socklen_t);
@@ -73,10 +69,6 @@ int      Epoll_create(int);
 int      Epoll_create1(int);
 int      Epoll_ctl(int, int, int, struct epoll_event *);
 int      Epoll_wait(int, struct epoll_event *, int, int);
-#endif
-
-#ifdef  __cplusplus
-}   // extern "C"
 #endif
 
 #endif
