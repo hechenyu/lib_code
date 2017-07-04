@@ -1,4 +1,7 @@
+extern "C" {
 #include "dg_echo.h"
+}
+
 #include <unordered_map>
 #include <iostream>
 #include <string>

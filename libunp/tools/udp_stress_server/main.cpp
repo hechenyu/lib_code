@@ -5,9 +5,12 @@
 #include <atomic>
 #include "statistics.h"
 #include "prog_opts_util.h"
+#include "thread.h"
+
+extern "C" {
 #include "udp_server.h"
 #include "wrapsock.h"
-#include "thread.h"
+}
 
 using namespace std;
 using namespace std::chrono;

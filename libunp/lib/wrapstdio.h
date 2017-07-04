@@ -4,10 +4,6 @@
 #include <stdio.h>
 #include "error.h"
 
-#ifdef  __cplusplus
-extern "C" {
-#endif
-
 			/* prototypes for our stdio wrapper functions: see {Sec errors} */
 void	 Fclose(FILE *);
 FILE	*Fdopen(int, const char *);
@@ -17,9 +13,5 @@ void	 Fputs(const char *, FILE *);
 
 FILE    *Popen(const char *, const char *);
 int      Pclose(FILE *);
-
-#ifdef  __cplusplus
-}   // extern "C"
-#endif
 
 #endif

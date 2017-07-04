@@ -5,14 +5,6 @@
 #include "wrapstdio.h"
 #include "sock_ntop.h"
 
-#ifdef  __cplusplus
-extern "C" {
-#endif
-
 void    dg_echo(int, SA *, socklen_t);
-
-#ifdef  __cplusplus
-}   // extern "C"
-#endif
 
 #endif

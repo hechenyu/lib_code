@@ -6,8 +6,11 @@
 #include <stdint.h>
 #include "statistics.h"
 #include "prog_opts_util.h"
+
+extern "C" {
 #include "udp_connect.h"
 #include "wrapsock.h"
+}
 
 using namespace std;
 using namespace std::chrono;

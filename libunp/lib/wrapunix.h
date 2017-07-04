@@ -84,10 +84,6 @@ union semun {				/* define union for semctl() */
 #endif
 /* $$.ix [va_mode_t]~datatype,~definition~of$$ */
 
-#ifdef  __cplusplus
-extern "C" {
-#endif
-
 /* prototypes for our Unix wrapper functions: see {Sec errors} */
 void    *Calloc(size_t, size_t);
 void     Close(int);
@@ -189,10 +185,6 @@ void     Write(int, void *, size_t);
 long     Pathconf(const char *pathname, int name);
 int		 Select(int, fd_set *, fd_set *, fd_set *, struct timeval *);
 void     Sigwait(const sigset_t *set, int *signo);
-
-#ifdef  __cplusplus
-}   // extern "C"
-#endif
 
 /* Define to 1 if you have the `mkstemp' function. */
 #define HAVE_MKSTEMP 1

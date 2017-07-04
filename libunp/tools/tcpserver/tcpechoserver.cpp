@@ -1,9 +1,13 @@
 /* include fig01 */
 #include <iostream>
 #include <string>
+
+extern "C" {
 #include "error.h"
 #include "wrapunix.h"
 #include "writen.h"
+}
+
 #include "tcpserver.h"
 
 using namespace std;
