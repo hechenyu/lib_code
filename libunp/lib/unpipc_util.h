@@ -53,6 +53,15 @@
 #define	SVMSG_MODE	(MSG_R | MSG_W | MSG_R>>3 | MSG_R>>6)
 //#define	SVMSG_MODE	(S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH)
 					/* default permissions for new SV message queues */
+
+#ifndef SEM_R 
+#define SEM_R S_IRUSR 
+#endif
+
+#ifndef SEM_A 
+#define SEM_A S_IWUSR 
+#endif
+
 /* $$.ix [SVMSG_MODE]~constant,~definition~of$$ */
 #define	SVSEM_MODE	(SEM_R | SEM_A | SEM_R>>3 | SEM_R>>6)
 					/* default permissions for new SV semaphores */
