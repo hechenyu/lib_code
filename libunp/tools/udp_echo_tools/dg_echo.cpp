@@ -1,6 +1,10 @@
 extern "C" {
-#include "dg_echo.h"
+#include "wrapsock.h"
+#include "wrapstdio.h"
+#include "sock_ntop.h"
 }
+
+#include <unistd.h>
 
 #include <unordered_map>
 #include <iostream>
@@ -10,17 +14,16 @@ extern "C" {
                         a single epoll_wait() call */
 
 void
-dg_echo(int sockfd, SA *pcliaddr, socklen_t clilen)
+dg_echo(int sockfd, SA *pcliaddr, socklen_t clilen, int pipe_fd)
 {
 	int			n;
 	socklen_t	len;
 	char		mesg[MAXLINE];
-	char	    sendline[MAXLINE];
+	char	    line[MAXLINE];
 
     int    i, epfd, nready;
     struct epoll_event  ev;
     struct epoll_event  evlist[MAX_EVENTS];
-    FILE  *fp = stdin;
 
 #ifdef	NOTDEF
     char                str[INET_ADDRSTRLEN];
@@ -28,9 +31,9 @@ dg_echo(int sockfd, SA *pcliaddr, socklen_t clilen)
 
     epfd = Epoll_create(MAX_EVENTS);
 
-    ev.data.fd = fileno(fp);
+    ev.data.fd = pipe_fd;
     ev.events = EPOLLIN; /* Only interested in input events */
-    Epoll_ctl(epfd, EPOLL_CTL_ADD, fileno(fp), &ev);
+    Epoll_ctl(epfd, EPOLL_CTL_ADD, pipe_fd, &ev);
 
     ev.data.fd = sockfd;
     ev.events = EPOLLIN; /* Only interested in input events */
@@ -65,15 +68,13 @@ dg_echo(int sockfd, SA *pcliaddr, socklen_t clilen)
                 continue;
             }
 
-            if (evlist[i].data.fd == fileno(fp) && evlist[i].events & EPOLLIN) {  /* stdin data in */
-                if (Fgets(sendline, MAXLINE, fp) != NULL) {
-                    for (auto &item: cliaddr_pkt_map) {
-                        std::cout << "[" << item.first << "]:" << item.second << std::endl;
-                    }
-                } else {    // EOF
-                    printf("close by stdin\n");
-                    return;
+            if (evlist[i].data.fd == pipe_fd && evlist[i].events & EPOLLIN) {  /* stdin data in */
+                read(pipe_fd, line, MAXLINE);
+                std::cout << "client map: \n";
+                for (auto &item: cliaddr_pkt_map) {
+                    std::cout << "[" << item.first << "]:" << item.second << '\n';
                 }
+                std::cout << std::endl;
                 continue;
             }
         }
