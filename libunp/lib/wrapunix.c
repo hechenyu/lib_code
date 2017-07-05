@@ -139,7 +139,7 @@ Getopt(int argc, char *const *argv, const char *str)
 void
 Gettimeofday(struct timeval *tv, void *foo)
 {
-	if (gettimeofday(tv, foo) == -1)
+	if (gettimeofday(tv, foo) == (void *) -1)
 		err_sys("gettimeofday error");
 	return;
 }
@@ -189,32 +189,32 @@ Mkfifo(const char *pathname, mode_t mode)
 }
 
 void
-Mktemp(char *template)
+Mktemp(char *stemplate)
 {
 #ifdef HAVE_MKSTEMP
 	int i;
 
-	if ((i = mkstemp(template)) < 0)
+	if ((i = mkstemp(stemplate)) < 0)
 		err_quit("mkstemp error");
     Close(i);
 #else
-	if (mktemp(template) == NULL || template[0] == 0)
+	if (mktemp(stemplate) == NULL || stemplate[0] == 0)
 		err_quit("mktemp error");
 #endif
 }
 
 int
-Mkstemp(char *template)
+Mkstemp(char *stemplate)
 {
 	int i;
 
 #ifdef HAVE_MKSTEMP
-	if ((i = mkstemp(template)) < 0)
+	if ((i = mkstemp(stemplate)) < 0)
 		err_quit("mkstemp error");
 #else
-	if (mktemp(template) == NULL || template[0] == 0)
+	if (mktemp(stemplate) == NULL || stemplate[0] == 0)
 		err_quit("mktemp error");
-	i = Open(template, O_CREAT | O_WRONLY, FILE_MODE);
+	i = Open(stemplate, O_CREAT | O_WRONLY, FILE_MODE);
 #endif
 
 	return i;

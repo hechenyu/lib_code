@@ -19,6 +19,7 @@ struct Send_conf {
     int bytes_per_packet;
     int packets_per_request;
     int sleep_per_loop;
+    int sleep_per_client;
     std::atomic<uint32_t> total_send_packets;
     std::atomic<uint64_t> total_send_bytes;
 };
@@ -51,6 +52,7 @@ int main(int argc, char *argv[])
     send_conf.bytes_per_packet = vm["bytes_per_packet"].as<int>();
     send_conf.packets_per_request = vm["packets_per_request"].as<int>();
     send_conf.sleep_per_loop = vm["sleep_per_loop"].as<int>();
+    send_conf.sleep_per_client = vm["sleep_per_client"].as<int>();
     send_conf.total_send_packets = 0;
     send_conf.total_send_bytes = 0;
 
@@ -89,6 +91,7 @@ void send_routine(vector<int> fd_set, Send_conf *send_conf)
     auto bytes_per_packet = send_conf->bytes_per_packet;
     auto packets_per_request = send_conf->packets_per_request;
     auto sleep_per_loop = send_conf->sleep_per_loop;
+    auto sleep_per_client = send_conf->sleep_per_client;
 
     int nclient = fd_set.size();
 
@@ -111,10 +114,15 @@ void send_routine(vector<int> fd_set, Send_conf *send_conf)
                     send_conf->total_send_packets++;
                     send_conf->total_send_bytes += bytes_per_packet; 
                 }
+                if (sleep_per_client > 0) {
+                    this_thread::sleep_for(microseconds(sleep_per_client));
+                }
             }
         }
 
-        this_thread::sleep_for(microseconds(sleep_per_loop));
+        if (sleep_per_loop > 0) {
+            this_thread::sleep_for(microseconds(sleep_per_loop));
+        }
     }
 }
 

@@ -74,6 +74,7 @@ dg_echo(int sockfd, SA *pcliaddr, socklen_t clilen, int pipe_fd)
                 for (auto &item: cliaddr_pkt_map) {
                     std::cout << "[" << item.first << "]:" << item.second << '\n';
                 }
+                std::cout << "size: " << cliaddr_pkt_map.size() << "\n";
                 std::cout << std::endl;
                 continue;
             }

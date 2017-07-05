@@ -30,7 +30,7 @@ main(int argc, char **argv)
     std::thread echo(&dg_echo, sockfd, (SA *) &cliaddr, sizeof(cliaddr), pipe_fds[0]);
 
     while (true) {
-        std::this_thread::sleep_for(std::chrono::seconds(5));
+        std::this_thread::sleep_for(std::chrono::seconds(10));
         write(pipe_fds[1], "x", 1);
     }
 
