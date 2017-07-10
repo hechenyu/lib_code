@@ -3,6 +3,7 @@
 
 #include "sclist.h"
 #include <stddef.h>
+#include <assert.h>
 
 // 栈结构: LIFO, 后进先出
 template <typename T, typename C = void>    // typename C 是为了适配std::stack接口
@@ -67,12 +68,16 @@ public:
     // 从stack中pop一个元素
     void pop() 
     {
+        assert(!empty());
+
         delete list_node<T>(list_delete_head(this));
     }
 
     // 返回stack顶部元素的引用
     T& top() 
     {
+        assert(!empty());
+
         return *list_data(list_node<T>(list_head(this)));
     }
 
