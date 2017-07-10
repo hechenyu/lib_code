@@ -27,7 +27,7 @@ void list_init(SCList_base *list)
 
 // 判断链表是否为空, 
 inline
-bool list_is_empty(const SCList_base *list)
+bool list_is_empty(SCList_base *list)
 {
 	return (list->head.next == NULL);
 }

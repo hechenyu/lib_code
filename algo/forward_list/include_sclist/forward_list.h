@@ -92,7 +92,7 @@ public:
 
     bool empty() const
     {
-        return list_is_empty(this);
+        return list_is_empty(const_cast<forward_list *>(this));
     }
 
     void push_front(const value_type &val)

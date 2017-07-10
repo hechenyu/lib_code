@@ -11,7 +11,7 @@ template <typename T>
 struct Stack {
 	int top;	// 栈顶下标
 	int length;	// 栈大小
-	T * array;	// 栈实际空间
+	T *array;	// 栈实际空间
 };
 
 // 初始化栈
