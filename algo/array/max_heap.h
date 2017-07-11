@@ -40,7 +40,7 @@ template <typename T>
 struct MAXHeap {
     int heap_size;  // 堆中元素个数, 等价于A.heap-size
     int length;     // 数组元素个数, 等价于A.length
-    T * array;
+    T  *array;
 };
 
 // 给定结点的下标i, 计算父结点的下标
